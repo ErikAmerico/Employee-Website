@@ -46,7 +46,34 @@ const resolvers = {
             return await User.findOne({ userId }).populate("company");
         },
     },
-    Mutation: {},
+    Mutation: {
+        //add a new company
+        addCompany: async (parent, { name, type, logo }) => {
+            return await Company.create({ name, type, logo });
+        },
+        //add a new user and link to the company you are in
+        addUser: async (
+            parent,
+            { name, role, title, email, phone, password, profileImage, companyId }
+        ) => {
+            const user = await User.create({
+                name,
+                role,
+                title,
+                email,
+                phone,
+                password,
+                profileImage,
+                companyId,
+            });
+            const token = signToken(user);
+            return { token, user };
+        },
+        //add a new post
+        addPost: async (parent, { userId, images, text }) => {
+            return await Post.create({ userId, images, text });
+        },
+    },
 };
 
 module.exports = resolvers;
