@@ -33,10 +33,17 @@ const resolvers = {
                 populate: "user",
             });
         },
+        //find a single post
+        post: async (parent, { postId }) => {
+            const params = postId ? { postId } : {};
+            return await Post.findOne(params).populate("user").populate({
+                path: "comments",
+                populate: "user",
+            });
+        },
         //find a selected User
         user: async (parent, { userId }) => {
-            return await User.findOne({ userId })
-                .populate("company")
+            return await User.findOne({ userId }).populate("company");
         },
     },
     Mutation: {},
