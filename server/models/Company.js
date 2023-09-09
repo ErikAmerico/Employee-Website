@@ -37,7 +37,7 @@ const postSchema = new mongoose.Schema({
   text: String,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  reactions: Number,
+  likes: Number,
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
 });
 

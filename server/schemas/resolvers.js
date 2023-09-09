@@ -1,4 +1,5 @@
 const { signToken, AuthenticationError } = require("../utils/auth");
+const { User, Company, Post, Comment } = require("../models");
 
 const resolvers = {
     Query: {
@@ -11,7 +12,34 @@ const resolvers = {
             }
             throw new AuthenticationError("Not logged in");
         },
+        company: async (parent, { companyId }) => {
+            return await Company.findOne({ companyId })
+                .populate("users")
+                .populate({
+                    path: "users",
+                    populate: "posts",
+                });
+        },
+        //find all users in a company
+        users: async (parent, { companyId }) => {
+            const params = companyId ? { companyId } : {};
+            return await User.find(params).populate("company");
+        },
+        //find all posts in a company
+        posts: async (parent, { companyId }) => {
+            const params = companyId ? { companyId } : {};
+            return await Post.find(params).populate("user").populate({
+                path: "comments",
+                populate: "user",
+            });
+        },
+        //find a selected User
+        user: async (parent, { userId }) => {
+            return await User.findOne({ userId })
+                .populate("company")
+        },
     },
+    Mutation: {},
 };
 
 module.exports = resolvers;
