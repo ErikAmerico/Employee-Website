@@ -1,26 +1,69 @@
+import React from 'react';
+import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Avatar, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
-export default function Header() {
-    return (
-        <>
-            <h1>This is the Header </h1>
+//import MenuIcon from '@mui/icons-material/Menu';
 
-            <nav>
-                <ul>
-                    <li>
-                        <Link to="/">Home</Link>
-                    </li>
-                    <li>
-                        <Link to="/chat">Chat</Link>
-                    </li>
-                    <li>
-                        <Link to="/announcements">Announcements</Link>
-                    </li>
-                    <li>
-                        <Link to="/users">Users</Link>
-                    </li>
-                </ul>
-            </nav>
-        </>
-    )
-}
+const Header = () => {
+  // State for the profile menu
+  const [anchorEl, setAnchorEl] = useState();
+  const [userName, setUserName] = useState('Logged In User');
+
+  // Open profile menu
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // Close profile menu
+  const handleMenuClose = () => {
+    setAnchorEl();
+  };
+
+  return (
+    <AppBar position="sticky" sx={{ borderRadius: 2, backgroundColor: '#8da9c4'}}>
+      <Toolbar>
+        {/* Company Logo */}
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Link to="/">
+            <img
+              src="/images/genLogo.png"
+              alt="Company Logo"
+              style={{ height: '60px', marginRight: '', marginTop: 6 }}
+            />
+          </Link>
+        </Typography>
+
+        {/* Navigation Links */}
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Button component={Link} color='info' variant='outlined' to="/announcements" sx={{marginRight: 2, backgroundColor: '#134074', color: 'white'}}>Announcements</Button>
+          <Button component={Link} color='info' variant='outlined' to="/users" sx={{marginRight: 2, backgroundColor: '#134074', color: 'white'}}>Users</Button>
+          <Button component={Link} color='info' variant='outlined' to="/chat" sx={{backgroundColor: '#134074', color: 'white'}}>Chat</Button>
+        </Typography>
+
+        {/* Logged in user name */}
+        {userName}
+
+        {/* Profile Picture and Dropdown */}
+        <IconButton
+          edge="end"
+          color="inherit"
+          onClick={handleMenuOpen}
+        >
+          <Avatar alt="User" src="" />
+        </IconButton>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+        </Menu>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default Header;
