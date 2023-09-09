@@ -1,10 +1,41 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App.jsx'
-//import './index.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+import Home from './pages/home.jsx'
+import Chat from './pages/chat.jsx'
+import Announcements from './pages/announcements.jsx'
+import Users from './pages/users.jsx'
+
+
+const router = createBrowserRouter([
+  {
+      path: "/",
+      element: <App />,
+      errorElement: <h1 className="display-2">Wrong page!</h1>,
+      children: [
+          {
+              index: true,
+              element: <Home />,
+          },
+          {
+              path: "/chat",
+              element: <Chat />,
+          },
+          {
+            path: "/announcements",
+            element: <Announcements />,
+          },
+          {
+          path: "/users",
+          element: <Users />,
+          },
+      ],
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <RouterProvider router={router} />
+);
+
