@@ -1,5 +1,5 @@
+import { Button, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
-import { TextField, Grid, Button } from "@mui/material";
 import "./logReg.css";
 
 const Login = () => {

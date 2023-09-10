@@ -2,12 +2,12 @@ import "./App.css";
 
 import {
     ApolloClient,
-    InMemoryCache,
     ApolloProvider,
     createHttpLink,
+    InMemoryCache,
 } from "@apollo/client";
-import { Outlet } from "react-router-dom";
 import { setContext } from "@apollo/client/link/context";
+import { Outlet } from "react-router-dom";
 import Header from "./components/header.jsx";
 
 const httpLink = createHttpLink({

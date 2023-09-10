@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Grid, Button } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import "./logReg.css";
 
-import { ADD_COMPANY } from "../../utils/mutations";
 import { useMutation } from "@apollo/client";
+import { ADD_COMPANY } from "../../utils/mutations";
 
 const Register = () => {
     // const [inputs, setInputs] = useState({
