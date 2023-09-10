@@ -7,6 +7,7 @@ import Home from './pages/home.jsx'
 import Chat from './pages/chat.jsx'
 import Announcements from './pages/announcements.jsx'
 import Users from './pages/users.jsx'
+import LoginRegister from './pages/loginRegister.jsx'
 
 
 const router = createBrowserRouter([
@@ -28,9 +29,13 @@ const router = createBrowserRouter([
             element: <Announcements />,
           },
           {
-          path: "/users",
-          element: <Users />,
+            path: "/users",
+            element: <Users />,
           },
+          {
+            path: "/loginRegister",
+            element: <LoginRegister />,
+          }
       ],
   },
 ]);

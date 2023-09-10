@@ -56,6 +56,8 @@ const typeDefs = `
         post(postId: String!): Post
         comment(commentId: String!): Comment
         me: User
+        users(companyId: String): [User]
+        posts(companyId: String): [Post]
     }
 
     type Mutation {
