@@ -1,6 +1,6 @@
 import React from 'react';
-import Register from '../components/register';
-import Login from '../components/login';
+import Register from '../components/logReg/register';
+import Login from '../components/logReg/login';
 
 export default function LoginRegister () {
   return (
@@ -10,5 +10,3 @@ export default function LoginRegister () {
     </div>
   );
 };
-
-
