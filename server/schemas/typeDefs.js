@@ -11,7 +11,8 @@ const typeDefs = `
     type User {
         _id: ID
         userId: String
-        name: String
+        firstName: String
+        lastName: String
         role: String
         title: String
         company: Company
@@ -62,12 +63,12 @@ const typeDefs = `
 
     type Mutation {
         addCompany(name: String!, type: String!, logo: String): Company
-        addUser(name: String!, role: String!, title: String!, email: String!, phone: String!, password: String!, profileImage: String): Auth
+        addUser(firstName: String!, lastName: String!, role: String!, title: String!, email: String!, phone: String!, password: String!, profileImage: String): Auth
         addPost(images: [String], text: String): Post
         addComment(postId: String!, text: String image: String): Comment
         login(email: String!, password: String!): Auth
         updateCompany(companyId: String!, name: String, type: String, logo: String): Company
-        updateUser(userId: String!, name: String, role: String, title: String, email: String, phone: String, password: String, profileImage: String): User
+        updateUser(userId: String!, firstName: String, lastName: String, role: String, title: String, email: String, phone: String, password: String, profileImage: String): User
         updatePost(postId: String!, images: [String], text: String): Post
         updateComment(commentId: String!, text: String, image: String): Comment
         removeUser(userId: String!): User
