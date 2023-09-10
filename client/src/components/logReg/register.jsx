@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Grid, Button } from '@mui/material';
 import './logReg.css'
 
+import { ADD_COMPANY } from '../../utils/mutations';
+import { useMutation } from '@apollo/client';
+
 const Register = () => {
 
+  // const [inputs, setInputs] = useState({
+  //   companyName: '',
+  //   name: '',
+  //   email: '',
+  //   password: ''
+  // })
+
   const [inputs, setInputs] = useState({
-    companyName: '',
     name: '',
-    email: '',
-    password: ''
+    type: '',
+    logo: ''
   })
+
+  const [addCompany, { error }] = useMutation(ADD_COMPANY);
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleChange = (e) => {
     setInputs((prevState) => ({
@@ -18,16 +30,35 @@ const Register = () => {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     console.log(inputs)
 
+    try {
+      const { data } = await addCompany({
+          variables: { ...inputs },
+      });
+      console.log(data);
+
+  } catch (err) {
+      console.error(err);
+      setShowAlert(true);
+  }
+
+
+
+    // setInputs({
+    //   companyName: '',
+    //   name: '',
+    //   email: '',
+    //   password: ''
+    // });
+
     setInputs({
-      companyName: '',
       name: '',
-      email: '',
-      password: ''
+      type: '',
+      logo: ''
     });
 
   };
@@ -45,6 +76,39 @@ const Register = () => {
       <form onSubmit={handleSubmit}>
 
       <TextField
+      name='name'
+      value={inputs.name}
+      onChange={handleChange}
+      type={'text'}
+      placeholder='Company Name'
+      variant='outlined'
+      fullWidth
+      margin='normal'
+      />
+
+      <TextField
+      name='type'
+      value={inputs.type}
+      onChange={handleChange}
+      type={'text'}
+      placeholder='Company Type'
+      variant='outlined'
+      fullWidth
+      margin='normal'
+      />
+
+      <TextField
+      name='logo'
+      value={inputs.logo}
+      onChange={handleChange}
+      type={'text'}
+      placeholder='Company Logo'
+      variant='outlined'
+      fullWidth
+      margin='normal'
+      />
+
+      {/* <TextField
       name='companyName' 
       value={inputs.companyName}
       onChange={handleChange}
@@ -86,7 +150,7 @@ const Register = () => {
       variant='outlined'
       fullWidth
       margin='normal'
-      />
+      /> */}
 
 
       <Grid container justifyContent="center">
