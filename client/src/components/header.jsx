@@ -1,14 +1,22 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Avatar, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import AuthService from '../utils/auth'
 
 //import MenuIcon from '@mui/icons-material/Menu';
 
 const Header = () => {
   // State for the profile menu
   const [anchorEl, setAnchorEl] = useState();
-  const [userName, setUserName] = useState('Logged In User');
+  const [userName, setUserName] = useState();
+
+  useEffect(() => {
+    if (AuthService.loggedIn()) {
+      const profile = AuthService.getProfile();
+      setUserName(profile.name);
+    }
+  }, []);
 
   // Open profile menu
   const handleMenuOpen = (event) => {
@@ -42,16 +50,37 @@ const Header = () => {
         </Typography>
 
         {/* Logged in user name */}
-        {userName}
+        {/* {userName} */}
+
+        {/* Display user's name or login/create-company button */}
+        {userName ? (
+          <Typography variant="h6" component="div">
+            {userName}
+          </Typography>
+        ) : (
+          <Button component={Link} to="/loginRegister" color="inherit">
+            Login/Register
+          </Button>
+        )}
 
         {/* Profile Picture and Dropdown */}
-        <IconButton
+        {/* <IconButton
           edge="end"
           color="inherit"
           onClick={handleMenuOpen}
         >
           <Avatar alt="User" src="" />
-        </IconButton>
+        </IconButton> */}
+
+        {AuthService.loggedIn() && (
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={handleMenuOpen}
+          >
+            <Avatar alt="User" src="" />
+          </IconButton>
+        )}
 
         <Menu
           anchorEl={anchorEl}
