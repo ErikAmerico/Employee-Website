@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const ADD_COMPANY = gql`
-  mutation AddCompany($name: String!, $type: String!, $logo: String) {
-    addCompany(name: $name, type: $type, logo: $logo) {
+export const CREATE_COMPANY = gql`
+  mutation createCompany($name: String!, $type: String!, $logo: String) {
+    createCompany(name: $name, type: $type, logo: $logo) {
       _id
       companyId
       name
@@ -12,8 +12,8 @@ export const ADD_COMPANY = gql`
   }
 `;
 
-export const ADD_USER = gql`
-  mutation AddUser(
+export const create_USER = gql`
+  mutation createUser(
     $firstName: String!
     $lastName: String!
     $role: String!
@@ -23,7 +23,7 @@ export const ADD_USER = gql`
     $password: String!
     $profileImage: String
   ) {
-    addUser(
+    createUser(
       firstName: $firstName
       lastName: $lastName
       role: $role
