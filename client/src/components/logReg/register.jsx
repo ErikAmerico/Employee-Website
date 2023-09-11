@@ -1,35 +1,44 @@
-import { Button, Grid, TextField } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
+import {
+  Button,
+  Grid,
+  TextField,
+  Modal,
+  Fade,
+} from "@mui/material";
 import "./logReg.css";
 
 import { useMutation } from "@apollo/client";
 import { ADD_COMPANY } from "../../utils/mutations";
+import { ADD_USER } from "../../utils/mutations";
 
 const Register = ({ toggleForm }) => {
-    // const [inputs, setInputs] = useState({
-    //   companyName: '',
-    //   firstName: '',
-    //   lastName: '',
-    //   email: '',
-    //   password: ''
-    // })
-
     const [inputs, setInputs] = useState({
         name: "",
         type: "",
         logo: "",
+     });
+    const [modalData, setModalData] = useState({
+        firstName: "",
+        lastName: "",
+        role: "",
+        title: "",
+        email: "",
+        phone: "",
+        password: "",
+        profileImage: "",
     });
-
     const [addCompany, { error }] = useMutation(ADD_COMPANY);
+    const [addUser, { error2 }] = useMutation(ADD_USER);
+    const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
-
     const formContainerRef = useRef(null);
 
     useEffect(() => {
         const formContainerHeight = formContainerRef.current.clientHeight;
         const toggleButton = document.querySelector(".toggleButton");
         if (toggleButton) {
-            toggleButton.style.height = `${formContainerHeight}px`;
+        toggleButton.style.height = `${formContainerHeight}px`;
         }
     }, []);
 
@@ -43,146 +52,239 @@ const Register = ({ toggleForm }) => {
 
     const handleChange = (e) => {
         setInputs((prevState) => ({
+        ...prevState,
+        [e.target.name]: e.target.value,
+        }));
+    };
+
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        setShowModal(true);
+    };
+
+    const handleModalInputChange = (e) => {
+        setModalData((prevState) => ({
             ...prevState,
             [e.target.name]: e.target.value,
         }));
     };
+    
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleModalSubmit = async () => {
+    try {
+        
+      const { data } = await addCompany({ variables: inputs});
+        console.log('companydata', data);
+        
+        const idCompany = data.addCompany.companyId;
+        console.log('idCompany', idCompany);
 
-        console.log(inputs);
-
-        try {
-            const { data } = await addCompany({
-                variables: { ...inputs },
+        const { userData } = await addUser({
+            variables: { ...modalData, companyId: idCompany },
+        })
+            .then(() => {
+              setModalData({
+                firstName: "",
+                lastName: "",
+                role: "",
+                title: "",
+                email: "",
+                phone: "",
+                password: "",
+                profileImage: "",
             });
-            console.log(data);
-        } catch (err) {
-            console.error(err);
-            setShowAlert(true);
-        }
+        
+            setInputs({
+                name: "",
+                type: "",
+                logo: "",
+            });
+        
+            setShowModal(false);
+        })
+    } catch (err) {
+      console.error(err);
+      setShowAlert(true);
+    }
+  };
 
-        // setInputs({
-        //   companyName: '',
-        //   firstName: '',
-        //   lastName: '',
-        //   email: '',
-        //   password: ''
-        // });
-
-        setInputs({
-            name: "",
-            type: "",
-            logo: "",
-        });
-    };
-
-    return (
-        <Grid
-            container
-            spacing={2}
-            justifyContent="center"
-            alignItems="center"
-            style={{ minHeight: "100vh" }}
+    const modalContent = (
+    <div className="modal-container">
+    <div className="modal-content">
+      <h2>Your Information</h2>
+      <TextField
+        name="firstName"
+        value={modalData.firstName}
+        onChange={handleModalInputChange}
+        type="text"
+        label="firstName"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        name="lastName"
+        value={modalData.lastName}
+        onChange={handleModalInputChange}
+        type="text"
+        label="lastName"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        name="role"
+        value={modalData.role}
+        onChange={handleModalInputChange}
+        type="text"
+        label="role"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        name="title"
+        value={modalData.title}
+        onChange={handleModalInputChange}
+        type="text"
+        label="title"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />  
+     <TextField
+        name="email"
+        value={modalData.email}
+        onChange={handleModalInputChange}
+        type="email"
+        label="email"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+     />
+     <TextField
+        name="phone"
+        value={modalData.phone}
+        onChange={handleModalInputChange}
+        type="tel"
+        label="phone"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+    />
+    <TextField
+        name="password"
+        value={modalData.password}
+        onChange={handleModalInputChange}
+        type="password"
+        label="password"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+    />
+    <TextField
+        name="profileImage"
+        value={modalData.profileImage}
+        onChange={handleModalInputChange}
+        type="text"
+        label="Profile Imag"
+        variant="outlined"
+        fullWidth
+        margin="normal"
+      />
+     <div className="button-container">
+        <Button
+          onClick={handleModalSubmit}
+          variant="contained"
+          color="primary"
+          className="submit-button"
         >
-        <div className="toggle-button-container">
-            <Button onClick={toggleForm} variant="contained" className="toggleButton">Login</Button>
-        </div>
-            <Grid item xs={12} sm={4} className="form-container" ref={formContainerRef}>
-                <h1>Registration</h1>
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        name="name"
-                        value={inputs.name}
-                        onChange={handleChange}
-                        type={"text"}
-                        placeholder="Company Name"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                    />
+          Submit
+        </Button>
+        <Button
+          variant="contained"
+          color="warning"
+          className="close-button"
+          onClick={() => setShowModal(false)}
+        >
+          Close
+        </Button>
+      </div>
+    </div>
+    </div>
+  );
 
-                    <TextField
-                        name="type"
-                        value={inputs.type}
-                        onChange={handleChange}
-                        type={"text"}
-                        placeholder="Company Type"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                    />
-
-                    <TextField
-                        name="logo"
-                        value={inputs.logo}
-                        onChange={handleChange}
-                        type={"text"}
-                        placeholder="Company Logo"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                    />
-
-                    {/* <TextField
-      name='companyName' 
-      value={inputs.companyName}
-      onChange={handleChange}
-      type={'text'} 
-      placeholder='Company Name' 
-      variant='outlined'
-      fullWidth
-      margin='normal'
-      />
-
-      <TextField
-      name='name' 
-      value={inputs.name} 
-      onChange={handleChange} 
-      type={'text'} 
-      placeholder='Your name' 
-      variant='outlined'
-      fullWidth
-      margin='normal'
-      />
-
-      <TextField
-      name='email' 
-      value={inputs.email} 
-      onChange={handleChange} 
-      type={'email'} 
-      placeholder='Email' 
-      variant='outlined'
-      fullWidth
-      margin='normal'
-      />
-
-      <TextField
-      name='password' 
-      value={inputs.password} 
-      onChange={handleChange}
-      type={'password'} 
-      placeholder='Password' 
-      variant='outlined'
-      fullWidth
-      margin='normal'
-      /> */}
-
-                    <Grid container justifyContent="center">
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            className="submit-button"
-                        >
-                            Submit
-                        </Button>
-                    </Grid>
-                </form>
-            </Grid>
-        </Grid>
-    );
+  return (
+    <Grid
+      container
+      spacing={2}
+      justifyContent="center"
+      alignItems="center"
+      style={{ minHeight: "100vh" }}
+    >
+      <div className="toggle-button-container">
+        <Button onClick={toggleForm} variant="contained" className="toggleButton">
+          Login
+        </Button>
+      </div>
+      <Grid item xs={12} sm={4} className="form-container" ref={formContainerRef}>
+        <h1>Registration</h1>
+        <form onSubmit={handleFormSubmit}>
+          <TextField
+            name="name"
+            value={inputs.name}
+            onChange={handleChange}
+            type={"text"}
+            placeholder="Company Name"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            name="type"
+            value={inputs.type}
+            onChange={handleChange}
+            type={"text"}
+            placeholder="Company Type"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            name="logo"
+            value={inputs.logo}
+            onChange={handleChange}
+            type={"text"}
+            placeholder="Company Logo"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+          />
+          <Grid container justifyContent="center">
+          <Button
+            onClick={handleFormSubmit}
+            variant="contained"
+            color="primary"
+            className="submit-button"
+          >
+            Continue
+          </Button>
+          </Grid>
+        </form>
+      </Grid>
+      {showModal && (
+        <Modal
+          open={showModal}
+          onClose={() => setShowModal(false)}
+          closeAfterTransition
+        >
+          <Fade in={showModal}>
+            <div className="modal-container">{modalContent}</div>
+          </Fade>
+        </Modal>
+      )}
+    </Grid>
+  );
 };
 
 export default Register;
