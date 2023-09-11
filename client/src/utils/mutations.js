@@ -4,7 +4,6 @@ export const CREATE_COMPANY = gql`
   mutation createCompany($name: String!, $type: String!, $logo: String) {
     createCompany(name: $name, type: $type, logo: $logo) {
       _id
-      companyId
       name
       type
       logo
@@ -49,13 +48,11 @@ export const LOGIN = gql`
       token
       user {
         _id
-        userId
         name
         role
         title
         company {
           _id
-          companyId
           name
           type
           logo
