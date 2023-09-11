@@ -8,14 +8,18 @@ const companySchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
+    firstName: { String, required: true },
+    lastName: { String, required: true },
     role: [String],
     title: String,
     company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
-    email: String,
+    email: {
+        type: String,
+        unique: true,
+        required: true,
+    },
     phone: String,
-    password: String,
+    password: { String, required: true },
     profileImage: String,
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
@@ -38,6 +42,18 @@ const postSchema = new mongoose.Schema({
         },
     ],
 });
+
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        const saltRounds = 10;
+        this.password = await bcrypt.hash(this.password, saltRounds);
+    }
+    next();
+});
+
+userSchema.methods.isCorrectPassword = async function (password) {
+    return bcrypt.compare(password, this.password);
+};
 
 const Company = mongoose.model("Company", companySchema);
 const User = mongoose.model("User", userSchema);
