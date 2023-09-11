@@ -12,7 +12,8 @@ const companySchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-    name: String,
+    firstName: String,
+    lastName: String,
     userId: {
         type: String,
         default: () => Math.random().toString(36).substring(7),

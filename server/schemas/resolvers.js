@@ -54,10 +54,21 @@ const resolvers = {
         //add a new user and link to the company you are in
         addUser: async (
             parent,
-            { name, role, title, email, phone, password, profileImage, companyId }
+            {
+                firstName,
+                lastName,
+                role,
+                title,
+                email,
+                phone,
+                password,
+                profileImage,
+                companyId,
+            }
         ) => {
             const user = await User.create({
-                name,
+                firstName,
+                lastName,
                 role,
                 title,
                 email,

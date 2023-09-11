@@ -3,5 +3,5 @@ export default function Announcements() {
         <>
             <h1>Announcements Page</h1>
         </>
-    )
+    );
 }
