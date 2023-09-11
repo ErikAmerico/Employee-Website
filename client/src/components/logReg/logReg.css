@@ -1,18 +1,64 @@
 .form-container {
-    border: 2px solid #8da9c4;
-    box-shadow: 0px 0px 10px #8da9c4;
-    padding: 20px;
-    background-color: white;
+  border: 2px solid #8da9c4;
+  box-shadow: 0px 0px 10px #8da9c4;
+  padding: 20px;
+  background-color: white;
+  transition: transform 0.5s ease-in-out;
+}
+
+.flip {
+  transform: rotateY(360deg);
+}
+
+.slide {
+  animation: Move 0.5s linear;
+}
+
+@keyframes Move {
+  0% {
+    transform: translateX(500px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+.flipLog {
+  transform: rotateY(-360deg);
+}
+
+.slideLog {
+  animation: MoveLog 0.5s linear;
+  z-index: -1;
+}
+
+@keyframes MoveLog {
+  0% {
+    transform: translateX(-500px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
 }
 
 .submit-button {
-    background-color: #8da9c4;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 20px;
+  background-color: #8da9c4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 20px;
 }
 
 .submit-button:hover {
-    background-color: #134074;
+  background-color: #134074;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 5px 5px 8px #8da9c4;
+}
+
+.toggleButton {
+  width: 107px;
 }
