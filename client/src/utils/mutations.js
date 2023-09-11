@@ -12,7 +12,7 @@ export const CREATE_COMPANY = gql`
   }
 `;
 
-export const create_USER = gql`
+export const CREATE_USER = gql`
   mutation createUser(
     $firstName: String!
     $lastName: String!
