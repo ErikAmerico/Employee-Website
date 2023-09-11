@@ -1,5 +1,5 @@
 const { signToken, AuthenticationError } = require("../utils/auth");
-const { User, Company, Post, Comment } = require("../models/Company");
+const { User, Company, Post } = require("../models/Company");
 
 const resolvers = {
   Query: {
@@ -46,11 +46,11 @@ const resolvers = {
   },
   Mutation: {
     //add a new company
-    addCompany: async (parent, { name, type, logo }) => {
+    createCompany: async (parent, { name, type, logo }) => {
       return await Company.create({ name, type, logo });
     },
     //add a new user and link to the company you are in
-    addUser: async (
+    createUser: async (
       parent,
       {
         firstName,
@@ -82,7 +82,7 @@ const resolvers = {
       return { token, user };
     },
     //add a new post
-    addPost: async (parent, { userId, images, text }) => {
+    createPost: async (parent, { userId, images, text }) => {
       return await Post.create({ userId, images, text });
     },
   },
