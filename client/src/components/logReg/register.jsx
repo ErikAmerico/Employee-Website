@@ -9,8 +9,8 @@ import {
 import "./logReg.css";
 
 import { useMutation } from "@apollo/client";
-import { ADD_COMPANY } from "../../utils/mutations";
-import { ADD_USER } from "../../utils/mutations";
+import { CREATE_COMPANY } from "../../utils/mutations";
+import { CREATE_USER } from "../../utils/mutations";
 
 const Register = ({ toggleForm }) => {
     const [inputs, setInputs] = useState({
@@ -28,8 +28,8 @@ const Register = ({ toggleForm }) => {
         password: "",
         profileImage: "",
     });
-    const [addCompany, { error }] = useMutation(ADD_COMPANY);
-    const [addUser, { error2 }] = useMutation(ADD_USER);
+    const [createCompany, { error }] = useMutation(CREATE_COMPANY);
+    const [createUser, { error2 }] = useMutation(CREATE_USER);
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const formContainerRef = useRef(null);
@@ -73,13 +73,13 @@ const Register = ({ toggleForm }) => {
   const handleModalSubmit = async () => {
     try {
         
-      const { data } = await addCompany({ variables: inputs});
+      const { data } = await createCompany({ variables: inputs});
         console.log('companydata', data);
         
-        const idCompany = data.addCompany.companyId;
+        const idCompany = data.createCompany.companyId;
         console.log('idCompany', idCompany);
 
-        const { userData } = await addUser({
+        const { userData } = await createUser({
             variables: { ...modalData, companyId: idCompany },
         })
             .then(() => {
