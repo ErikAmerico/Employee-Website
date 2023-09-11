@@ -1,11 +1,11 @@
 import { Button, Grid, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./logReg.css";
 
 import { useMutation } from "@apollo/client";
 import { ADD_COMPANY } from "../../utils/mutations";
 
-const Register = () => {
+const Register = ({ toggleForm }) => {
     // const [inputs, setInputs] = useState({
     //   companyName: '',
     //   firstName: '',
@@ -22,6 +22,24 @@ const Register = () => {
 
     const [addCompany, { error }] = useMutation(ADD_COMPANY);
     const [showAlert, setShowAlert] = useState(false);
+
+    const formContainerRef = useRef(null);
+
+    useEffect(() => {
+        const formContainerHeight = formContainerRef.current.clientHeight;
+        const toggleButton = document.querySelector(".toggleButton");
+        if (toggleButton) {
+            toggleButton.style.height = `${formContainerHeight}px`;
+        }
+    }, []);
+
+    useEffect(() => {
+        document.querySelector(".form-container").classList.toggle("flip");
+    }, []);
+
+    useEffect(() => {
+        document.querySelector(".toggleButton").classList.toggle("slide");
+    }, []);
 
     const handleChange = (e) => {
         setInputs((prevState) => ({
@@ -68,7 +86,11 @@ const Register = () => {
             alignItems="center"
             style={{ minHeight: "100vh" }}
         >
-            <Grid item xs={12} sm={6} className="form-container">
+        <div className="toggle-button-container">
+            <Button onClick={toggleForm} variant="contained" className="toggleButton">Login</Button>
+        </div>
+            <Grid item xs={12} sm={4} className="form-container" ref={formContainerRef}>
+                <h1>Registration</h1>
                 <form onSubmit={handleSubmit}>
                     <TextField
                         name="name"
@@ -154,7 +176,7 @@ const Register = () => {
                             color="primary"
                             className="submit-button"
                         >
-                            Register
+                            Submit
                         </Button>
                     </Grid>
                 </form>
