@@ -58,7 +58,7 @@ const Login = ({ toggleForm }) => {
             alignItems="center"
             style={{ minHeight: "100vh" }}
         >
-            <Grid item xs={12} sm={4} className="form-container" ref={formContainerRef}>
+            <Grid item xs={12} sm={4} className="form-container" ref={formContainerRef} id="login-form">
                 <h1>Login Form</h1>
                 <form onSubmit={handleSubmit}>
                     <TextField
@@ -96,7 +96,7 @@ const Login = ({ toggleForm }) => {
                 </form>
             </Grid>
             <div className="toggle-button-container">
-                <Button onClick={toggleForm} variant="contained" className="toggleButton">Register</Button>
+                <Button onClick={toggleForm} variant="contained" className="toggleButton" id="registration-button">Register</Button>
             </div>
         </Grid>
     );

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./logReg.css";
 
 import { useMutation } from "@apollo/client";
-import { CREATE_COMPANY, CREATE_USER } from "../../utils/mutations";
+import { CREATE_COMPANY, CREATE_USER, ADD_USER_TO_COMPANY } from "../../utils/mutations";
 
 const Register = ({ toggleForm }) => {
     const [inputs, setInputs] = useState({
@@ -23,6 +23,7 @@ const Register = ({ toggleForm }) => {
     });
     const [createCompany, { error }] = useMutation(CREATE_COMPANY);
     const [createUser, { error2 }] = useMutation(CREATE_USER);
+    const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const formContainerRef = useRef(null);
@@ -67,10 +68,23 @@ const Register = ({ toggleForm }) => {
             const { data } = await createCompany({ variables: inputs });
             console.log("companyData", data);
 
-            const companyId = data.createCompany._id;
-            await createUser({
-                variables: { ...modalData, company: companyId },
-            }).then(() => {
+          const companyId = data.createCompany._id;
+          console.log("companyId", companyId);
+
+           const userResponse =  await createUser({
+                variables: { ...modalData, company:  companyId },
+           })
+             
+          const userId = userResponse.data.createUser.user._id;
+          
+          addUserToCompany({
+                variables: { companyId, userId },
+          })
+            .then((res) => {
+              console.log("usr added to company", res);
+            })
+              
+             .then(() => {
                 setModalData({
                     firstName: "",
                     lastName: "",
@@ -215,6 +229,7 @@ const Register = ({ toggleForm }) => {
                     onClick={toggleForm}
                     variant="contained"
                     className="toggleButton"
+                    id="login-button"
                 >
                     Login
                 </Button>
@@ -224,7 +239,8 @@ const Register = ({ toggleForm }) => {
                 xs={12}
                 sm={4}
                 className="form-container"
-                ref={formContainerRef}
+              ref={formContainerRef}
+              id="registration-form"
             >
                 <h1>Registration</h1>
                 <form onSubmit={handleFormSubmit}>
