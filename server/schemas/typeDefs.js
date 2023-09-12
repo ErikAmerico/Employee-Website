@@ -77,7 +77,7 @@ const typeDefs = `
 
     type Mutation {
         createCompany(name: String!, type: String!, logo: String): Company
-        createUser(firstName: String!, lastName: String!, role: String!, title: String!, email: String!, phone: String!, password: String!, profileImage: String): Auth
+        createUser(firstName: String!, lastName: String!, role: String, title: String, email: String!, phone: String, password: String!, profileImage: String): Auth
         createPost(images: [String], text: String): Post
         createComment(postId: String!, text: String image: String): Comment
         login(email: String!, password: String!): Auth
@@ -88,6 +88,7 @@ const typeDefs = `
         removeUser(userId: String!): User
         removePost(postId: String!): Post
         removeComment(commentId: String!): Comment
+        addUserToCompany(companyId: ID!, userId: ID!): Company
     }
 `;
 
