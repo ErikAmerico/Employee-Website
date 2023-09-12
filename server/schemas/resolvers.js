@@ -63,7 +63,7 @@ const resolvers = {
                 profileImage, // change to object
             }
         ) => {
-          const company = await Company.create
+            const company = await Company.create
             const user = await User.create({
                 firstName,
                 lastName,
