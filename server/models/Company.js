@@ -8,8 +8,8 @@ const companySchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-    firstName: { String, required: true },
-    lastName: { String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     role: [String],
     title: String,
     company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
         required: true,
     },
     phone: String,
-    password: { String, required: true },
+    password: { type: String, required: true },
     profileImage: String,
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],

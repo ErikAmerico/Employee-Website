@@ -3,6 +3,7 @@ const { User, Company, Post } = require("../models/Company");
 
 const resolvers = {
     Query: {
+        //find a single user
         me: async (parent, args, context) => {
             if (context.user) {
                 const userData = await User.findOne({
@@ -12,18 +13,13 @@ const resolvers = {
             }
             throw new AuthenticationError("Not logged in");
         },
-        company: async (parent, { companyId }) => {
-            return await Company.findOne({ companyId })
-                .populate("users")
-                .populate({
-                    path: "users",
-                    populate: "posts",
-                });
-        },
-        //find all users in a company
-        users: async (parent, { companyId }) => {
-            const params = companyId ? { companyId } : {};
-            return await User.find(params).populate("company");
+
+        users: async (parent, {}) => {
+            if (context.user) {
+                const params = companyId ? { companyId } : {};
+                return await User.find(params).populate("company");
+            }
+            throw new AuthenticationError("Not logged in");
         },
         //find all posts in a company
         posts: async (parent, { companyId }) => {
@@ -42,8 +38,10 @@ const resolvers = {
             });
         },
         //find a selected User
-        user: async (parent, { userId }) => {
-            return await User.findOne({ userId }).populate("company");
+        user: async (parent, {}) => {
+            return await User.findOne({ _id: context.user._id }).populate(
+                "company"
+            );
         },
     },
     Mutation: {
@@ -62,10 +60,10 @@ const resolvers = {
                 email,
                 phone,
                 password,
-                profileImage,
-                companyId,
+                profileImage, // change to object
             }
         ) => {
+          const company = await Company.create
             const user = await User.create({
                 firstName,
                 lastName,
@@ -75,27 +73,24 @@ const resolvers = {
                 phone,
                 password,
                 profileImage,
-                companyId,
             });
 
-            // await Company.updateOne({ companyId }, { $push: { users: user } });
-
-            const token = signToken(user);
+            const token = signToken(user); //create company id to payload of token
             return { token, user };
         },
         //add a new post
-        createPost: async (parent, { userId, images, text }) => {
-            return await Post.create({ userId, images, text });
+        createPost: async (parent, { images, text }) => {
+            return await Post.create({ images, text });
         },
 
         //add a new comment
-        createComment: async (parent, { postId, userId, text, images }) => {
-            return await Comment.create({ postId, userId, text, images });
+        createComment: async (parent, { text, images }) => {
+            return await Comment.create({ text, images });
         },
 
         //login
         login: async (parent, { email, password }) => {
-            const user = await User.findOne({ email });
+            const user = await User.findOne({ email }).populate("company");
             if (!user) {
                 throw new AuthenticationError("Incorrect credentials");
             }
@@ -107,9 +102,8 @@ const resolvers = {
             return { token, user };
         },
 
-        updateCompany: async (parent, { companyId, name, type, logo }) => {
+        updateCompany: async (parent, { name, type, logo }) => {
             const updatedCompany = await Company.findOneAndUpdate(
-                { companyId },
                 { name, type, logo },
                 { new: true }
             );
@@ -119,7 +113,6 @@ const resolvers = {
         updateUser: async (
             parent,
             {
-                userId,
                 firstName,
                 lastName,
                 role,
@@ -131,7 +124,6 @@ const resolvers = {
             }
         ) => {
             const updatedUser = await User.findOneAndUpdate(
-                { userId },
                 {
                     firstName,
                     lastName,
@@ -147,26 +139,26 @@ const resolvers = {
             return updatedUser;
         },
 
-        updatePost: async (parent, { postId, images, text }) => {
+        updatePost: async (parent, { images, text }) => {
             const updatedPost = await Post.findOneAndUpdate(
-                { postId },
                 { images, text },
                 { new: true }
             );
             return updatedPost;
         },
 
-        updateComment: async (parent, { commentId, text, images }) => {
+        updateComment: async (parent, { text, images }) => {
             const updatedComment = await Comment.findOneAndUpdate(
-                { commentId },
                 { text, images },
                 { new: true }
             );
             return updatedComment;
         },
 
-        removeUser: async (parent, { userId }) => {
-            const user = await User.findByIdAndDelete(userId);
+        removeUser: async (parent, {}) => {
+            const user = await User.findByIdAndDelete({
+                _id: context.user._id,
+            });
             return user;
         },
     },

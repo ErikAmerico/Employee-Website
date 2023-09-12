@@ -1,16 +1,20 @@
 const typeDefs = `
     type Company {
         _id: ID!
-        companyId: String
         name: String
         type: String
         users: [User]
         logo: String
     }
 
+    input CompanyInput {
+        name: String
+        type: String
+        logo: String
+    }
+
     type User {
         _id: ID!
-        userId: String
         firstName: String
         lastName: String
         role: String
@@ -21,6 +25,16 @@ const typeDefs = `
         password: String
         profileImage: String
         posts: [Post]
+    }
+
+    input UserInput {
+        firstName: String
+        lastName: String
+        role: String
+        title: String
+        email: String
+        phone: String
+        password: String
     }
 
     type Post {
@@ -63,10 +77,10 @@ const typeDefs = `
 
     type Mutation {
         createCompany(name: String!, type: String!, logo: String): Company
-        createUser(firstName: String!, lastName: String!, role: String!, title: String!, email: String!, phone: String!, password: String!, profileImage: String): User
+        createUser(firstName: String!, lastName: String!, role: String!, title: String!, email: String!, phone: String!, password: String!, profileImage: String): Auth
         createPost(images: [String], text: String): Post
         createComment(postId: String!, text: String image: String): Comment
-        login(email: String!, password: String!): User
+        login(email: String!, password: String!): Auth
         updateCompany(companyId: String!, name: String, type: String, logo: String): Company
         updateUser(userId: String!, firstName: String, lastName: String, role: String, title: String, email: String, phone: String, password: String, profileImage: String): User
         updatePost(postId: String!, images: [String], text: String): Post
