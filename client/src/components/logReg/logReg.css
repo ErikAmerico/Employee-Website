@@ -83,3 +83,153 @@ h1 {
 .toggleButton {
   width: 107px;
 }
+/* 
+@media screen and (min-width: 360px) {
+  #login-button {
+    position: relative;
+    top: 10px !important;
+    left: 11px !important;
+    width: 300px !important;
+    height: 30px !important;
+  }
+
+  #registration-form {
+    position: relative;
+    top: -140px !important;
+    left: 11px !important;
+  }
+
+  #registration-button {
+    position: relative;
+    bottom: 525px !important;
+    width: 300px !important;
+    left: 11px !important;
+    height: 30px !important;
+  }
+
+  #login-form {
+    position: relative;
+    top: 20px !important;
+    left: 11px !important;
+  }
+}
+
+@media screen and (min-width: 375px) {
+  #login-button {
+    position: relative;
+    top: 45px !important;
+    left: 11px !important;
+    width: 300px !important;
+    height: 30px !important;
+  }
+
+  #registration-form {
+    position: relative;
+    top: -75px !important;
+    left: 11px !important;
+  }
+
+  #registration-button {
+    position: relative;
+    bottom: 457px !important;
+    width: 300px !important;
+    left: 11px !important;
+    height: 30px !important;
+  }
+
+  #login-form {
+    position: relative;
+    top: 50px !important;
+    left: 11px !important;
+  }
+}
+
+@media screen and (min-width: 390px) {
+  #login-button {
+    position: relative;
+    top: -10px !important;
+    left: 11px !important;
+    width: 300px !important;
+    height: 30px !important;
+  }
+
+  #registration-form {
+    position: relative;
+    top: -218px !important;
+    left: 11px !important;
+  }
+
+  #registration-button {
+    position: relative;
+    bottom: 600px !important;
+    width: 300px !important;
+    left: 11px !important;
+    height: 30px !important;
+  }
+
+  #login-form {
+    position: relative;
+    top: 3px !important;
+    left: 11px !important;
+  }
+}
+
+@media screen and (min-width: 412px) {
+  #login-button {
+    position: relative;
+    top: 20px !important;
+    left: 11px !important;
+    width: 350px !important;
+    height: 30px !important;
+  }
+
+  #registration-form {
+    position: relative;
+    top: -214px !important;
+    left: 11px !important;
+  }
+
+  #registration-button {
+    position: relative;
+    bottom: 605px !important;
+    width: 300px !important;
+    left: 11px !important;
+    height: 30px !important;
+  }
+
+  #login-form {
+    position: relative;
+    top: 33px !important;
+    left: 11px !important;
+  }
+}
+
+@media screen and (min-width: 540px) {
+  #login-button {
+    position: relative;
+    top: 20px !important;
+    left: 11px !important;
+    width: 350px !important;
+    height: 30px !important;
+  }
+
+  #registration-form {
+    position: relative;
+    top: -125px !important;
+    left: 11px !important;
+  }
+
+  #registration-button {
+    position: relative;
+    bottom: 500px !important;
+    width: 300px !important;
+    left: 11px !important;
+    height: 30px !important;
+  }
+
+  #login-form {
+    position: relative;
+    top: 35px !important;
+    left: 11px !important;
+  }
+} */

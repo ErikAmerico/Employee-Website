@@ -229,6 +229,7 @@ const Register = ({ toggleForm }) => {
                     onClick={toggleForm}
                     variant="contained"
                     className="toggleButton"
+                    id="login-button"
                 >
                     Login
                 </Button>
@@ -238,7 +239,8 @@ const Register = ({ toggleForm }) => {
                 xs={12}
                 sm={4}
                 className="form-container"
-                ref={formContainerRef}
+              ref={formContainerRef}
+              id="registration-form"
             >
                 <h1>Registration</h1>
                 <form onSubmit={handleFormSubmit}>
