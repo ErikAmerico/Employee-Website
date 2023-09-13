@@ -77,8 +77,8 @@ const resolvers = {
       return { token, user };
     },
     //add a new post
-    createPost: async (parent, { images, text }) => {
-      return await Post.create({ images, text });
+    createPost: async (parent, { images, postText }) => {
+      return await Post.create({ images, postText });
     },
 
     //add a new comment
@@ -88,18 +88,15 @@ const resolvers = {
 
     //login
     login: async (parent, { email, password }) => {
-      const user = await User.findOne({ email });
-
+      const user = await User.findOne({ email }).populate("company");
       if (!user) {
         throw new AuthenticationError("Incorrect credentials");
       }
       const correctPw = await user.isCorrectPassword(password);
-
       if (!correctPw) {
         throw new AuthenticationError("Incorrect credentials");
       }
       const token = signToken(user);
-
       return { token, user };
     },
 
@@ -131,9 +128,9 @@ const resolvers = {
       return updatedUser;
     },
 
-    updatePost: async (parent, { images, text }) => {
+    updatePost: async (parent, { images, postText }) => {
       const updatedPost = await Post.findOneAndUpdate(
-        { images, text },
+        { images, postText },
         { new: true }
       );
       return updatedPost;

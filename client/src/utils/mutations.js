@@ -27,9 +27,9 @@ export const CREATE_USER = gql`
       token
       user {
         _id
+        email
         firstName
         lastName
-        email
       }
     }
   }
@@ -64,3 +64,31 @@ export const LOGIN = gql`
     }
   }
 `;
+
+export const CREATE_POST = gql`
+  mutation createPost($postText: String!, $images: [String]) {
+    createPost(postText: $postText, images: $images) {
+      postText
+    }
+  }
+`;
+
+// export const CREATE_POST = gql`
+//     mutation createPost($postText: String!, $images: [String]) {
+//         createPost(postText: $postText, images: $images) {
+//             _id
+//             postText
+//             user {
+//                 _id
+//                 firstName
+//                 lastName
+//             }
+//             images
+//             likes
+//             comments {
+//                 _id
+//                 text
+//             }
+//         }
+//     }
+// `;

@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
 const postSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   images: [String],
-  text: String,
+  postText: String,
   // createdAt: { type: Date, default: Date.now },
   // updatedAt: { type: Date, default: Date.now },
   likes: Number,
