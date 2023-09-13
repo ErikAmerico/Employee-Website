@@ -23,19 +23,25 @@ const Header = () => {
     useEffect(() => {
         if (AuthService.loggedIn()) {
             const profile = AuthService.getProfile();
-            setUserName(profile.name);
+            console.log(profile)
+            const firstName = profile.data.firstName;
+            const lastName = profile.data.lastName;
+            setUserName(`${firstName} ${lastName}`);
         }
     }, []);
 
-    // Open profile menu
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
-    // Close profile menu
     const handleMenuClose = () => {
         setAnchorEl();
     };
+
+    const handleLogout = () => {
+        AuthService.logout();
+        handleMenuClose();
+};
 
     return (
         <AppBar
@@ -97,10 +103,6 @@ const Header = () => {
                     </Button>
                 </Typography>
 
-                {/* Logged in user name */}
-                {/* {userName} */}
-
-                {/* Display user's name or login/create-company button */}
                 {userName ? (
                     <Typography variant="h6" component="div">
                         {userName}
@@ -114,15 +116,6 @@ const Header = () => {
                         Login/Register
                     </Button>
                 )}
-
-                {/* Profile Picture and Dropdown */}
-                {/* <IconButton
-          edge="end"
-          color="inherit"
-          onClick={handleMenuOpen}
-        >
-          <Avatar alt="User" src="" />
-        </IconButton> */}
 
                 {AuthService.loggedIn() && (
                     <IconButton
@@ -141,6 +134,7 @@ const Header = () => {
                 >
                     <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
                     <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
             </Toolbar>
         </AppBar>
