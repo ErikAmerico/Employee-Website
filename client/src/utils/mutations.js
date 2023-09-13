@@ -92,3 +92,24 @@ export const CREATE_POST = gql`
 //         }
 //     }
 // `;
+
+export const REMOVE_POST = gql`
+  mutation removePost($postId: ID!) {
+    removePost(postId: $postId) {
+      _id
+      postText
+      images
+    }
+  }
+`;
+
+export const UPDATE_POST = gql`
+  mutation updatePost($postId: ID!, $postText: String!, $images: [String]) {
+    updatePost(postId: $postId, postText: $postText, images: $images) {
+      _id
+      postText
+      images
+    }
+  }
+`;
+
