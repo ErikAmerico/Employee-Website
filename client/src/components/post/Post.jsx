@@ -1,6 +1,6 @@
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -15,15 +15,30 @@ import "./post.css";
 import { useQuery } from "@apollo/client";
 import { QUERY_POSTS } from "../../utils/queries";
 
+import { useMutation } from "@apollo/client";
+import { REMOVE_POST } from "../../utils/mutations";
+
 const Post = () => {
     const { data } = useQuery(QUERY_POSTS);
     const posts = data?.posts || [];
+
+    const [removePost, { error }] = useMutation(REMOVE_POST);
+
+    const handleRemovePost = async (postId) => {
+        try {
+            const { data } = await removePost({
+                variables: { postId: postId },
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     if (!posts.length) {
         return <p>No Announcements</p>;
     } else {
         return posts.map((post) => (
-            <div className="post">
+            <div key={post._id} className="post">
                 <Card sx={{ maxWidth: 850 }} className="cardBody">
                     <CardHeader
                         className="cardHeader"
@@ -33,14 +48,16 @@ const Post = () => {
                             </Avatar>
                         }
                         action={
-                            <IconButton aria-label="settings">
-                                <MoreVertIcon />
+                            <IconButton
+                                aria-label="settings"
+                                onClick={() => handleRemovePost(post._id)}
+                            >
+                                <DeleteIcon />
                             </IconButton>
                         }
-                        title="Shrimp and Chorizo Paella"
+                        title="announcements"
                         subheader="September 14, 2016"
                     />
-                    {/* if no image dont render this */}
 
                     <CardMedia
                         component="img"

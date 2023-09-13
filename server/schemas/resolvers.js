@@ -150,6 +150,14 @@ const resolvers = {
       });
       return user;
     },
+
+    removePost: async (parent, { postId }) => {
+      const post = await Post.findOneAndDelete({
+        _id: postId,
+      });
+      return post;
+    },
+        
     addUserToCompany: async (parent, { companyId, userId }) => {
       try {
         const company = await Company.findById(companyId);

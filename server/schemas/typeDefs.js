@@ -85,7 +85,7 @@ const typeDefs = `
         updatePost(postId: String!, images: [String], text: String): Post
         updateComment(commentId: String!, text: String, image: String): Comment
         removeUser(userId: String!): User
-        removePost(postId: String!): Post
+        removePost(postId: ID!): Post
         removeComment(commentId: String!): Comment
         addUserToCompany(companyId: ID!, userId: ID!): Company
     }
