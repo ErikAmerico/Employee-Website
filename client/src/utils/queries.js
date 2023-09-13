@@ -3,9 +3,9 @@ export const QUERY_ME = gql`
     me {
       token
       user {
+        _id
         firstName
         lastName
-        email
       }
     }
   }

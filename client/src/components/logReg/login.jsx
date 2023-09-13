@@ -1,5 +1,8 @@
 import { Button, Grid, TextField } from "@mui/material";
 import React, { useState, useEffect, useRef } from "react";
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "../../utils/mutations";
+import Auth from "../../utils/auth";
 import "./logReg.css";
 
 const Login = ({ toggleForm }) => {
@@ -8,6 +11,7 @@ const Login = ({ toggleForm }) => {
         password: "",
     });
 
+    const [loginUser, { error }] = useMutation(LOGIN);
     const formContainerRef = useRef(null);
 
     useEffect(() => {
@@ -39,10 +43,29 @@ const Login = ({ toggleForm }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         console.log(inputs);
+
+        try {
+            const { data } = await loginUser({
+                variables: {
+                    email: inputs.email,
+                    password: inputs.password,
+                },
+            });
+
+            if (data && data.login && data.login.token) {
+                Auth.login(data.login.token);
+                
+                console.log("Successful login!");
+            } else {
+                console.log("Login failed.");
+            }
+        } catch (error) {
+            console.error("Error logging in:", error.message);
+        }
 
         setInputs({
             email: "",
