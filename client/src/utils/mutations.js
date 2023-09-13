@@ -102,3 +102,14 @@ export const REMOVE_POST = gql`
     }
   }
 `;
+
+export const UPDATE_POST = gql`
+  mutation updatePost($postId: ID!, $postText: String!, $images: [String]) {
+    updatePost(postId: $postId, postText: $postText, images: $images) {
+      _id
+      postText
+      images
+    }
+  }
+`;
+
