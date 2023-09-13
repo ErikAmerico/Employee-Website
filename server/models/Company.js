@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const companySchema = new mongoose.Schema({
     name: String,
@@ -28,7 +29,7 @@ const userSchema = new mongoose.Schema({
 const postSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     images: [String],
-    text: String,
+    postText: String,
     // createdAt: { type: Date, default: Date.now },
     // updatedAt: { type: Date, default: Date.now },
     likes: Number,
@@ -44,7 +45,7 @@ const postSchema = new mongoose.Schema({
 });
 
 userSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) {
+    if (this.isNew || this.isModified("password")) {
         const saltRounds = 10;
         this.password = await bcrypt.hash(this.password, saltRounds);
     }
