@@ -11,52 +11,63 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import "./post.css";
+
+import { useQuery } from "@apollo/client";
+import { QUERY_POSTS } from "../../utils/queries";
+
 const Post = () => {
-    return (
-        <div className="post">
-            <Card sx={{ maxWidth: 850 }} className="cardBody">
-                <CardHeader
-                    className="cardHeader"
-                    avatar={
-                        <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
-                            R
-                        </Avatar>
-                    }
-                    action={
-                        <IconButton aria-label="settings">
-                            <MoreVertIcon />
+    const { data } = useQuery(QUERY_POSTS);
+    const posts = data?.posts || [];
+
+    if (!posts.length) {
+        return <p>No Announcements</p>;
+    } else {
+        return posts.map((post) => (
+            <div className="post">
+                <Card sx={{ maxWidth: 850 }} className="cardBody">
+                    <CardHeader
+                        className="cardHeader"
+                        avatar={
+                            <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
+                                R
+                            </Avatar>
+                        }
+                        action={
+                            <IconButton aria-label="settings">
+                                <MoreVertIcon />
+                            </IconButton>
+                        }
+                        title="Shrimp and Chorizo Paella"
+                        subheader="September 14, 2016"
+                    />
+                    {/* if no image dont render this */}
+
+                    <CardMedia
+                        component="img"
+                        height="fit-content"
+                        image={post.postImage}
+                    />
+
+                    <CardContent>
+                        <Typography variant="body2" color="text.secondary">
+                            {post.postText}
+                        </Typography>
+                    </CardContent>
+                    {/* add like button and comment button */}
+                    <div className="postButtons">
+                        <IconButton aria-label="like">
+                            <FavoriteBorderIcon />
+                            <div>1</div>
                         </IconButton>
-                    }
-                    title="Shrimp and Chorizo Paella"
-                    subheader="September 14, 2016"
-                />
-                <CardMedia
-                    component="img"
-                    height="fit-content"
-                    image="https://mui.com/static/images/cards/paella.jpg"
-                    alt="Paella dish"
-                />
-                <CardContent>
-                    <Typography variant="body2" color="text.secondary">
-                        This impressive paella is a perfect party dish and a fun
-                        meal to cook together with your guests. Add 1 cup of
-                        frozen peas along with the mussels, if you like.
-                    </Typography>
-                </CardContent>
-                {/* add like button and comment button */}
-                <div className="postButtons">
-                    <IconButton aria-label="like">
-                        <FavoriteBorderIcon />
-                        <div>1</div>
-                    </IconButton>
-                    <IconButton aria-label="comment">
-                        <ChatBubbleIcon />
-                        <div>3</div>
-                    </IconButton>
-                </div>
-            </Card>
-        </div>
-    );
+                        <IconButton aria-label="comment">
+                            <ChatBubbleIcon />
+                            <div>3</div>
+                        </IconButton>
+                    </div>
+                </Card>
+            </div>
+        ));
+    }
 };
 
 export default Post;
