@@ -3,7 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import "./logReg.css";
 
 import { useMutation } from "@apollo/client";
-import { CREATE_COMPANY, CREATE_USER, ADD_USER_TO_COMPANY } from "../../utils/mutations";
+import { CREATE_COMPANY, CREATE_USER, ADD_USER_TO_COMPANY, LOGIN } from "../../utils/mutations";
+import Auth from "../../utils/auth";
 
 const Register = ({ toggleForm }) => {
     const [inputs, setInputs] = useState({
@@ -24,6 +25,7 @@ const Register = ({ toggleForm }) => {
     const [createCompany, { error }] = useMutation(CREATE_COMPANY);
     const [createUser, { error2 }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
+    const [loginUser, { error3 }] = useMutation(LOGIN);
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const formContainerRef = useRef(null);
@@ -75,15 +77,34 @@ const Register = ({ toggleForm }) => {
                 variables: { ...modalData, company:  companyId },
            })
              
-          const userId = userResponse.data.createUser.user._id;
+            const userId = userResponse.data.createUser.user._id;
+            
           
           addUserToCompany({
                 variables: { companyId, userId },
           })
             .then((res) => {
-              console.log("usr added to company", res);
+                console.log("usr added to company", res);
+                console.log('modalData', modalData)
             })
-              
+              .then(async() => {
+                const { data } = await loginUser({
+                    variables: {
+                        email: modalData.email,
+                        password: modalData.password,
+                    },
+                });
+                  
+                  console.log('loggin in', data)
+
+                if (data && data.login && data.login.token) {
+                    Auth.login(data.login.token);
+                    console.log("Successful login!");
+                } else {
+                    console.log("Login failed.");
+                }
+                  
+              })      
              .then(() => {
                 setModalData({
                     firstName: "",
