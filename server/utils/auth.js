@@ -30,13 +30,18 @@ module.exports = {
     } catch (err) {
       console.log("Invalid token");
       console.error(err);
+      //if there is an error, the req gets returned regardelss, not ideal?
+      // throw new AuthenticationError("Invalid token");
     }
 
     // return the request object so it can be passed to the resolver as `context`
     return req;
   },
-  signToken: function ({ email, firstName, lastName, _id }) {
-    const payload = { email, firstName, lastName, _id };
+  //checkIfadminAUth goes here maybe
+
+  //Role should be sent in payload of token, for admin purposes
+  signToken: function ({ email, firstName, lastName, _id, role, company }) {
+    const payload = { email, firstName, lastName, _id, role, company };
     return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
   },
 };

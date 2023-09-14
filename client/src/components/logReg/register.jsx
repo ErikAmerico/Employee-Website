@@ -15,7 +15,6 @@ const Register = ({ toggleForm }) => {
     const [modalData, setModalData] = useState({
         firstName: "",
         lastName: "",
-        role: "",
         title: "",
         email: "",
         phone: "",
@@ -71,15 +70,16 @@ const Register = ({ toggleForm }) => {
             console.log("companyData", data);
 
           const companyId = data.createCompany._id;
-          console.log("companyId", companyId);
+            console.log("companyId", companyId);
+            console.log("modalData", modalData)
 
-           const userResponse =  await createUser({
-                variables: { ...modalData, company:  companyId },
+            const userResponse = await createUser({
+                variables: { ...modalData, company: companyId, role: 'Admin'},
            })
              
             const userId = userResponse.data.createUser.user._id;
-            
-          
+            console.log("USERINFO", userResponse.data.createUser)
+
           addUserToCompany({
                 variables: { companyId, userId },
           })
@@ -109,7 +109,6 @@ const Register = ({ toggleForm }) => {
                 setModalData({
                     firstName: "",
                     lastName: "",
-                    role: "",
                     title: "",
                     email: "",
                     phone: "",
