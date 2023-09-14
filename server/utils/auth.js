@@ -40,8 +40,8 @@ module.exports = {
   //checkIfadminAUth goes here maybe
 
   //Role should be sent in payload of token, for admin purposes
-  signToken: function ({ email, firstName, lastName, _id }) {
-    const payload = { email, firstName, lastName, _id };
+  signToken: function ({ email, firstName, lastName, _id, role, company }) {
+    const payload = { email, firstName, lastName, _id, role, company };
     return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
   },
 };
