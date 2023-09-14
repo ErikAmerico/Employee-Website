@@ -30,6 +30,8 @@ module.exports = {
     } catch (err) {
       console.log("Invalid token");
       console.error(err);
+      //if there is an error, the req gets returned regardelss, not ideal?
+      // throw new AuthenticationError("Invalid token");
     }
 
     // return the request object so it can be passed to the resolver as `context`
