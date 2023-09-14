@@ -6,6 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import './users.css';
 
 import { useQuery } from '@apollo/client';
 
@@ -28,8 +29,9 @@ export default function Users({ triggerRefetch }) {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="user table">
+    <div className='tableContainerDiv'>
+    <TableContainer component={Paper} className="tableContainer">
+      <Table sx={{ minWidth: 650 }} aria-label="user table" className='userTable'>
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
@@ -58,5 +60,6 @@ export default function Users({ triggerRefetch }) {
         </TableBody>
       </Table>
     </TableContainer>
+    </div>
   );
 }
