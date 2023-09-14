@@ -1,14 +1,11 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 export const QUERY_ME = gql`
     query me {
         me {
-            token
-            user {
-                _id
-                firstName
-                lastName
-            }
+            _id
+            firstName
+            lastName
         }
     }
 `;

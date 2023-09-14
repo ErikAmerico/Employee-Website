@@ -7,7 +7,6 @@ import "./share.css";
 
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
-// import Auth from "../../utils/auth";
 import { CREATE_POST } from "../../utils/mutations";
 
 const Share = () => {

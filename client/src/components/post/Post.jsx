@@ -9,7 +9,6 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import IconButton from "@mui/material/IconButton";
-import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import "./post.css";
@@ -22,6 +21,7 @@ import { REMOVE_POST } from "../../utils/mutations";
 
 import { useState } from "react";
 import { UPDATE_POST } from "../../utils/mutations";
+
 const Post = () => {
     const [editingPostId, setEditingPostId] = useState(null);
     const [updatePost, { errors }] = useMutation(UPDATE_POST);
