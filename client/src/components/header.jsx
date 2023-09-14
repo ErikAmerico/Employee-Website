@@ -19,6 +19,8 @@ import {CREATE_USER, ADD_USER_TO_COMPANY } from "../utils/mutations";
 import AuthService from "../utils/auth";
 
 //import MenuIcon from '@mui/icons-material/Menu';
+import { useQuery } from "@apollo/client";
+import { GET_USERS_BY_COMPANY } from "../utils/queries";
 
 const Header = () => {
     // State for the profile menu
@@ -29,6 +31,15 @@ const Header = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
+
+    const { refetch } = useQuery(GET_USERS_BY_COMPANY, {
+        variables: { companyId: localStorage.getItem('company_id') },
+        skip: true, // Set skip to true to prevent automatic fetching
+    });
+
+    const triggerRefetch = () => {
+        refetch();
+    };
 
     const [modalData, setModalData] = useState({
         firstName: "",
@@ -81,37 +92,38 @@ const Header = () => {
     const companyId = localStorage.getItem("company_id");
     console.log("companyId", companyId);
 
-     const handleModalSubmit = async () => {
+    const handleModalSubmit = async () => {
         try {
 
             const userResponse = await createUser({
                 variables: { ...modalData, company: companyId },
-           })
+            })
              
             const userId = userResponse.data.createUser.user._id;
             console.log("USERINFOHeader", userResponse.data.createUser)
 
-          addUserToCompany({
+            addUserToCompany({
                 variables: { companyId, userId },
-          })
-            .then((res) => {
-                console.log("usr added to company", res);
-                console.log('modalData', modalData)
-            })    
-             .then(() => {
-                setModalData({
-                    firstName: "",
-                    lastName: "",
-                    role: "",
-                    title: "",
-                    email: "",
-                    phone: "",
-                    password: "",
-                    profileImage: "",
-                });
+            })
+                .then((res) => {
+                    console.log("usr added to company", res);
+                    console.log('modalData', modalData);
+                    triggerRefetch();
+                })
+                .then(() => {
+                    setModalData({
+                        firstName: "",
+                        lastName: "",
+                        role: "",
+                        title: "",
+                        email: "",
+                        phone: "",
+                        password: "",
+                        profileImage: "",
+                    });
 
-                 setShowModal(false);
-            });
+                    setShowModal(false);
+                });
         } catch (err) {
             console.error(err);
             setShowAlert(true);
