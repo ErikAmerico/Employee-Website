@@ -17,12 +17,16 @@ export const CREATE_USER = gql`
     $lastName: String!
     $email: String!
     $password: String!
+    $company: String
+    $role: String
   ) {
     createUser(
       firstName: $firstName
       lastName: $lastName
       email: $email
       password: $password
+      company: $company
+      role: $role
     ) {
       token
       user {
@@ -30,6 +34,12 @@ export const CREATE_USER = gql`
         email
         firstName
         lastName
+        company {
+          _id
+          name
+          type
+          logo
+        }
       }
     }
   }
@@ -112,4 +122,3 @@ export const UPDATE_POST = gql`
     }
   }
 `;
-
