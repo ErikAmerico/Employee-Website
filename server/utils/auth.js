@@ -37,6 +37,8 @@ module.exports = {
     // return the request object so it can be passed to the resolver as `context`
     return req;
   },
+  //checkIfadminAUth goes here maybe
+
   //Role should be sent in payload of token, for admin purposes
   signToken: function ({ email, firstName, lastName, _id }) {
     const payload = { email, firstName, lastName, _id };
