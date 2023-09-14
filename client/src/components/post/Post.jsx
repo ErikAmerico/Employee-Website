@@ -11,6 +11,7 @@ import CardMedia from "@mui/material/CardMedia";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { formatDate } from "../../utils/date";
 import "./post.css";
 
 import { useQuery } from "@apollo/client";
@@ -78,8 +79,8 @@ const Post = () => {
                                 </IconButton>
                             </ButtonGroup>
                         }
-                        title="announcements"
-                        subheader="September 14, 2016"
+                        title={`${post.user.firstName} ${post.user.lastName}`}
+                        subheader={formatDate(post.createdAt)}
                     />
 
                     <CardMedia
@@ -98,7 +99,9 @@ const Post = () => {
                         <input
                             type="text"
                             defaultValue={post.postText}
-                            onBlur={(e) => handleUpdatePost(post._id, e.target.value)}
+                            onBlur={(e) =>
+                                handleUpdatePost(post._id, e.target.value)
+                            }
                         />
                     )}
 

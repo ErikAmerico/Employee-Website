@@ -2,7 +2,9 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import Avatar from "@mui/material/Avatar";
+import jwtDecode from "jwt-decode";
 import React from "react";
+import AuthService from "../../utils/auth";
 import "./share.css";
 
 import { useMutation } from "@apollo/client";
@@ -16,6 +18,7 @@ const Share = () => {
     //set useMutation
     const [createPost] = useMutation(CREATE_POST);
 
+
     //handle post submit
     const handlePostSubmit = async (event) => {
         event.preventDefault();
@@ -23,6 +26,7 @@ const Share = () => {
         try {
             const { data } = await createPost({
                 variables: {
+                //Pass post text and user information to be used on posts
                     postText,
                 },
             });

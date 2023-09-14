@@ -19,6 +19,11 @@ export const QUERY_POSTS = gql`
     posts {
       _id
       postText
+      createdAt
+      user {
+        firstName
+        lastName
+      }
     }
   }
 `;
