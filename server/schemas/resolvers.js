@@ -14,10 +14,18 @@ const resolvers = {
       throw new AuthenticationError("Not logged in");
     },
 
-    users: async (parent, {}) => {
+    users: async (parent, {}, context) => {
       if (context.user) {
         const params = Company ? { Company } : {};
-        return await User.find(params).populate("company");
+        const users = await User.find(params).populate("company");
+
+        const usersWithRolesAsString = users.map((user) => ({
+          ...user.toObject(),
+          role: user.role.join(", "),
+        }));
+
+        return usersWithRolesAsString;
+        //return await User.find(params).populate("company");
       }
       throw new AuthenticationError("Not logged in");
     },
