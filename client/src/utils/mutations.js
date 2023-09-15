@@ -19,6 +19,8 @@ export const CREATE_USER = gql`
     $password: String!
     $company: String
     $role: String
+    $phone: String
+    $title: String
   ) {
     createUser(
       firstName: $firstName
@@ -27,6 +29,8 @@ export const CREATE_USER = gql`
       password: $password
       company: $company
       role: $role
+      phone: $phone
+      title: $title
     ) {
       token
       user {

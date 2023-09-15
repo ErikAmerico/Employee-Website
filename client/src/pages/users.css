@@ -1,0 +1,11 @@
+.tableContainerDiv {
+  display: flex;
+  justify-content: center;
+}
+
+.tableContainer {
+  position: relative;
+  top: 20px;
+  max-width: 80%;
+  box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.5) !important;
+}

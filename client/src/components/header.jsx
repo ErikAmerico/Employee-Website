@@ -6,21 +6,31 @@ import {
     IconButton,
     Menu,
     MenuItem,
-    Avatar,
     Button,
     Modal,
     TextField,
     Fade,
+    Select,
+    FormControl,
+    InputLabel,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import {CREATE_USER, ADD_USER_TO_COMPANY } from "../utils/mutations";
 import AuthService from "../utils/auth";
 
 //import MenuIcon from '@mui/icons-material/Menu';
+import Avatar from '@mui/material/Avatar';
+import { styled } from "@mui/material/styles";
 import { useQuery } from "@apollo/client";
 import { GET_USERS_BY_COMPANY } from "../utils/queries";
+
+const classes = styled(Avatar)(({ theme }) => ({
+  width: theme.spacing(4),
+  height: theme.spacing(4),
+  fontSize: "16px",
+}));
 
 const Header = () => {
     // State for the profile menu
@@ -29,8 +39,10 @@ const Header = () => {
     const [userRole, setUserRole] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
+    const [selectedRole, setSelectedRole] = useState('');
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
+    const navigate = useNavigate();
 
     const { refetch } = useQuery(GET_USERS_BY_COMPANY, {
         variables: { companyId: localStorage.getItem('company_id') },
@@ -49,7 +61,6 @@ const Header = () => {
         email: "",
         phone: "",
         password: "",
-        profileImage: "",
     });
 
     useEffect(() => {
@@ -69,6 +80,10 @@ const Header = () => {
             ...prevState,
             [e.target.name]: e.target.value,
         }));
+    };
+
+    const handleRoleChange = (event) => {
+        setSelectedRole(event.target.value);
     };
 
     const handleMenuOpen = (event) => {
@@ -96,7 +111,7 @@ const Header = () => {
         try {
 
             const userResponse = await createUser({
-                variables: { ...modalData, company: companyId },
+                variables: { ...modalData, company: companyId, profileImage: initials, role: selectedRole },
             })
              
             const userId = userResponse.data.createUser.user._id;
@@ -119,28 +134,29 @@ const Header = () => {
                         email: "",
                         phone: "",
                         password: "",
-                        profileImage: "",
                     });
 
                     setShowModal(false);
-                });
+                    navigate("/users");
+            });
         } catch (err) {
             console.error(err);
             setShowAlert(true);
         }
     };
 
+    const initials = userName ? `${userName.split(" ")[0][0]}${userName.split(" ")[1][0]}` : "";
 
     const modalContent = (
         <div className="modal-container">
             <div className="modal-content">
-                <h2>Your Information</h2>
+                <h2>Employee Information</h2>
                 <TextField
                     name="firstName"
                     value={modalData.firstName}
                     onChange={handleModalInputChange}
                     type="text"
-                    label="firstName"
+                    label="First Name"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -150,27 +166,29 @@ const Header = () => {
                     value={modalData.lastName}
                     onChange={handleModalInputChange}
                     type="text"
-                    label="lastName"
+                    label="Last Name"
                     variant="outlined"
                     fullWidth
                     margin="normal"
                 />
-                <TextField
-                    name="role"
-                    value={modalData.role}
-                    onChange={handleModalInputChange}
-                    type="text"
-                    label="role"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                />
+                <FormControl fullWidth variant="outlined" margin="normal">
+                <InputLabel htmlFor="role">Role</InputLabel>
+                    <Select
+                        id="role"
+                        label="Role"
+                        value={selectedRole}
+                        onChange={handleRoleChange}
+                    >
+                        <MenuItem value="Admin">Admin</MenuItem>
+                        <MenuItem value="Employee">Employee</MenuItem>
+                    </Select>
+                </FormControl>
                 <TextField
                     name="title"
                     value={modalData.title}
                     onChange={handleModalInputChange}
                     type="text"
-                    label="title"
+                    label="Title"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -180,7 +198,7 @@ const Header = () => {
                     value={modalData.email}
                     onChange={handleModalInputChange}
                     type="email"
-                    label="email"
+                    label="Email"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -190,7 +208,7 @@ const Header = () => {
                     value={modalData.phone}
                     onChange={handleModalInputChange}
                     type="tel"
-                    label="phone"
+                    label="Phone Number"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -200,17 +218,7 @@ const Header = () => {
                     value={modalData.password}
                     onChange={handleModalInputChange}
                     type="password"
-                    label="password"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    name="profileImage"
-                    value={modalData.profileImage}
-                    onChange={handleModalInputChange}
-                    type="text"
-                    label="Profile Imag"
+                    label="Password"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -318,7 +326,15 @@ const Header = () => {
                         color="inherit"
                         onClick={handleMenuOpen}
                     >
-                        <Avatar alt="User" src="" />
+                            <Avatar className={classes.avatar} sx={{
+                                bgcolor: "white",
+                                color: "#144074",
+                                border: "3px solid gray",
+                                fontWeight: "bold",
+                                textShadow: "0px 0px 12px black",
+                            }}>
+                            {initials}
+                        </Avatar>
                     </IconButton>
                 )}
 
