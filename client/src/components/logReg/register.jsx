@@ -10,7 +10,6 @@ const Register = ({ toggleForm }) => {
     const [inputs, setInputs] = useState({
         name: "",
         type: "",
-        logo: "",
     });
     const [modalData, setModalData] = useState({
         firstName: "",
@@ -19,7 +18,6 @@ const Register = ({ toggleForm }) => {
         email: "",
         phone: "",
         password: "",
-        profileImage: "",
     });
     const [createCompany, { error }] = useMutation(CREATE_COMPANY);
     const [createUser, { error2 }] = useMutation(CREATE_USER);
@@ -113,13 +111,11 @@ const Register = ({ toggleForm }) => {
                     email: "",
                     phone: "",
                     password: "",
-                    profileImage: "",
                 });
 
                 setInputs({
                     name: "",
                     type: "",
-                    logo: "",
                 });
 
                 setShowModal(false);
@@ -139,7 +135,7 @@ const Register = ({ toggleForm }) => {
                     value={modalData.firstName}
                     onChange={handleModalInputChange}
                     type="text"
-                    label="firstName"
+                    label="First Name"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -149,17 +145,7 @@ const Register = ({ toggleForm }) => {
                     value={modalData.lastName}
                     onChange={handleModalInputChange}
                     type="text"
-                    label="lastName"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    name="role"
-                    value={modalData.role}
-                    onChange={handleModalInputChange}
-                    type="text"
-                    label="role"
+                    label="Last Name"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -169,7 +155,7 @@ const Register = ({ toggleForm }) => {
                     value={modalData.title}
                     onChange={handleModalInputChange}
                     type="text"
-                    label="title"
+                    label="Title"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -179,7 +165,7 @@ const Register = ({ toggleForm }) => {
                     value={modalData.email}
                     onChange={handleModalInputChange}
                     type="email"
-                    label="email"
+                    label="Email"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -189,7 +175,7 @@ const Register = ({ toggleForm }) => {
                     value={modalData.phone}
                     onChange={handleModalInputChange}
                     type="tel"
-                    label="phone"
+                    label="Phone Number"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -199,17 +185,7 @@ const Register = ({ toggleForm }) => {
                     value={modalData.password}
                     onChange={handleModalInputChange}
                     type="password"
-                    label="password"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                />
-                <TextField
-                    name="profileImage"
-                    value={modalData.profileImage}
-                    onChange={handleModalInputChange}
-                    type="text"
-                    label="Profile Imag"
+                    label="Password"
                     variant="outlined"
                     fullWidth
                     margin="normal"
@@ -280,16 +256,6 @@ const Register = ({ toggleForm }) => {
                         onChange={handleChange}
                         type={"text"}
                         placeholder="Company Type"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        name="logo"
-                        value={inputs.logo}
-                        onChange={handleChange}
-                        type={"text"}
-                        placeholder="Company Logo"
                         variant="outlined"
                         fullWidth
                         margin="normal"
