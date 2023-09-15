@@ -1,5 +1,6 @@
 const { signToken, AuthenticationError } = require("../utils/auth");
 const { User, Company, Post } = require("../models/Company");
+const { default: mongoose } = require("mongoose");
 
 const resolvers = {
     Query: {
@@ -30,20 +31,37 @@ const resolvers = {
             throw new AuthenticationError("Not logged in");
         },
         //find all posts in a company
-        posts: async (parent, { companyId }) => {
-            const params = companyId ? { companyId } : {};
-            return await Post.find(params).populate("user").populate({
-                path: "comments",
-                populate: "user",
-            });
+        posts: async (parent, args, context) => {
+            // return await Post.find({ "user.company._id": context.user.company })
+            return await Post.find({
+                user: {
+                    company: {
+                        _id: new mongoose.Types.ObjectId(
+                            "6502e51f83a006d7ebbef2cd"
+                        ),
+                    },
+                },
+            })
+                // "user._id": new mongoose.Types.ObjectId("6502e51f83a006d7ebbef2cf"),  })
+                .populate("user")
+                .populate({
+                    path: "comments",
+                    populate: "user",
+                });
         },
         //find a single post
         post: async (parent, { postId }) => {
-            const params = postId ? { postId } : {};
-            return await Post.findOne(params).populate("user").populate({
-                path: "comments",
-                populate: "user",
-            });
+            if (postId) {
+                return await Post.findOne({ _id: postId })
+                    .populate("user")
+                    .populate("comments")
+                    .populate({
+                        path: "comments",
+                        populate: "user",
+                    });
+            } else {
+                throw new Error("Post not found");
+            }
         },
         //find a selected User
         user: async (parent, {}) => {
@@ -91,7 +109,11 @@ const resolvers = {
         //add a new post
         createPost: async (parent, { images, postText }, context) => {
             if (context.user) {
-                const post = await Post.create({ images, postText, user: context.user._id });
+                const post = await Post.create({
+                    images,
+                    postText,
+                    user: context.user._id,
+                });
                 await User.findOneAndUpdate(
                     { _id: context.user._id },
                     { $addToSet: { post: post._id } },
@@ -103,8 +125,8 @@ const resolvers = {
         },
 
         //add a new comment
-        createComment: async (parent, { text, images }) => {
-            return await Comment.create({ text, images });
+        createComment: async (parent, { commentText, images }) => {
+            return await Comment.create({ commentText, images });
         },
 
         //login
@@ -171,9 +193,9 @@ const resolvers = {
             return updatedPost;
         },
 
-        updateComment: async (parent, { text, images }) => {
+        updateComment: async (parent, { commentText, images }) => {
             const updatedComment = await Comment.findOneAndUpdate(
-                { text, images },
+                { commentText, images },
                 { new: true }
             );
             return updatedComment;

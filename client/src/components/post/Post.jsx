@@ -17,8 +17,7 @@ import Comment from "../comment/comment";
 import "./post.css";
 
 import { useQuery } from "@apollo/client";
-import { QUERY_POSTS } from "../../utils/queries";
-import { QUERY_SINGLE_POST } from "../../utils/queries";
+import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
 
 import { useMutation } from "@apollo/client";
 import { REMOVE_POST } from "../../utils/mutations";
@@ -29,15 +28,19 @@ import { UPDATE_POST } from "../../utils/mutations";
 const Post = () => {
     const [editingPostId, setEditingPostId] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [postId, setPostId] = useState();
     const [updatePost, { errors }] = useMutation(UPDATE_POST);
     const [removePost, { error }] = useMutation(REMOVE_POST);
 
     const { data } = useQuery(QUERY_POSTS);
     const posts = data?.posts || [];
-    const { data: singlePostData } = useQuery(QUERY_SINGLE_POST);
+    const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
+        variables: { postId: postId },
+    });
     const singlePost = singlePostData?.singlePost || {};
 
-    const openModal = () => {
+    const openModal = (posts) => {
+        setPostId(posts._id);
         setShowModal(true);
     };
     const closeModal = () => {
@@ -124,7 +127,7 @@ const Post = () => {
                             <FavoriteBorderIcon />
                             <div>1</div>
                         </IconButton>
-                        <IconButton aria-label="comment" onClick={openModal}>
+                        <IconButton aria-label="comment" onClick={() => openModal(post)}>
                             <ChatBubbleIcon />
                             <div>3</div>
                         </IconButton>
