@@ -30,7 +30,7 @@ module.exports = {
     } catch (err) {
       console.log("Invalid token");
       console.error(err);
-      //if there is an error, the req gets returned regardelss, not ideal?
+      //if there is an error, the req gets returned regardless, not ideal?
       // throw new AuthenticationError("Invalid token");
     }
 
