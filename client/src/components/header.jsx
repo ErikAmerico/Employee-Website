@@ -10,6 +10,9 @@ import {
     Modal,
     TextField,
     Fade,
+    Select,
+    FormControl,
+    InputLabel,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -36,7 +39,7 @@ const Header = () => {
     const [userRole, setUserRole] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
-    const [profileImage, setProfileImage] = useState('');
+    const [selectedRole, setSelectedRole] = useState('');
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
     const navigate = useNavigate();
@@ -79,6 +82,10 @@ const Header = () => {
         }));
     };
 
+    const handleRoleChange = (event) => {
+        setSelectedRole(event.target.value);
+    };
+
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -104,7 +111,7 @@ const Header = () => {
         try {
 
             const userResponse = await createUser({
-                variables: { ...modalData, company: companyId, profileImage: initials },
+                variables: { ...modalData, company: companyId, profileImage: initials, role: selectedRole },
             })
              
             const userId = userResponse.data.createUser.user._id;
@@ -164,16 +171,18 @@ const Header = () => {
                     fullWidth
                     margin="normal"
                 />
-                <TextField
-                    name="role"
-                    value={modalData.role}
-                    onChange={handleModalInputChange}
-                    type="text"
-                    label="Role"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                />
+                <FormControl fullWidth variant="outlined" margin="normal">
+                <InputLabel htmlFor="role">Role</InputLabel>
+                    <Select
+                        id="role"
+                        label="Role"
+                        value={selectedRole}
+                        onChange={handleRoleChange}
+                    >
+                        <MenuItem value="Admin">Admin</MenuItem>
+                        <MenuItem value="Employee">Employee</MenuItem>
+                    </Select>
+                </FormControl>
                 <TextField
                     name="title"
                     value={modalData.title}

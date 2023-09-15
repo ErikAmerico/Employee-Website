@@ -20,7 +20,7 @@ export default function Users({ triggerRefetch }) {
     
   useEffect(() => {
     if (data) {
-      const userData = data.users;
+        const userData = data.users;
       setUsers(userData);
     }
   }, [data, triggerRefetch]);
