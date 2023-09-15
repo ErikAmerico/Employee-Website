@@ -6,13 +6,12 @@ import {
     IconButton,
     Menu,
     MenuItem,
-    //Avatar,
     Button,
     Modal,
     TextField,
     Fade,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import {CREATE_USER, ADD_USER_TO_COMPANY } from "../utils/mutations";
@@ -40,6 +39,7 @@ const Header = () => {
     const [profileImage, setProfileImage] = useState('');
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
+    const navigate = useNavigate();
 
     const { refetch } = useQuery(GET_USERS_BY_COMPANY, {
         variables: { companyId: localStorage.getItem('company_id') },
@@ -130,7 +130,8 @@ const Header = () => {
                     });
 
                     setShowModal(false);
-                });
+                    navigate("/users");
+            });
         } catch (err) {
             console.error(err);
             setShowAlert(true);
