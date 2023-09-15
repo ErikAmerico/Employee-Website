@@ -9,13 +9,16 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import IconButton from "@mui/material/IconButton";
+import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { formatDate } from "../../utils/date";
+import Comment from "../comment/comment";
 import "./post.css";
 
 import { useQuery } from "@apollo/client";
 import { QUERY_POSTS } from "../../utils/queries";
+import { QUERY_SINGLE_POST } from "../../utils/queries";
 
 import { useMutation } from "@apollo/client";
 import { REMOVE_POST } from "../../utils/mutations";
@@ -25,11 +28,21 @@ import { UPDATE_POST } from "../../utils/mutations";
 
 const Post = () => {
     const [editingPostId, setEditingPostId] = useState(null);
+    const [showModal, setShowModal] = useState(false);
     const [updatePost, { errors }] = useMutation(UPDATE_POST);
     const [removePost, { error }] = useMutation(REMOVE_POST);
 
     const { data } = useQuery(QUERY_POSTS);
     const posts = data?.posts || [];
+    const { data: singlePostData } = useQuery(QUERY_SINGLE_POST);
+    const singlePost = singlePostData?.singlePost || {};
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+    const closeModal = () => {
+        setShowModal(false);
+    };
 
     const handleRemovePost = async (postId) => {
         try {
@@ -111,10 +124,21 @@ const Post = () => {
                             <FavoriteBorderIcon />
                             <div>1</div>
                         </IconButton>
-                        <IconButton aria-label="comment">
+                        <IconButton aria-label="comment" onClick={openModal}>
                             <ChatBubbleIcon />
                             <div>3</div>
                         </IconButton>
+
+                        {showModal && (
+                            <Modal
+                                open={showModal}
+                                onClose={closeModal}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                            >
+                                <Comment post={singlePost} />
+                            </Modal>
+                        )}
                     </div>
                 </Card>
             </div>
