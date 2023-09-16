@@ -76,7 +76,6 @@ const Header = () => {
     useEffect(() => {
         if (AuthService.loggedIn()) {
             const profile = AuthService.getProfile();
-            console.log(profile)
             const firstName = profile.data.firstName;
             const lastName = profile.data.lastName;
             const role = profile.data.role;
@@ -115,7 +114,6 @@ const Header = () => {
     };
 
     const companyId = localStorage.getItem("company_id");
-    console.log("companyId", companyId);
 
     const handleModalSubmit = async () => {
         try {
@@ -355,7 +353,7 @@ const Header = () => {
                     onClose={handleMenuClose}
                 >
                     <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-                    {userRole.includes("Admin") && [
+                        {userRole.some(role => role === "Admin" || role === "Owner") && [
                         <MenuItem key="addUzer" onClick={handleAddUserClick}>Add User</MenuItem>
                     ]}
                     <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
