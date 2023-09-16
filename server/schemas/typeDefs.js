@@ -47,13 +47,17 @@ const typeDefs = `
         likes: Int
         comments: [Comment]
     }
+
+    type Posts {
+        posts: [Post]
+    }
      
     type Comment {
         _id: ID!
         commentId: ID
         post: Post
         user: User
-        text: String
+        commentText: String
         images: [String]
         createdAt: String
         updatedAt: String
@@ -94,12 +98,12 @@ const typeDefs = `
         createCompany(name: String!, type: String!, logo: String): Company
         createUser(firstName: String!, lastName: String!, company: String, role: String, title: String, email: String!, phone: String, password: String!, profileImage: String): Auth
         createPost(postText: String!, images: [String]): Post
-        createComment(postId: ID!, text: String image: String): Comment
+        createComment(postId: ID!, commentText: String image: String): Comment
         login(email: String!, password: String!): Auth
         updateCompany(companyId: ID!, name: String, type: String, logo: String): Company
         updateUser(userId: ID!, firstName: String, lastName: String, role: String, title: String, email: String, phone: String, password: String, profileImage: String): User
         updatePost(postId: ID!, images: [String], postText: String): Post
-        updateComment(commentId: ID!, text: String, image: String): Comment
+        updateComment(commentId: ID!, commentText: String, image: String): Comment
         removeUser(userId: ID!): User
         removePost(postId: ID!): Post
         removeComment(commentId: ID!): Comment

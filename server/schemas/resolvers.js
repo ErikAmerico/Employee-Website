@@ -17,36 +17,58 @@ const resolvers = {
 
         users: async (parent, {}, context) => {
             if (context.user) {
-              const companyId = context.user.company;
-              const params = companyId ? { company: companyId } : {};
-              const users = await User.find(params).populate("company");
+                const companyId = context.user.company;
+                const params = companyId ? { company: companyId } : {};
+                const users = await User.find(params).populate("company");
 
-              const usersWithRolesAsString = users.map((user) => ({
-                ...user.toObject(),
-                role: user.role.join(", "),
-              }));
+                const usersWithRolesAsString = users.map((user) => ({
+                    ...user.toObject(),
+                    role: user.role.join(", "),
+                }));
 
-              return usersWithRolesAsString;
-              //return await User.find(params).populate("company");
+                return usersWithRolesAsString;
+                //return await User.find(params).populate("company");
             }
             throw new AuthenticationError("Not logged in");
         },
 
         //find all posts in a company
-        posts: async (parent, { companyId }) => {
-            const params = companyId ? { companyId } : {};
-            return await Post.find(params).populate("user").populate({
-                path: "comments",
-                populate: "user",
+        posts: async (parent, args, context) => {
+            // return await Post.find({ "user.company._id": context.user.company })
+            return await Post.find({
+                //     user: {
+                //         company: {
+                //             _id: new mongoose.Types.ObjectId(
+                //                 "6502e51f83a006d7ebbef2cd"
+                //             ),
+                //         },
+                //     },
+                // })
+                //     // "user._id": new mongoose.Types.ObjectId("6502e51f83a006d7ebbef2cf"),  })
+                //     .populate("user")
+                //     .populate({
+                //         path: "comments",
+                //         populate: "user",
+                //     });
+                user: context.user._id,
+            }).populate({
+                path: "user",
+                select: "firstName lastName profileImage company",
             });
         },
         //find a single post
         post: async (parent, { postId }) => {
-            const params = postId ? { postId } : {};
-            return await Post.findOne(params).populate("user").populate({
-                path: "comments",
-                populate: "user",
-            });
+            if (postId) {
+                return await Post.findOne({ _id: postId })
+                    .populate("user")
+                    .populate("comments")
+                    .populate({
+                        path: "comments",
+                        populate: "user",
+                    });
+            } else {
+                throw new Error("Post not found");
+            }
         },
         //find a selected User
         user: async (parent, {}) => {
@@ -59,7 +81,7 @@ const resolvers = {
                 const messages = await ChatMessage.find({ companyId });
                 return messages;
             } catch (error) {
-                throw new Error('Error getting chat messages');
+                throw new Error("Error getting chat messages");
             }
         },
     },
@@ -97,12 +119,16 @@ const resolvers = {
             });
 
             const token = signToken(user); //create company id to payload of token
-            return { token, user };
+            return { token, user, company };
         },
         //add a new post
         createPost: async (parent, { images, postText }, context) => {
             if (context.user) {
-                const post = await Post.create({ images, postText, user: context.user._id });
+                const post = await Post.create({
+                    images,
+                    postText,
+                    user: context.user._id,
+                });
                 await User.findOneAndUpdate(
                     { _id: context.user._id },
                     { $addToSet: { post: post._id } },
@@ -114,8 +140,25 @@ const resolvers = {
         },
 
         //add a new comment
-        createComment: async (parent, { text, images }) => {
-            return await Comment.create({ text, images });
+        createComment: async (parent, { postId, commentText, images }) => {
+            try {
+                const post = await Post.findById(postId);
+                if (!post) {
+                    throw new Error("No post found");
+                }
+                const newComment = {
+                    user: context.user._id,
+                    commentText,
+                    images,
+                    createdAt: new Date().toISOString(),
+                };
+                post.comments.push(newComment);
+                await post.save();
+                return newComment;
+            } catch (error) {
+                console.error(error);
+                throw new Error("Error creating comment");
+            }
         },
 
         //login
@@ -182,12 +225,24 @@ const resolvers = {
             return updatedPost;
         },
 
-        updateComment: async (parent, { text, images }) => {
-            const updatedComment = await Comment.findOneAndUpdate(
-                { text, images },
-                { new: true }
-            );
-            return updatedComment;
+        updateComment: async (parent, { postId, commentId, commentText }) => {
+            try {
+                const post = await Post.findById(postId);
+                if (!post) {
+                    throw new Error("No post found");
+                }
+                const comment = post.comments.id(commentId);
+                if (!comment) {
+                    throw new Error("No comment found");
+                }
+                comment.commentText = commentText;
+                comment.updatedAt = new Date().toISOString();
+                await post.save();
+                return comment;
+            } catch (error) {
+                console.error(error);
+                throw new Error("Error updating comment");
+            }
         },
 
         removeUser: async (parent, {}) => {
@@ -202,6 +257,25 @@ const resolvers = {
                 _id: postId,
             });
             return post;
+        },
+
+        removeComment: async (parent, { postId, commentId }) => {
+            try {
+                const post = await Post.findById(postId);
+                if (!post) {
+                    throw new Error("No post found");
+                }
+                const comment = post.comments.id(commentId);
+                if (!comment) {
+                    throw new Error("No comment found");
+                }
+                comment.remove();
+                await post.save();
+                return comment;
+            } catch (error) {
+                console.error(error);
+                throw new Error("Error deleting comment");
+            }
         },
 
         addUserToCompany: async (parent, { companyId, userId }) => {
@@ -221,14 +295,23 @@ const resolvers = {
                 throw new Error("Error adding user to company");
             }
         },
-        createChatMessage: async (parent, { companyId, text, sender, name }, context) => {
+        createChatMessage: async (
+            parent,
+            { companyId, text, sender, name },
+            context
+        ) => {
             try {
-                const newMessage = new ChatMessage({ companyId, text, sender, name });
+                const newMessage = new ChatMessage({
+                    companyId,
+                    text,
+                    sender,
+                    name,
+                });
                 await newMessage.save();
                 return newMessage;
             } catch (error) {
                 console.error(error);
-                throw new Error('Error creating chat message');
+                throw new Error("Error creating chat message");
             }
         },
     },

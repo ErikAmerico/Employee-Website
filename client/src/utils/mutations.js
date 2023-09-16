@@ -87,26 +87,6 @@ export const CREATE_POST = gql`
   }
 `;
 
-// export const CREATE_POST = gql`
-//     mutation createPost($postText: String!, $images: [String]) {
-//         createPost(postText: $postText, images: $images) {
-//             _id
-//             postText
-//             user {
-//                 _id
-//                 firstName
-//                 lastName
-//             }
-//             images
-//             likes
-//             comments {
-//                 _id
-//                 text
-//             }
-//         }
-//     }
-// `;
-
 export const REMOVE_POST = gql`
   mutation removePost($postId: ID!) {
     removePost(postId: $postId) {
@@ -140,6 +120,33 @@ export const CREATE_CHAT_MESSAGE = gql`
       text
       sender
       name
+    }
+  }
+`;
+
+export const CREATE_COMMENT = gql`
+  mutation createComment($postId: ID!, $commentText: String!) {
+    createComment(postId: $postId, commentText: $commentText) {
+      _id
+      commentText
+    }
+  }
+`;
+
+export const REMOVE_COMMENT = gql`
+  mutation removeComment($commentId: ID!) {
+    removeComment(commentId: $commentId) {
+      _id
+      commentText
+    }
+  }
+`;
+
+export const UPDATE_COMMENT = gql`
+  mutation updateComment($commentId: ID!, $commentText: String!) {
+    updateComment(commentId: $commentId, commentText: $commentText) {
+      _id
+      commentText
     }
   }
 `;
