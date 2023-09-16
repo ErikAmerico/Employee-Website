@@ -90,7 +90,7 @@ const resolvers = {
                 throw new AuthenticationError("Not logged in");
             }
         },
-        getChatMessages: async (parent, { companyId }) => {
+        getChatMessages: async (parent, { companyId }, context) => {
             if (context.user) {
                 try {
                     const messages = await ChatMessage.find({ companyId });
