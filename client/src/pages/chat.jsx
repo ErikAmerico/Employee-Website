@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import AuthService from "../utils/auth";
 import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_CHAT_MESSAGE, GET_PREV_CHAT_MESSAGES } from '../utils/mutations';
+import './Chat.css';
 const socket = io.connect('http://localhost:3002');
 
 export default function Chat () {
@@ -78,19 +79,26 @@ export default function Chat () {
             <h1>Messages:</h1>
         <div className="message-list">
             {messages.map((msg, index) => (
-            <div key={index}>
-                    {/* <strong>{msg.sender}</strong>: {msg.text} */}
-                    <strong>{msg.name}</strong>: {msg.text}
+            <div key={index} className={`message ${msg.sender === userId ? 'sent' : 'received'}`}>
+                <div className="message-content">
+                    <strong className="message-sender">{msg.name}</strong>
+                    <p className="message-text">{msg.text}</p>
+                </div>
             </div>
         ))}
         </div>
-        <input type="text"
-            placeholder='message...'
-            value={message} 
+        <div className="input-container">
+          <input
+            type="text"
+            placeholder='Type a message...'
+            value={message}
             onChange={(event) => {
-                setMessage(event.target.value);
-        }}/>
-        <button onClick={sendMessage}>send message</button>
+              setMessage(event.target.value);
+            }}
+            className="message-input"
+          />
+          <button onClick={sendMessage} className="send-button">Send</button>
+        </div>
     </div>
   );
 };
