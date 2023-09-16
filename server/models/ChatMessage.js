@@ -15,6 +15,10 @@ const chatMessageSchema = new mongoose.Schema({
       ref: "User",
       required: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
 });
 
 const ChatMessage = mongoose.model("ChatMessage", chatMessageSchema);

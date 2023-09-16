@@ -13,7 +13,7 @@ export default function Chat () {
     const companyId = localStorage.getItem("company_id");
     const [createChatMessage] = useMutation(CREATE_CHAT_MESSAGE);
 
-    const { loading, data } = useQuery(GET_PREV_CHAT_MESSAGES, {
+    const { loading, data, refetch } = useQuery(GET_PREV_CHAT_MESSAGES, {
         variables: { companyId },
     });
 
@@ -48,10 +48,12 @@ export default function Chat () {
                     companyId,
                     text: message,
                     sender: userId,
+                    name: userName,
                 },
             });
             if (data.createChatMessage) {
                 console.log("Chat message created successfully:", data.createChatMessage);
+                refetch();
             }
         } catch (error) {
             console.error("Error creating chat message:", error);
@@ -67,6 +69,7 @@ export default function Chat () {
     useEffect(() => {
         socket.on("receive_message", (data) => {
             addMessage(data);
+            refetch();
         });
     }, [socket]);
 
@@ -76,7 +79,8 @@ export default function Chat () {
         <div className="message-list">
             {messages.map((msg, index) => (
             <div key={index}>
-                <strong>{msg.sender}</strong>: {msg.text}
+                    {/* <strong>{msg.sender}</strong>: {msg.text} */}
+                    <strong>{msg.name}</strong>: {msg.text}
             </div>
         ))}
         </div>

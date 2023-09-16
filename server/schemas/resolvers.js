@@ -219,9 +219,9 @@ const resolvers = {
                 throw new Error("Error adding user to company");
             }
         },
-        createChatMessage: async (parent, { companyId, text, sender }, context) => {
+        createChatMessage: async (parent, { companyId, text, sender, name }, context) => {
             try {
-                const newMessage = new ChatMessage({ companyId, text, sender });
+                const newMessage = new ChatMessage({ companyId, text, sender, name });
                 await newMessage.save();
                 return newMessage;
             } catch (error) {
