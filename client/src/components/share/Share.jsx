@@ -11,12 +11,12 @@ import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { CREATE_POST } from "../../utils/mutations";
 
+const user = AuthService.getProfile();
+
 const Share = () => {
     if (
-        (AuthService.loggedIn() &&
-            jwtDecode(AuthService.getToken()).data.isAdmin) ||
-        (AuthService.loggedIn() &&
-            jwtDecode(AuthService.getToken()).data.isOwner)
+        (AuthService.loggedIn() && user.data.role == "Admin") ||
+        (AuthService.loggedIn() && user.data.role == "Owner")
     ) {
         //set useStates
         const [postText, setPostText] = useState("");

@@ -143,8 +143,8 @@ const resolvers = {
         createPost: async (parent, { images, postText }, context) => {
             // check if user is logged in and is owner or admin role
             if (
-                (context.user && context.user.role.includes("admin")) ||
-                context.user.role.includes("owner")
+                (context.user && context.user.role == "Owner") ||
+                context.user.role == "Admin"
             ) {
                 const post = await Post.create({
                     images,
@@ -210,7 +210,7 @@ const resolvers = {
         },
 
         updateCompany: async (parent, { name, type, logo }) => {
-            if (context.user.role.includes("owner")) {
+            if (context.user.role == "Owner") {
                 const updatedCompany = await Company.findOneAndUpdate(
                     { name, type, logo },
                     { new: true }
@@ -254,8 +254,8 @@ const resolvers = {
 
         updatePost: async (parent, { postId, images, postText }) => {
             if (
-                (context.user && context.user.role.includes("admin")) ||
-                context.user.role.includes("owner")
+                (context.user && context.user.role == "Admin") ||
+                context.user.role == "Owner"
             ) {
                 const updatedPost = await Post.findOneAndUpdate(
                     { _id: postId },
@@ -298,8 +298,8 @@ const resolvers = {
 
         removeUser: async (parent, { userId }) => {
             if (
-                context.user.role.includes("owner") ||
-                context.user.role.includes("admin")
+                context.user.role == "Owner" ||
+                context.user.role == "Admin"
             ) {
                 const user = await User.findByIdAndDelete(userId);
                 return user;
@@ -312,8 +312,8 @@ const resolvers = {
 
         removePost: async (parent, { postId }) => {
             if (
-                context.user.role.includes("owner") ||
-                context.user.role.includes("admin")
+                context.user.role == "Owner" ||
+                context.user.role == "Admin"
             ) {
                 const post = await Post.findOneAndDelete({
                     _id: postId,
