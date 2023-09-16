@@ -12,6 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import { forwardRef } from "react";
 import { formatDate } from "../../utils/date";
 import Comment from "../comment/comment";
 import "./post.css";
@@ -37,13 +38,14 @@ const Post = () => {
     const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
         variables: { postId: postId },
     });
-    const singlePost = singlePostData?.singlePost || {};
+    const post = singlePostData?.singlePost || {};
 
-    const openModal = (posts) => {
-        setPostId(posts._id);
+    const openModal = (post) => {
+        setPostId(post._id);
         setShowModal(true);
     };
     const closeModal = () => {
+        setPostId(null);
         setShowModal(false);
     };
 
@@ -65,6 +67,11 @@ const Post = () => {
         });
         setEditingPostId(null);
     };
+
+    //add forwards ref to modal
+    const ForwardedModal = forwardRef((props, ref) => {
+        return <Modal ref={ref} {...props} />;
+    });
 
     if (!posts.length) {
         return <p>No Announcements</p>;
@@ -127,20 +134,23 @@ const Post = () => {
                             <FavoriteBorderIcon />
                             <div>1</div>
                         </IconButton>
-                        <IconButton aria-label="comment" onClick={() => openModal(post)}>
+                        <IconButton
+                            aria-label="comment"
+                            onClick={() => openModal(post._id)}
+                        >
                             <ChatBubbleIcon />
                             <div>3</div>
                         </IconButton>
 
                         {showModal && (
-                            <Modal
+                            <ForwardedModal
                                 open={showModal}
                                 onClose={closeModal}
                                 aria-labelledby="modal-modal-title"
                                 aria-describedby="modal-modal-description"
                             >
-                                <Comment post={singlePost} />
-                            </Modal>
+                                <Comment post={postId} />
+                            </ForwardedModal>
                         )}
                     </div>
                 </Card>
