@@ -1,6 +1,6 @@
 const { signToken, AuthenticationError } = require("../utils/auth");
 const { User, Company, Post } = require("../models/Company");
-// const { default: mongoose } = require("mongoose");
+const ChatMessage = require("../models/ChatMessage");
 
 const resolvers = {
     Query: {
@@ -73,6 +73,14 @@ const resolvers = {
             return await User.findOne({ _id: context.user._id }).populate(
                 "company"
             );
+        },
+        getChatMessages: async (parent, { companyId }) => {
+            try {
+                const messages = await ChatMessage.find({ companyId });
+                return messages;
+            } catch (error) {
+                throw new Error('Error getting chat messages');
+            }
         },
     },
     Mutation: {
@@ -235,6 +243,16 @@ const resolvers = {
                 return company;
             } catch (error) {
                 throw new Error("Error adding user to company");
+            }
+        },
+        createChatMessage: async (parent, { companyId, text, sender }, context) => {
+            try {
+                const newMessage = new ChatMessage({ companyId, text, sender });
+                await newMessage.save();
+                return newMessage;
+            } catch (error) {
+                console.error(error);
+                throw new Error('Error creating chat message');
             }
         },
     },

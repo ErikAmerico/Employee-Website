@@ -68,6 +68,19 @@ const typeDefs = `
         user: User
     }
 
+    type ChatMessage {
+        _id: ID!
+        companyId: ID!
+        text: String!
+        sender: String!
+    }
+
+    input ChatMessageInput {
+        companyId: ID!
+        text: String!
+        sender: String!
+    }
+
     type Query {
         company(companyId: ID!): Company
         user(userId: ID!): User
@@ -76,6 +89,7 @@ const typeDefs = `
         me: User
         users(companyId: ID): [User]
         posts(companyId: ID): [Post]
+        getChatMessages(companyId: ID!): [ChatMessage]
     }
 
     type Mutation {
@@ -92,6 +106,7 @@ const typeDefs = `
         removePost(postId: ID!): Post
         removeComment(commentId: ID!): Comment
         addUserToCompany(companyId: ID!, userId: ID!): Company
+        createChatMessage(companyId: ID!, text: String!, sender: String!): ChatMessage
     }
 `;
 
