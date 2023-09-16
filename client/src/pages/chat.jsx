@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import io from 'socket.io-client';
 import AuthService from "../utils/auth";
 import { useMutation, useQuery } from '@apollo/client';
@@ -13,6 +13,7 @@ export default function Chat () {
     const [userId, setUserId] = useState('');
     const companyId = localStorage.getItem("company_id");
     const [createChatMessage] = useMutation(CREATE_CHAT_MESSAGE);
+    const chatContainerRef = useRef(null);
 
     const { loading, data, refetch } = useQuery(GET_PREV_CHAT_MESSAGES, {
         variables: { companyId },
@@ -21,6 +22,7 @@ export default function Chat () {
     useEffect(() => {
         if (data) {
             setMessages(data.getChatMessages);
+            scrollToBottom();
         }
     }
     , [data]);
@@ -39,6 +41,12 @@ export default function Chat () {
 
     // console.log(userName)
     // console.log(userId)
+
+    const scrollToBottom = () => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    };
     
     const sendMessage = async () => {
         socket.emit('send_message', { companyId, text: message, sender: userId })
@@ -61,10 +69,12 @@ export default function Chat () {
         }
 
         setMessage("");
+        scrollToBottom();
     };
 
     const addMessage = (messageData) => {
         setMessages((prevMessages) => [...prevMessages, messageData]);
+        scrollToBottom();
     }
 
     useEffect(() => {
@@ -74,10 +84,14 @@ export default function Chat () {
         });
     }, [socket]);
 
+    useLayoutEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     return (
         <div className='messagecontainer'>
             <h1>Messages:</h1>
-        <div className="message-list">
+        <div className="message-list" ref={chatContainerRef}>
             {messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender === userId ? 'sent' : 'received'}`}>
                 <div className="message-content">
