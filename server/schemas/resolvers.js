@@ -245,10 +245,8 @@ const resolvers = {
             }
         },
 
-        removeUser: async (parent, {}) => {
-            const user = await User.findByIdAndDelete({
-                _id: context.user._id,
-            });
+        removeUser: async (parent, {userId}) => {
+            const user = await User.findByIdAndDelete(userId);
             return user;
         },
 

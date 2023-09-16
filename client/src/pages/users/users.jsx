@@ -12,19 +12,33 @@ import ChatModal from "../../components/chatModal/chatModal";
 import './users.css';
 
 import { useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import { GET_USERS_BY_COMPANY } from '../../utils/queries';
+import { REMOVE_USER } from '../../utils/mutations';
 
-export default function Users({ triggerRefetch }) {
+export default function Users() {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profile, setProfile] = useState(AuthService.getProfile());
+  const [removeUser] = useMutation(REMOVE_USER);
+
   const { loading, error, data } = useQuery(GET_USERS_BY_COMPANY, {
     variables: { companyId: localStorage.getItem('company_id') },
   });
 
   const myRole = profile.data.role;
   const myId = profile.data._id;
+  console.log(myId)
+
+  const { refetch } = useQuery(GET_USERS_BY_COMPANY, {
+        variables: { companyId: localStorage.getItem('company_id') },
+        skip: true, // Set skip to true to prevent automatic fetching
+    });
+
+  const triggerRefetch = () => {
+        refetch();
+    };
     
   useEffect(() => {
     if (data) {
@@ -35,6 +49,19 @@ export default function Users({ triggerRefetch }) {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
+
+  const handleRemoveUser = (user) => {
+    const userId = user._id;
+    console.log(userId)
+
+  removeUser({ variables: { userId } })
+    .then(() => {
+      triggerRefetch();
+    })
+    .catch((error) => {
+      console.error('Error removing user:', error);
+    });
+};
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -81,7 +108,7 @@ export default function Users({ triggerRefetch }) {
               </TableCell>
               <TableCell>
                 {myRole.includes("Owner") && user._id !== myId && [
-                  <Button key='removeUzer' onClick={() => RemoveUser(user)} color='error' variant='contained'>Remove User</Button>
+                  <Button key='removeUzer' onClick={() => handleRemoveUser(user)} color='error' variant='contained'>Remove User</Button>
                 ]}
               </TableCell>
             </TableRow>

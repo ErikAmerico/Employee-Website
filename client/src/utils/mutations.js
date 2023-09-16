@@ -150,3 +150,11 @@ export const UPDATE_COMMENT = gql`
     }
   }
 `;
+
+export const REMOVE_USER = gql`
+  mutation RemoveUser($userId: ID!) {
+    removeUser(userId: $userId) {
+      _id
+    }
+  }
+`;
