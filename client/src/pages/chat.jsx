@@ -96,7 +96,7 @@ export default function Chat () {
 
     return (
         <div className='messagecontainer'>
-            <h1>Messages:</h1>
+            <h1>Group Chat</h1>
         <div className="message-list" ref={chatContainerRef}>
             {messages.map((msg, index) => (
             <div key={index} className={`message ${msg.sender === userId ? 'sent' : 'received'}`}>
