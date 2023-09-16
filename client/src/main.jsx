@@ -4,10 +4,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 
 import Announcements from "./pages/announcements.jsx";
-import Chat from "./pages/chat.jsx";
+import Chat from "./pages/chat/chat.jsx";
 import Home from "./pages/home.jsx";
 import LoginRegister from "./pages/loginRegister.jsx";
-import Users from "./pages/users.jsx";
+import Users from "./pages/users/users.jsx";
 
 const router = createBrowserRouter([
     {
