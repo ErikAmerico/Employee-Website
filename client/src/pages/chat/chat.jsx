@@ -8,7 +8,8 @@ import { useGlobalContext } from "../../utils/globalContext";
 import './Chat.css';
 const socket = io.connect('http://localhost:3002');
 
-export default function Chat () {
+export default function Chat() {
+    if (AuthService.loggedIn()) {   
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
     const [userName, setUserName] = useState('');
@@ -120,5 +121,10 @@ export default function Chat () {
           <button onClick={sendMessage} className="send-button">Send</button>
         </div>
     </div>
-  );
+        );
+    } else {
+        return (
+            <h1> Please log in to view this page. </h1>
+        )
+    }
 };

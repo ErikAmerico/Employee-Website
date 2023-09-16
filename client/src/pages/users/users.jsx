@@ -18,6 +18,7 @@ import { GET_USERS_BY_COMPANY } from '../../utils/queries';
 import { REMOVE_USER } from '../../utils/mutations';
 
 export default function Users() {
+  if (AuthService.loggedIn()) {
   const [users, setUsers] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profile, setProfile] = useState(AuthService.getProfile());
@@ -70,53 +71,58 @@ export default function Users() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-  return (
-    <div className='tableContainerDiv'>
-    <TableContainer component={Paper} className="tableContainer">
-      <Table sx={{ minWidth: 650 }} aria-label="user table" className='userTable'>
-        <TableHead>
-          <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Title</TableCell>
-            <TableCell>Phone Number</TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user._id}>
-              <TableCell component="th" scope="row">
-                {`${user.firstName} ${user.lastName}`}
-              </TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.role}</TableCell>
-              <TableCell>{user.title}</TableCell>
-              <TableCell>{user.phone}</TableCell>
-              <TableCell>
-                {user._id !== myId && (
-                <Button key='chatUzer'
-                  onClick={() => openModal()}
-                  sx={{ backgroundColor: '#134074' }}
-                  variant='contained'>
-                  {`Chat with ${user.firstName}`}
-                  </Button>
-                )}
-              </TableCell>
-              <TableCell>
-                {myRole.includes("Owner") && user._id !== myId && [
-                  <Button key='removeUzer' onClick={() => handleRemoveUser(user)} color='error' variant='contained'>Remove User</Button>
-                ]}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    <ChatModal isOpen={isModalOpen} onClose={closeModal} />
-    </div>
-  );
+  
+    return (
+      <div className='tableContainerDiv'>
+        <TableContainer component={Paper} className="tableContainer">
+          <Table sx={{ minWidth: 650 }} aria-label="user table" className='userTable'>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Phone Number</TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user._id}>
+                  <TableCell component="th" scope="row">
+                    {`${user.firstName} ${user.lastName}`}
+                  </TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell>{user.title}</TableCell>
+                  <TableCell>{user.phone}</TableCell>
+                  <TableCell>
+                    {user._id !== myId && (
+                      <Button key='chatUzer'
+                        onClick={() => openModal()}
+                        sx={{ backgroundColor: '#134074' }}
+                        variant='contained'>
+                        {`Chat with ${user.firstName}`}
+                      </Button>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {myRole.includes("Owner") && user._id !== myId && [
+                      <Button key='removeUzer' onClick={() => handleRemoveUser(user)} color='error' variant='contained'>Remove User</Button>
+                    ]}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <ChatModal isOpen={isModalOpen} onClose={closeModal} />
+      </div>
+    );
+  } else {
+    return (
+      <h1>Please log in to view this page.</h1>
+    )
+  }
 }

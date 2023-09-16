@@ -15,6 +15,7 @@ import * as React from "react";
 import { formatDate } from "../../utils/date";
 import Comment from "../comment/comment";
 import "./post.css";
+import AuthService from "../../utils/auth";
 
 import { useQuery } from "@apollo/client";
 import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
@@ -26,132 +27,145 @@ import { useState } from "react";
 import { UPDATE_POST } from "../../utils/mutations";
 
 const Post = () => {
-    const [editingPostId, setEditingPostId] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [postId, setPostId] = useState();
-    const [updatePost, { errors }] = useMutation(UPDATE_POST);
-    const [removePost, { error }] = useMutation(REMOVE_POST);
+    if (AuthService.loggedIn()) {
+        const [editingPostId, setEditingPostId] = useState(null);
+        const [showModal, setShowModal] = useState(false);
+        const [postId, setPostId] = useState();
+        const [updatePost, { errors }] = useMutation(UPDATE_POST);
+        const [removePost, { error }] = useMutation(REMOVE_POST);
 
-    const { data } = useQuery(QUERY_POSTS);
-    const posts = data?.posts || [];
-    const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
-        variables: { postId: postId },
-    });
-    const singlePost = singlePostData?.post || {};
-
-    const openModal = (postId) => {
-        setPostId(postId);
-        setShowModal(true);
-    };
-    const closeModal = () => {
-        setPostId(null);
-        setShowModal(false);
-    };
-
-    const handleRemovePost = async (postId) => {
-        try {
-            const { data } = await removePost({
-                variables: { postId: postId },
-            });
-        } catch (err) {
-            console.error(err);
-        }
-    };
-
-    const handleUpdatePost = async (postId, newValue) => {
-        const updatedValue = newValue;
-
-        await updatePost({
-            variables: { postId: postId, postText: updatedValue },
+        const { data } = useQuery(QUERY_POSTS);
+        const posts = data?.posts || [];
+        const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
+            variables: { postId: postId },
         });
-        setEditingPostId(null);
-    };
+        const singlePost = singlePostData?.post || {};
 
-    //add forwardRef to fix error here if and when needed.
+        const openModal = (postId) => {
+            setPostId(postId);
+            setShowModal(true);
+        };
+        const closeModal = () => {
+            setPostId(null);
+            setShowModal(false);
+        };
 
-    if (!posts.length) {
-        return <p>No Announcements</p>;
-    } else {
-        return posts.map((post) => (
-            <div key={post._id} className="post">
-                <Card sx={{ maxWidth: 850 }} className="cardBody">
-                    <CardHeader
-                        className="cardHeader"
-                        avatar={
-                            <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
-                                R
-                            </Avatar>
-                        }
-                        action={
-                            <ButtonGroup>
-                                <IconButton
-                                    aria-label="settings"
-                                    onClick={() => handleRemovePost(post._id)}
+        const handleRemovePost = async (postId) => {
+            try {
+                const { data } = await removePost({
+                    variables: { postId: postId },
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        const handleUpdatePost = async (postId, newValue) => {
+            const updatedValue = newValue;
+
+            await updatePost({
+                variables: { postId: postId, postText: updatedValue },
+            });
+            setEditingPostId(null);
+        };
+
+        //add forwardRef to fix error here if and when needed.
+
+        if (!posts.length) {
+            return <p>No Announcements</p>;
+        } else {
+            return posts.map((post) => (
+                <div key={post._id} className="post">
+                    <Card sx={{ maxWidth: 850 }} className="cardBody">
+                        <CardHeader
+                            className="cardHeader"
+                            avatar={
+                                <Avatar
+                                    sx={{ bgcolor: "red" }}
+                                    aria-label="recipe"
                                 >
-                                    <DeleteIcon />
-                                </IconButton>
-                                <IconButton
-                                    aria-label="settings"
-                                    onClick={() => setEditingPostId(post._id)}
-                                >
-                                    <EditIcon />
-                                </IconButton>
-                            </ButtonGroup>
-                        }
-                        title={`${post.user.firstName} ${post.user.lastName}`}
-                        subheader={formatDate(post.createdAt)}
-                    />
-
-                    <CardMedia
-                        component="img"
-                        height="fit-content"
-                        image={post.postImage}
-                    />
-
-                    <CardContent>
-                        <Typography variant="body2" color="text.secondary">
-                            {post.postText}
-                        </Typography>
-                    </CardContent>
-
-                    {editingPostId === post._id && (
-                        <input
-                            type="text"
-                            defaultValue={post.postText}
-                            onBlur={(e) =>
-                                handleUpdatePost(post._id, e.target.value)
+                                    R
+                                </Avatar>
                             }
+                            action={
+                                <ButtonGroup>
+                                    <IconButton
+                                        aria-label="settings"
+                                        onClick={() =>
+                                            handleRemovePost(post._id)
+                                        }
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        aria-label="settings"
+                                        onClick={() =>
+                                            setEditingPostId(post._id)
+                                        }
+                                    >
+                                        <EditIcon />
+                                    </IconButton>
+                                </ButtonGroup>
+                            }
+                            title={`${post.user.firstName} ${post.user.lastName}`}
+                            subheader={formatDate(post.createdAt)}
                         />
-                    )}
 
-                    {/* add like button and comment button */}
-                    <div className="postButtons">
-                        <IconButton aria-label="like">
-                            <FavoriteBorderIcon />
-                            <div>1</div>
-                        </IconButton>
-                        <IconButton
-                            aria-label="comment"
-                            onClick={() => openModal(post._id)}
-                        >
-                            <ChatBubbleIcon />
-                            <div>3</div>
-                        </IconButton>
+                        <CardMedia
+                            component="img"
+                            height="fit-content"
+                            image={post.postImage}
+                        />
 
-                        {showModal && (
-                            <Modal
-                                open={showModal}
-                                onClose={closeModal}
-                                aria-labelledby="modal-modal-title"
-                                aria-describedby="modal-modal-description"
-                            >
-                                <Comment post={singlePost} />
-                            </Modal>
+                        <CardContent>
+                            <Typography variant="body2" color="text.secondary">
+                                {post.postText}
+                            </Typography>
+                        </CardContent>
+
+                        {editingPostId === post._id && (
+                            <input
+                                type="text"
+                                defaultValue={post.postText}
+                                onBlur={(e) =>
+                                    handleUpdatePost(post._id, e.target.value)
+                                }
+                            />
                         )}
-                    </div>
-                </Card>
-            </div>
-        ));
+
+                        {/* add like button and comment button */}
+                        <div className="postButtons">
+                            <IconButton aria-label="like">
+                                <FavoriteBorderIcon />
+                                <div>1</div>
+                            </IconButton>
+                            <IconButton
+                                aria-label="comment"
+                                onClick={() => openModal(post._id)}
+                            >
+                                <ChatBubbleIcon />
+                                <div>3</div>
+                            </IconButton>
+
+                            {showModal && (
+                                <Modal
+                                    open={showModal}
+                                    onClose={closeModal}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                >
+                                    <Comment post={singlePost} />
+                                </Modal>
+                            )}
+                        </div>
+                    </Card>
+                </div>
+            ));
+        }
+    } else {
+        return (
+            <h1> Please log in to view this page. </h1>
+        )
     }
 };
 
