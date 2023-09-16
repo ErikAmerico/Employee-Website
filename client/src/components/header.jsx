@@ -264,10 +264,11 @@ const Header = () => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     <Link to="/">
                         <img
-                            src="/images/genLogo.png"
+                            src="../src/assets/images/componnect-nobg.png"
                             alt="Company Logo"
                             style={{
-                                height: "60px",
+                                height: "auto",
+                                width: "150px",
                                 marginRight: "",
                                 marginTop: 6,
                             }}
