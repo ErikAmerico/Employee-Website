@@ -12,7 +12,6 @@ import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { forwardRef } from "react";
 import { formatDate } from "../../utils/date";
 import Comment from "../comment/comment";
 import "./post.css";
@@ -38,10 +37,10 @@ const Post = () => {
     const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
         variables: { postId: postId },
     });
-    const post = singlePostData?.singlePost || {};
+    const singlePost = singlePostData?.post || {};
 
-    const openModal = (post) => {
-        setPostId(post._id);
+    const openModal = (postId) => {
+        setPostId(postId);
         setShowModal(true);
     };
     const closeModal = () => {
@@ -68,10 +67,7 @@ const Post = () => {
         setEditingPostId(null);
     };
 
-    //add forwards ref to modal
-    const ForwardedModal = forwardRef((props, ref) => {
-        return <Modal ref={ref} {...props} />;
-    });
+    //add forwardRef to fix error here if and when needed.
 
     if (!posts.length) {
         return <p>No Announcements</p>;
@@ -143,14 +139,14 @@ const Post = () => {
                         </IconButton>
 
                         {showModal && (
-                            <ForwardedModal
+                            <Modal
                                 open={showModal}
                                 onClose={closeModal}
                                 aria-labelledby="modal-modal-title"
                                 aria-describedby="modal-modal-description"
                             >
-                                <Comment post={postId} />
-                            </ForwardedModal>
+                                <Comment post={singlePost} />
+                            </Modal>
                         )}
                     </div>
                 </Card>
