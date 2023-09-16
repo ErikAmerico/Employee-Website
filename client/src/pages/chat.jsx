@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import io from 'socket.io-client';
 import AuthService from "../utils/auth";
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_CHAT_MESSAGE, GET_PREV_CHAT_MESSAGES } from '../utils/mutations';
+import { CREATE_CHAT_MESSAGE } from '../utils/mutations';
+import { GET_PREV_CHAT_MESSAGES } from '../utils/queries';
+import { useGlobalContext } from "../utils/globalContext";
+import './Chat.css';
 const socket = io.connect('http://localhost:3002');
 
 export default function Chat () {
@@ -12,14 +15,17 @@ export default function Chat () {
     const [userId, setUserId] = useState('');
     const companyId = localStorage.getItem("company_id");
     const [createChatMessage] = useMutation(CREATE_CHAT_MESSAGE);
+    const { setHasUnreadMessages } = useGlobalContext();
+    const chatContainerRef = useRef(null);
 
-    const { loading, data } = useQuery(GET_PREV_CHAT_MESSAGES, {
+    const { loading, data, refetch } = useQuery(GET_PREV_CHAT_MESSAGES, {
         variables: { companyId },
     });
 
     useEffect(() => {
         if (data) {
             setMessages(data.getChatMessages);
+            scrollToBottom();
         }
     }
     , [data]);
@@ -38,6 +44,12 @@ export default function Chat () {
 
     // console.log(userName)
     // console.log(userId)
+
+    const scrollToBottom = () => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    };
     
     const sendMessage = async () => {
         socket.emit('send_message', { companyId, text: message, sender: userId })
@@ -48,45 +60,65 @@ export default function Chat () {
                     companyId,
                     text: message,
                     sender: userId,
+                    name: userName,
                 },
             });
             if (data.createChatMessage) {
                 console.log("Chat message created successfully:", data.createChatMessage);
+                refetch();
             }
         } catch (error) {
             console.error("Error creating chat message:", error);
         }
 
         setMessage("");
+        scrollToBottom();
     };
 
     const addMessage = (messageData) => {
         setMessages((prevMessages) => [...prevMessages, messageData]);
+        scrollToBottom();
     }
 
     useEffect(() => {
         socket.on("receive_message", (data) => {
             addMessage(data);
+            refetch();
+            if (window.location.pathname !== "/chat") {
+                setHasUnreadMessages(true);
+            }
         });
     }, [socket]);
 
+    useLayoutEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     return (
         <div className='messagecontainer'>
-            <h1>Messages:</h1>
-        <div className="message-list">
+            <h1>Group Chat</h1>
+        <div className="message-list" ref={chatContainerRef}>
             {messages.map((msg, index) => (
-            <div key={index}>
-                <strong>{msg.sender}</strong>: {msg.text}
+            <div key={index} className={`message ${msg.sender === userId ? 'sent' : 'received'}`}>
+                <div className="message-content">
+                    <strong className="message-sender">{msg.name}</strong>
+                    <p className="message-text">{msg.text}</p>
+                </div>
             </div>
         ))}
         </div>
-        <input type="text"
-            placeholder='message...'
-            value={message} 
+        <div className="input-container">
+          <input
+            type="text"
+            placeholder='Type a message...'
+            value={message}
             onChange={(event) => {
-                setMessage(event.target.value);
-        }}/>
-        <button onClick={sendMessage}>send message</button>
+              setMessage(event.target.value);
+            }}
+            className="message-input"
+          />
+          <button onClick={sendMessage} className="send-button">Send</button>
+        </div>
     </div>
   );
 };

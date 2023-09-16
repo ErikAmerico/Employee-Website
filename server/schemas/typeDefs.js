@@ -69,12 +69,14 @@ const typeDefs = `
         companyId: ID!
         text: String!
         sender: String!
+        name: String!
     }
 
     input ChatMessageInput {
         companyId: ID!
         text: String!
         sender: String!
+        name: String!
     }
 
     type Query {
@@ -102,7 +104,7 @@ const typeDefs = `
         removePost(postId: ID!): Post
         removeComment(commentId: ID!): Comment
         addUserToCompany(companyId: ID!, userId: ID!): Company
-        createChatMessage(companyId: ID!, text: String!, sender: String!): ChatMessage
+        createChatMessage(companyId: ID!, text: String!, sender: String!, name: String!): ChatMessage
     }
 `;
 

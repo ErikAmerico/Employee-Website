@@ -55,8 +55,8 @@ export const QUERY_SINGLE_POST = gql`
 
 //get all users in a company
 export const GET_USERS_BY_COMPANY = gql`
-  query users {
-    users {
+  query getUsersByCompany($companyId: ID!) {
+    users (companyId: $companyId) {
       _id
       firstName
       lastName
@@ -64,6 +64,18 @@ export const GET_USERS_BY_COMPANY = gql`
       role
       title
       phone
+    }
+  }
+`;
+
+export const GET_PREV_CHAT_MESSAGES = gql`
+  query getPrevChatMessages($companyId: ID!) {
+    getChatMessages(companyId: $companyId) {
+      _id
+      companyId
+      text
+      sender
+      name
     }
   }
 `;
