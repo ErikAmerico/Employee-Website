@@ -14,7 +14,7 @@ import {
     FormControl,
     InputLabel,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import {CREATE_USER, ADD_USER_TO_COMPANY } from "../utils/mutations";
@@ -25,6 +25,7 @@ import Avatar from '@mui/material/Avatar';
 import { styled } from "@mui/material/styles";
 import { useQuery } from "@apollo/client";
 import { GET_USERS_BY_COMPANY } from "../utils/queries";
+import { useGlobalContext } from "../utils/globalContext";
 
 const classes = styled(Avatar)(({ theme }) => ({
   width: theme.spacing(4),
@@ -42,7 +43,16 @@ const Header = () => {
     const [selectedRole, setSelectedRole] = useState('');
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
+    const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
     const navigate = useNavigate();
+
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.pathname === "/chat" && hasUnreadMessages) {
+            setHasUnreadMessages(false);
+        }
+    }, [location, hasUnreadMessages, setHasUnreadMessages]);
 
     const { refetch } = useQuery(GET_USERS_BY_COMPANY, {
         variables: { companyId: localStorage.getItem('company_id') },
@@ -300,7 +310,7 @@ const Header = () => {
                         color="info"
                         variant="outlined"
                         to="/chat"
-                        sx={{ backgroundColor: "#134074", color: "white" }}
+                        sx={{ backgroundColor: hasUnreadMessages ? "#6669ad" :  "#134074", color: "white" }}
                     >
                         Chat
                     </Button>

@@ -13,6 +13,7 @@
   padding: 10px;
   border-radius: 10px;
   background-color: #e5e5ea;
+  min-width: 35%;
 }
 
 .message {
@@ -59,7 +60,7 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  background-color: #e5e5ea;
+  background-color: #6669ad;
   border-radius: 10px;
   border: 1px solid #ccc;
   box-shadow: 6px 6px 6px 6px rgba(0, 0, 0, 0.1);

@@ -4,6 +4,7 @@ import AuthService from "../utils/auth";
 import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_CHAT_MESSAGE } from '../utils/mutations';
 import { GET_PREV_CHAT_MESSAGES } from '../utils/queries';
+import { useGlobalContext } from "../utils/globalContext";
 import './Chat.css';
 const socket = io.connect('http://localhost:3002');
 
@@ -14,6 +15,7 @@ export default function Chat () {
     const [userId, setUserId] = useState('');
     const companyId = localStorage.getItem("company_id");
     const [createChatMessage] = useMutation(CREATE_CHAT_MESSAGE);
+    const { setHasUnreadMessages } = useGlobalContext();
     const chatContainerRef = useRef(null);
 
     const { loading, data, refetch } = useQuery(GET_PREV_CHAT_MESSAGES, {
@@ -82,6 +84,9 @@ export default function Chat () {
         socket.on("receive_message", (data) => {
             addMessage(data);
             refetch();
+            if (window.location.pathname !== "/chat") {
+                setHasUnreadMessages(true);
+            }
         });
     }, [socket]);
 
