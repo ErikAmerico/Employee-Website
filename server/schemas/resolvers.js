@@ -35,53 +35,71 @@ const resolvers = {
         //find all posts in a company
         posts: async (parent, args, context) => {
             // return await Post.find({ "user.company._id": context.user.company })
-            return await Post.find({
-                //     user: {
-                //         company: {
-                //             _id: new mongoose.Types.ObjectId(
-                //                 "6502e51f83a006d7ebbef2cd"
-                //             ),
-                //         },
-                //     },
-                // })
-                //     // "user._id": new mongoose.Types.ObjectId("6502e51f83a006d7ebbef2cf"),  })
-                //     .populate("user")
-                //     .populate({
-                //         path: "comments",
-                //         populate: "user",
-                //     });
-                user: context.user._id,
-            }).populate({
-                path: "user",
-                select: "firstName lastName profileImage company",
-            });
+            // check if user is logged in
+            if (context.user) {
+                return await Post.find({
+                    //     user: {
+                    //         company: {
+                    //             _id: new mongoose.Types.ObjectId(
+                    //                 "6502e51f83a006d7ebbef2cd"
+                    //             ),
+                    //         },
+                    //     },
+                    // })
+                    //     // "user._id": new mongoose.Types.ObjectId("6502e51f83a006d7ebbef2cf"),  })
+                    //     .populate("user")
+                    //     .populate({
+                    //         path: "comments",
+                    //         populate: "user",
+                    //     });
+                    user: context.user._id,
+                }).populate({
+                    path: "user",
+                    select: "firstName lastName profileImage company",
+                });
+            } else {
+                throw new AuthenticationError("Not logged in");
+            }
         },
         //find a single post
         post: async (parent, { postId }) => {
-            if (postId) {
-                return await Post.findOne({ _id: postId })
-                    .populate("user")
-                    .populate("comments")
-                    .populate({
-                        path: "comments",
-                        populate: "user",
-                    });
+            //check if logged in
+            if (context.user) {
+                if (postId) {
+                    return await Post.findOne({ _id: postId })
+                        .populate("user")
+                        .populate("comments")
+                        .populate({
+                            path: "comments",
+                            populate: "user",
+                        });
+                } else {
+                    throw new Error("Post not found");
+                }
             } else {
-                throw new Error("Post not found");
+                throw new AuthenticationError("Not logged in");
             }
         },
         //find a selected User
         user: async (parent, {}) => {
-            return await User.findOne({ _id: context.user._id }).populate(
-                "company"
-            );
+            if (context.user) {
+                return await User.findOne({ _id: context.user._id }).populate(
+                    "company"
+                );
+            } else {
+                throw new AuthenticationError("Not logged in");
+            }
         },
         getChatMessages: async (parent, { companyId }) => {
-            try {
-                const messages = await ChatMessage.find({ companyId });
-                return messages;
-            } catch (error) {
-                throw new Error("Error getting chat messages");
+            if (context.user) {
+                try {
+                    const messages = await ChatMessage.find({ companyId });
+                    return messages;
+                } catch (error) {
+                    throw new Error("Error getting chat messages");
+                }
+            } else {
+                throw new AuthenticationError("Not logged in");
             }
         },
     },
@@ -123,7 +141,11 @@ const resolvers = {
         },
         //add a new post
         createPost: async (parent, { images, postText }, context) => {
-            if (context.user) {
+            // check if user is logged in and is owner or admin role
+            if (
+                (context.user && context.user.role.includes("admin")) ||
+                context.user.role.includes("owner")
+            ) {
                 const post = await Post.create({
                     images,
                     postText,
@@ -136,28 +158,36 @@ const resolvers = {
                 );
                 return post;
             }
-            throw new AuthenticationError("You need to be logged in!");
+            throw new AuthenticationError(
+                "You need to be logged in and be and admin/owner to create a post"
+            );
         },
 
         //add a new comment
         createComment: async (parent, { postId, commentText, images }) => {
-            try {
-                const post = await Post.findById(postId);
-                if (!post) {
-                    throw new Error("No post found");
+            if (context.user) {
+                try {
+                    const post = await Post.findById(postId);
+                    if (!post) {
+                        throw new Error("No post found");
+                    }
+                    const newComment = {
+                        user: context.user._id,
+                        commentText,
+                        images,
+                        createdAt: new Date().toISOString(),
+                    };
+                    post.comments.push(newComment);
+                    await post.save();
+                    return newComment;
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error creating comment");
                 }
-                const newComment = {
-                    user: context.user._id,
-                    commentText,
-                    images,
-                    createdAt: new Date().toISOString(),
-                };
-                post.comments.push(newComment);
-                await post.save();
-                return newComment;
-            } catch (error) {
-                console.error(error);
-                throw new Error("Error creating comment");
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in to create a comment"
+                );
             }
         },
 
@@ -180,11 +210,17 @@ const resolvers = {
         },
 
         updateCompany: async (parent, { name, type, logo }) => {
-            const updatedCompany = await Company.findOneAndUpdate(
-                { name, type, logo },
-                { new: true }
-            );
-            return updatedCompany;
+            if (context.user.role.includes("owner")) {
+                const updatedCompany = await Company.findOneAndUpdate(
+                    { name, type, logo },
+                    { new: true }
+                );
+                return updatedCompany;
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in and be an owner to update a company"
+                );
+            }
         },
 
         updateUser: async (
@@ -217,62 +253,101 @@ const resolvers = {
         },
 
         updatePost: async (parent, { postId, images, postText }) => {
-            const updatedPost = await Post.findOneAndUpdate(
-                { _id: postId },
-                { images, postText },
-                { new: true }
-            );
-            return updatedPost;
-        },
-
-        updateComment: async (parent, { postId, commentId, commentText }) => {
-            try {
-                const post = await Post.findById(postId);
-                if (!post) {
-                    throw new Error("No post found");
-                }
-                const comment = post.comments.id(commentId);
-                if (!comment) {
-                    throw new Error("No comment found");
-                }
-                comment.commentText = commentText;
-                comment.updatedAt = new Date().toISOString();
-                await post.save();
-                return comment;
-            } catch (error) {
-                console.error(error);
-                throw new Error("Error updating comment");
+            if (
+                (context.user && context.user.role.includes("admin")) ||
+                context.user.role.includes("owner")
+            ) {
+                const updatedPost = await Post.findOneAndUpdate(
+                    { _id: postId },
+                    { images, postText },
+                    { new: true }
+                );
+                return updatedPost;
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in and be an admin/owner to update a post"
+                );
             }
         },
 
-        removeUser: async (parent, {userId}) => {
-            const user = await User.findByIdAndDelete(userId);
-            return user;
+        updateComment: async (parent, { postId, commentId, commentText }) => {
+            if (context.user) {
+                try {
+                    const post = await Post.findById(postId);
+                    if (!post) {
+                        throw new Error("No post found");
+                    }
+                    const comment = post.comments.id(commentId);
+                    if (!comment) {
+                        throw new Error("No comment found");
+                    }
+                    comment.commentText = commentText;
+                    comment.updatedAt = new Date().toISOString();
+                    await post.save();
+                    return comment;
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error updating comment");
+                }
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in to update a comment"
+                );
+            }
+        },
+
+        removeUser: async (parent, { userId }) => {
+            if (
+                context.user.role.includes("owner") ||
+                context.user.role.includes("admin")
+            ) {
+                const user = await User.findByIdAndDelete(userId);
+                return user;
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in and be an owner/admin to delete a user"
+                );
+            }
         },
 
         removePost: async (parent, { postId }) => {
-            const post = await Post.findOneAndDelete({
-                _id: postId,
-            });
-            return post;
+            if (
+                context.user.role.includes("owner") ||
+                context.user.role.includes("admin")
+            ) {
+                const post = await Post.findOneAndDelete({
+                    _id: postId,
+                });
+                return post;
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in and be an owner/admin to delete a post"
+                );
+            }
         },
 
         removeComment: async (parent, { postId, commentId }) => {
-            try {
-                const post = await Post.findById(postId);
-                if (!post) {
-                    throw new Error("No post found");
+            if (context.user) {
+                try {
+                    const post = await Post.findById(postId);
+                    if (!post) {
+                        throw new Error("No post found");
+                    }
+                    const comment = post.comments.id(commentId);
+                    if (!comment) {
+                        throw new Error("No comment found");
+                    }
+                    comment.remove();
+                    await post.save();
+                    return comment;
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error deleting comment");
                 }
-                const comment = post.comments.id(commentId);
-                if (!comment) {
-                    throw new Error("No comment found");
-                }
-                comment.remove();
-                await post.save();
-                return comment;
-            } catch (error) {
-                console.error(error);
-                throw new Error("Error deleting comment");
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in to delete a comment"
+                );
             }
         },
 
@@ -298,18 +373,24 @@ const resolvers = {
             { companyId, text, sender, name },
             context
         ) => {
-            try {
-                const newMessage = new ChatMessage({
-                    companyId,
-                    text,
-                    sender,
-                    name,
-                });
-                await newMessage.save();
-                return newMessage;
-            } catch (error) {
-                console.error(error);
-                throw new Error("Error creating chat message");
+            if (context.user) {
+                try {
+                    const newMessage = new ChatMessage({
+                        companyId,
+                        text,
+                        sender,
+                        name,
+                    });
+                    await newMessage.save();
+                    return newMessage;
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error creating chat message");
+                }
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in to create a chat message"
+                );
             }
         },
     },
