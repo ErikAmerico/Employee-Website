@@ -17,19 +17,21 @@ const resolvers = {
 
         users: async (parent, {}, context) => {
             if (context.user) {
-                const params = Company ? { Company } : {};
-                const users = await User.find(params).populate("company");
+              const companyId = context.user.company;
+              const params = companyId ? { company: companyId } : {};
+              const users = await User.find(params).populate("company");
 
-                const usersWithRolesAsString = users.map((user) => ({
-                    ...user.toObject(),
-                    role: user.role.join(", "),
-                }));
+              const usersWithRolesAsString = users.map((user) => ({
+                ...user.toObject(),
+                role: user.role.join(", "),
+              }));
 
-                return usersWithRolesAsString;
-                //return await User.find(params).populate("company");
+              return usersWithRolesAsString;
+              //return await User.find(params).populate("company");
             }
             throw new AuthenticationError("Not logged in");
         },
+
         //find all posts in a company
         posts: async (parent, { companyId }) => {
             const params = companyId ? { companyId } : {};

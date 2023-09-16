@@ -55,8 +55,8 @@ export const QUERY_SINGLE_POST = gql`
 
 //get all users in a company
 export const GET_USERS_BY_COMPANY = gql`
-  query users {
-    users {
+  query getUsersByCompany($companyId: ID!) {
+    users (companyId: $companyId) {
       _id
       firstName
       lastName
