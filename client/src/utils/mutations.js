@@ -126,3 +126,29 @@ export const UPDATE_POST = gql`
     }
   }
 `;
+
+export const CREATE_CHAT_MESSAGE = gql`
+  mutation createChatMessage(
+    $companyId: ID!
+    $text: String!
+    $sender: String!
+  ) {
+    createChatMessage(companyId: $companyId, text: $text, sender: $sender) {
+      _id
+      companyId
+      text
+      sender
+    }
+  }
+`;
+
+export const GET_PREV_CHAT_MESSAGES = gql`
+  query getPrevChatMessages($companyId: ID!) {
+    getChatMessages(companyId: $companyId) {
+      _id
+      companyId
+      text
+      sender
+    }
+  }
+`;
