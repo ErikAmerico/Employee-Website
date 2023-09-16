@@ -132,3 +132,30 @@ export const GET_PREV_CHAT_MESSAGES = gql`
     }
   }
 `;
+
+export const CREATE_COMMENT = gql`
+  mutation createComment($postId: ID!, $commentText: String!) {
+    createComment(postId: $postId, commentText: $commentText) {
+      _id
+      commentText
+    }
+  }
+`;
+
+export const REMOVE_COMMENT = gql`
+  mutation removeComment($commentId: ID!) {
+    removeComment(commentId: $commentId) {
+      _id
+      commentText
+    }
+  }
+`;
+
+export const UPDATE_COMMENT = gql`
+  mutation updateComment($commentId: ID!, $commentText: String!) {
+    updateComment(commentId: $commentId, commentText: $commentText) {
+      _id
+      commentText
+    }
+  }
+`;

@@ -52,6 +52,21 @@ export const QUERY_SINGLE_POST = gql`
   }
 `;
 
+//get all comments
+export const QUERY_COMMENTS = gql`
+  query comments {
+    comments {
+      _id
+      commentText
+      createdAt
+      user {
+        firstName
+        lastName
+      }
+    }
+  }
+`;
+
 
 //get all users in a company
 export const GET_USERS_BY_COMPANY = gql`

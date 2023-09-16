@@ -68,6 +68,14 @@ const resolvers = {
                 throw new Error("Post not found");
             }
         },
+        //find all comments in a post
+        comments: async (parent, { postId }) => {
+            if (postId) {
+                return await Comment.find({ post: postId }).populate("user");
+            } else {
+                throw new Error("Post not found");
+            }
+        },
         //find a selected User
         user: async (parent, {}) => {
             return await User.findOne({ _id: context.user._id }).populate(
@@ -79,7 +87,7 @@ const resolvers = {
                 const messages = await ChatMessage.find({ companyId });
                 return messages;
             } catch (error) {
-                throw new Error('Error getting chat messages');
+                throw new Error("Error getting chat messages");
             }
         },
     },
@@ -228,6 +236,13 @@ const resolvers = {
             return post;
         },
 
+        removeComment: async (parent, { commentId }) => {
+            const comment = await Comment.findOneAndDelete({
+                _id: commentId,
+            });
+            return comment;
+        },
+
         addUserToCompany: async (parent, { companyId, userId }) => {
             try {
                 const company = await Company.findById(companyId);
@@ -245,14 +260,18 @@ const resolvers = {
                 throw new Error("Error adding user to company");
             }
         },
-        createChatMessage: async (parent, { companyId, text, sender }, context) => {
+        createChatMessage: async (
+            parent,
+            { companyId, text, sender },
+            context
+        ) => {
             try {
                 const newMessage = new ChatMessage({ companyId, text, sender });
                 await newMessage.save();
                 return newMessage;
             } catch (error) {
                 console.error(error);
-                throw new Error('Error creating chat message');
+                throw new Error("Error creating chat message");
             }
         },
     },
