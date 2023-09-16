@@ -87,26 +87,6 @@ export const CREATE_POST = gql`
   }
 `;
 
-// export const CREATE_POST = gql`
-//     mutation createPost($postText: String!, $images: [String]) {
-//         createPost(postText: $postText, images: $images) {
-//             _id
-//             postText
-//             user {
-//                 _id
-//                 firstName
-//                 lastName
-//             }
-//             images
-//             likes
-//             comments {
-//                 _id
-//                 text
-//             }
-//         }
-//     }
-// `;
-
 export const REMOVE_POST = gql`
   mutation removePost($postId: ID!) {
     removePost(postId: $postId) {

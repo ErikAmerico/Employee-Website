@@ -47,6 +47,10 @@ const typeDefs = `
         likes: Int
         comments: [Comment]
     }
+
+    type Posts {
+        posts: [Post]
+    }
      
     type Comment {
         _id: ID!

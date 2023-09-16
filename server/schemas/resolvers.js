@@ -1,6 +1,6 @@
 const { signToken, AuthenticationError } = require("../utils/auth");
 const { User, Company, Post } = require("../models/Company");
-const { default: mongoose } = require("mongoose");
+// const { default: mongoose } = require("mongoose");
 
 const resolvers = {
     Query: {
@@ -34,20 +34,25 @@ const resolvers = {
         posts: async (parent, args, context) => {
             // return await Post.find({ "user.company._id": context.user.company })
             return await Post.find({
-                user: {
-                    company: {
-                        _id: new mongoose.Types.ObjectId(
-                            "6502e51f83a006d7ebbef2cd"
-                        ),
-                    },
-                },
-            })
-                // "user._id": new mongoose.Types.ObjectId("6502e51f83a006d7ebbef2cf"),  })
-                .populate("user")
-                .populate({
-                    path: "comments",
-                    populate: "user",
-                });
+                //     user: {
+                //         company: {
+                //             _id: new mongoose.Types.ObjectId(
+                //                 "6502e51f83a006d7ebbef2cd"
+                //             ),
+                //         },
+                //     },
+                // })
+                //     // "user._id": new mongoose.Types.ObjectId("6502e51f83a006d7ebbef2cf"),  })
+                //     .populate("user")
+                //     .populate({
+                //         path: "comments",
+                //         populate: "user",
+                //     });
+                user: context.user._id,
+            }).populate({
+                path: "user",
+                select: "firstName lastName profileImage company",
+            });
         },
         //find a single post
         post: async (parent, { postId }) => {
@@ -104,7 +109,7 @@ const resolvers = {
             });
 
             const token = signToken(user); //create company id to payload of token
-            return { token, user };
+            return { token, user, company };
         },
         //add a new post
         createPost: async (parent, { images, postText }, context) => {
