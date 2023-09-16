@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import io from 'socket.io-client';
 import AuthService from "../utils/auth";
 import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_CHAT_MESSAGE, GET_PREV_CHAT_MESSAGES } from '../utils/mutations';
+import { CREATE_CHAT_MESSAGE } from '../utils/mutations';
+import { GET_PREV_CHAT_MESSAGES } from '../utils/queries';
 import './Chat.css';
 const socket = io.connect('http://localhost:3002');
 

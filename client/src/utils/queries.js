@@ -67,3 +67,15 @@ export const GET_USERS_BY_COMPANY = gql`
     }
   }
 `;
+
+export const GET_PREV_CHAT_MESSAGES = gql`
+  query getPrevChatMessages($companyId: ID!) {
+    getChatMessages(companyId: $companyId) {
+      _id
+      companyId
+      text
+      sender
+      name
+    }
+  }
+`;
