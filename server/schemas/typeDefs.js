@@ -84,6 +84,16 @@ const typeDefs = `
         name: String!
     }
 
+    type msgCnt {
+        companyId: ID!
+        count: Int!
+    }
+
+    input msgCntInput {
+        companyId: ID!
+        count: Int!
+    }
+
     type Query {
         company(companyId: ID!): Company
         user(userId: ID!): User
@@ -111,6 +121,7 @@ const typeDefs = `
         removeCompany(companyId: ID!): Company
         addUserToCompany(companyId: ID!, userId: ID!): Company
         createChatMessage(companyId: ID!, text: String!, sender: String!, name: String!): ChatMessage
+        createMsgCnt(companyId: ID!, count: Int!): msgCnt
     }
 `;
 

@@ -1,6 +1,7 @@
 const { signToken, AuthenticationError } = require("../utils/auth");
 const { User, Company, Post } = require("../models/Company");
 const ChatMessage = require("../models/ChatMessage");
+const MsgCnt = require("../models/MsgCnt.js");
 
 const resolvers = {
     Query: {
@@ -425,6 +426,25 @@ const resolvers = {
             } else {
                 throw new AuthenticationError(
                     "You need to be logged in to create a chat message"
+                );
+            }
+        },
+        createMsgCnt: async (parent, { companyId, count }, context) => {
+            if (context.user) {
+                try {
+                    const newMsgCnt = new MsgCnt({
+                        companyId,
+                        count,
+                    });
+                    await newMsgCnt.save();
+                    return newMsgCnt;
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error storing message count");
+                }
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in store message count"
                 );
             }
         },

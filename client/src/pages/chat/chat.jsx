@@ -22,6 +22,8 @@ export default function Chat() {
     const { loading, data, refetch } = useQuery(GET_PREV_CHAT_MESSAGES, {
         variables: { companyId },
     });
+        
+    console.log('chat messages query data', data)
 
     useEffect(() => {
         if (data) {

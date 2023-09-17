@@ -17,7 +17,8 @@ import {
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
-import {CREATE_USER, ADD_USER_TO_COMPANY, REMOVE_COMPANY } from "../utils/mutations";
+import { CREATE_USER, ADD_USER_TO_COMPANY, REMOVE_COMPANY, CREATE_MSG_CNT } from "../utils/mutations";
+import { GET_PREV_CHAT_MESSAGES } from "../utils/queries";
 import AuthService from "../utils/auth";
 
 //import MenuIcon from '@mui/icons-material/Menu';
@@ -45,7 +46,9 @@ const Header = () => {
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
     const [removeCompany] = useMutation(REMOVE_COMPANY);
+    const [createMsgCnt] = useMutation(CREATE_MSG_CNT);
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
+    const [msgCntAtLogOut, setMsgCntAtLogOut] = useState(0);
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -105,17 +108,60 @@ const Header = () => {
         setAnchorEl();
     };
 
-    const handleLogout = () => {
-        AuthService.logout();
-        handleMenuClose();
-    };
+
+    // const handleLogout = async () => { //
+    //     await createMsgCnt({
+    //         variables: { companyId: companyId, count: msgCntAtLogOut },
+    //     })
+    //     .then(() => {
+        
+    //         AuthService.logout();
+    //         handleMenuClose();
+    //         localStorage.removeItem("company_id");
+    //     })
+    // };
+
+    // useEffect(() => {
+    //     const { Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, {
+    //         variables: { companyId },
+    //     });
+    //     setMsgCntAtLogOut(Msgs4MsgCount);
+    // }), [handleLogout];
+
+    // const handleLogout = () => {
+    //     AuthService.logout();
+    //     handleMenuClose();
+    //     localStorage.removeItem("company_id");
+    // };
+
+    const companyId = localStorage.getItem("company_id");
+
+  const { data: Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, {
+    variables: { companyId },
+  });
+
+  const handleLogout = async () => {
+    await createMsgCnt({
+      variables: { companyId: companyId, count: msgCntAtLogOut },
+    });
+
+    AuthService.logout();
+    handleMenuClose();
+    localStorage.removeItem("company_id");
+  };
+    
+  useEffect(() => {
+    if (Msgs4MsgCount && Msgs4MsgCount.length > 0) {
+      const messageCount = Msgs4MsgCount.length;
+      setMsgCntAtLogOut(messageCount);
+    }
+  }, [Msgs4MsgCount, msgCntAtLogOut, handleLogout]);
 
     const handleAddUserClick = () => {
         setShowModal(true);
         handleMenuClose();
     };
 
-    const companyId = localStorage.getItem("company_id");
 
     const handleModalSubmit = async () => {
         try {
