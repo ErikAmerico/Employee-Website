@@ -19,7 +19,7 @@ const typeDefs = `
         lastName: String
         role: String
         title: String
-        company: Company
+        companyId: Company
         email: String
         phone: String
         password: String
@@ -39,6 +39,7 @@ const typeDefs = `
 
     type Post {
         _id: ID!
+        companyId: Company
         user: User!
         images: [String]
         postText: String!
@@ -96,8 +97,8 @@ const typeDefs = `
 
     type Mutation {
         createCompany(name: String!, type: String!, logo: String): Company
-        createUser(firstName: String!, lastName: String!, company: String, role: String, title: String, email: String!, phone: String, password: String!, profileImage: String): Auth
-        createPost(postText: String!, images: [String]): Post
+        createUser(firstName: String!, lastName: String!, companyId: String, role: String, title: String, email: String!, phone: String, password: String!, profileImage: String): Auth
+        createPost(postText: String!, images: [String], companyId: String): Post
         createComment(postId: ID!, commentText: String image: String): Comment
         login(email: String!, password: String!): Auth
         updateCompany(companyId: ID!, name: String, type: String, logo: String): Company
@@ -107,6 +108,7 @@ const typeDefs = `
         removeUser(userId: ID!): User
         removePost(postId: ID!): Post
         removeComment(commentId: ID!): Comment
+        removeCompany(companyId: ID!): Company
         addUserToCompany(companyId: ID!, userId: ID!): Company
         createChatMessage(companyId: ID!, text: String!, sender: String!, name: String!): ChatMessage
     }

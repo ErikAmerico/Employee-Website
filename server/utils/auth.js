@@ -46,7 +46,7 @@ module.exports = {
         lastName,
         _id,
         role,
-        company,
+        companyId,  //changed from company to companyId
         title,
         phone,
     }) {
@@ -56,7 +56,7 @@ module.exports = {
             lastName,
             _id,
             role,
-            company,
+            companyId,  //changed from company to companyId
             title,
             phone,
         };
