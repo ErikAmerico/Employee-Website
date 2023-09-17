@@ -41,7 +41,7 @@ class AuthService {
     login(idToken) {
         //saves company id of logged in user to local storage
         const decodedToken = decode(idToken);
-        localStorage.setItem("company_id", decodedToken.data.company);
+        localStorage.setItem("company_id", decodedToken.data.companyId._id); //changed from company to companyId._id
 
         // Saves user token to localStorage
         localStorage.setItem("id_token", idToken);

@@ -108,7 +108,7 @@ export default function Users() {
                     )}
                   </TableCell>
                   <TableCell>
-                    {myRole.includes("Owner") && user._id !== myId && [
+                    {((myRole.includes("Owner") || (myRole.includes("Admin") && user.role !== "Owner")) && user._id !== myId) && [
                       <Button key='removeUzer' onClick={() => handleRemoveUser(user)} color='error' variant='contained'>Remove User</Button>
                     ]}
                   </TableCell>

@@ -17,7 +17,7 @@ import {
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
-import {CREATE_USER, ADD_USER_TO_COMPANY } from "../utils/mutations";
+import {CREATE_USER, ADD_USER_TO_COMPANY, REMOVE_COMPANY } from "../utils/mutations";
 import AuthService from "../utils/auth";
 
 //import MenuIcon from '@mui/icons-material/Menu';
@@ -41,8 +41,10 @@ const Header = () => {
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const [selectedRole, setSelectedRole] = useState('');
+    const [showDeleteCompanyModal, setShowDeleteCompanyModal] = useState(false);
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
+    const [removeCompany] = useMutation(REMOVE_COMPANY);
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
     const navigate = useNavigate();
 
@@ -119,7 +121,7 @@ const Header = () => {
         try {
 
             const userResponse = await createUser({
-                variables: { ...modalData, company: companyId, profileImage: initials, role: selectedRole },
+                variables: { ...modalData, companyId: companyId, profileImage: initials, role: selectedRole },
             })
              
             const userId = userResponse.data.createUser.user._id;
@@ -253,6 +255,53 @@ const Header = () => {
         </div>
     );
 
+    const handleDeleteCompanyClick = () => {
+        setShowDeleteCompanyModal(true);
+        handleMenuClose();
+    };
+
+    const handleConfirmDeleteCompany = () => {
+        removeCompany({
+            variables: { companyId },
+        })
+        .then(() => {
+            setShowDeleteCompanyModal(false);
+            AuthService.logout();
+            localStorage.removeItem("company_id");
+        });
+    };
+
+    const handleCancelDeleteCompany = () => {
+        setShowDeleteCompanyModal(false);
+    };
+
+    const deleteCompanyModalContent = (
+          <div className="modal-container">
+            <div className="modal-content">
+              <h2>Confirm Deletion</h2>
+              <p>All content associated with this organization will be erased upon confirmation</p>
+              <div className="button-container">
+                <Button
+                  onClick={handleConfirmDeleteCompany}
+                  variant="contained"
+                  color="primary"
+                  className="submit-button"
+                >
+                  Confirm
+                </Button>
+                <Button
+                  onClick={handleCancelDeleteCompany}
+                  variant="contained"
+                  color="warning"
+                  className="close-button"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+    );
+
     return (
         <>
         <AppBar
@@ -358,6 +407,14 @@ const Header = () => {
                     ]}
                     <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        {userRole.includes("Owner") && [
+                        <MenuItem 
+                          key="delComp"
+                          onClick={handleDeleteCompanyClick}
+                          style={{ fontSize: "12px", color: "white", backgroundColor: "red", borderRadius: "5px" }}
+                          >Disband Company
+                          </MenuItem>
+                    ]}
                 </Menu>
             </Toolbar>
         </AppBar>
@@ -370,6 +427,18 @@ const Header = () => {
             >
                 <Fade in={showModal}>
                     {modalContent}
+                </Fade>
+            </Modal>
+            )}
+            {showDeleteCompanyModal && (
+            <Modal
+                key="delCompModal"
+                open={showDeleteCompanyModal}
+                onClose={() => setShowDeleteCompanyModal(false)}
+                closeAfterTransition
+                >
+                <Fade in={showDeleteCompanyModal}>
+                    {deleteCompanyModalContent}
                 </Fade>
             </Modal>
             )}

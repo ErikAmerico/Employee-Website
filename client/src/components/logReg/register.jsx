@@ -72,7 +72,7 @@ const Register = ({ toggleForm }) => {
             console.log("modalData", modalData)
 
             const userResponse = await createUser({
-                variables: { ...modalData, company: companyId, role: 'Owner'},
+                variables: { ...modalData, companyId: companyId, role: 'Owner'},
            })
              
             const userId = userResponse.data.createUser.user._id;
