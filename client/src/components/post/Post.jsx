@@ -12,10 +12,10 @@ import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import AuthService from "../../utils/auth";
 import { formatDate } from "../../utils/date";
 import Comment from "../comment/comment";
 import "./post.css";
-import AuthService from "../../utils/auth";
 
 import { useQuery } from "@apollo/client";
 import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
@@ -69,7 +69,9 @@ const Post = () => {
             setEditingPostId(null);
         };
 
-        //add forwardRef to fix error here if and when needed.
+        const user = AuthService.getProfile();
+        const isAdminOrOwner =
+            user && (user.role === "Admin" || user.role === "Owner");
 
         if (!posts.length) {
             return <p>No Announcements</p>;
@@ -88,24 +90,26 @@ const Post = () => {
                                 </Avatar>
                             }
                             action={
-                                <ButtonGroup>
-                                    <IconButton
-                                        aria-label="settings"
-                                        onClick={() =>
-                                            handleRemovePost(post._id)
-                                        }
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                                    <IconButton
-                                        aria-label="settings"
-                                        onClick={() =>
-                                            setEditingPostId(post._id)
-                                        }
-                                    >
-                                        <EditIcon />
-                                    </IconButton>
-                                </ButtonGroup>
+                                isAdminOrOwner && (
+                                    <ButtonGroup>
+                                        <IconButton
+                                            aria-label="settings"
+                                            onClick={() =>
+                                                handleRemovePost(post._id)
+                                            }
+                                        >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                        <IconButton
+                                            aria-label="settings"
+                                            onClick={() =>
+                                                setEditingPostId(post._id)
+                                            }
+                                        >
+                                            <EditIcon />
+                                        </IconButton>
+                                    </ButtonGroup>
+                                )
                             }
                             title={`${post.user.firstName} ${post.user.lastName}`}
                             subheader={formatDate(post.createdAt)}
@@ -163,9 +167,7 @@ const Post = () => {
             ));
         }
     } else {
-        return (
-            <h1> Please log in to view this page. </h1>
-        )
+        return <h1> Please log in to view this page. </h1>;
     }
 };
 
