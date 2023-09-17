@@ -37,26 +37,21 @@ const resolvers = {
             // return await Post.find({ "user.company._id": context.user.company })
             // check if user is logged in
             if (context.user) {
-                return await Post.find({
-                    //     user: {
-                    //         company: {
-                    //             _id: new mongoose.Types.ObjectId(
-                    //                 "6502e51f83a006d7ebbef2cd"
-                    //             ),
-                    //         },
-                    //     },
-                    // })
-                    //     // "user._id": new mongoose.Types.ObjectId("6502e51f83a006d7ebbef2cf"),  })
-                    //     .populate("user")
-                    //     .populate({
-                    //         path: "comments",
-                    //         populate: "user",
-                    //     });
-                    user: context.user._id,
-                }).populate({
-                    path: "user",
-                    select: "firstName lastName profileImage companyId", //changed from company to companyId
-                });
+                const companyId = context.user.companyId; //changed from company to companyId
+                try {
+                    const params = companyId ? { companyId: companyId } : {};
+                    const posts = await Post.find(params)
+                        .populate("user")
+                        .populate("comments")
+                        .populate({
+                            path: "comments",
+                            populate: "user",
+                        });
+                    return posts;
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error getting posts");
+                }
             } else {
                 throw new AuthenticationError("Not logged in");
             }
@@ -84,7 +79,7 @@ const resolvers = {
         user: async (parent, {}, context) => {
             if (context.user) {
                 return await User.findOne({ _id: context.user._id }).populate(
-                  "companyId" //changed from company to companyId
+                    "companyId" //changed from company to companyId
                 );
             } else {
                 throw new AuthenticationError("Not logged in");
@@ -140,7 +135,11 @@ const resolvers = {
             return { token, user, companyId }; //changed from company to companyId
         },
         //add a new post
-        createPost: async (parent, { images, postText, companyId }, context) => {
+        createPost: async (
+            parent,
+            { images, postText, companyId },
+            context
+        ) => {
             // check if user is logged in and is owner or admin role
             if (
                 (context.user && context.user.role == "Owner") ||
@@ -165,7 +164,11 @@ const resolvers = {
         },
 
         //add a new comment
-        createComment: async (parent, { postId, commentText, images }, context) => {
+        createComment: async (
+            parent,
+            { postId, commentText, images },
+            context
+        ) => {
             if (context.user) {
                 try {
                     const post = await Post.findById(postId);
@@ -204,8 +207,8 @@ const resolvers = {
             }
             // const token = signToken(user);
             const token = signToken({
-              ...user.toObject(),
-              companyId: user.companyId, // changed from company._id,
+                ...user.toObject(),
+                companyId: user.companyId, // changed from company._id,
             });
             return { token, user };
         },
@@ -271,7 +274,11 @@ const resolvers = {
             }
         },
 
-        updateComment: async (parent, { postId, commentId, commentText }, context) => {
+        updateComment: async (
+            parent,
+            { postId, commentId, commentText },
+            context
+        ) => {
             if (context.user) {
                 try {
                     const post = await Post.findById(postId);
@@ -298,25 +305,22 @@ const resolvers = {
         },
 
         removeUser: async (parent, { userId }, context) => {
-            if (
-                context.user.role == "Owner" ||
-                context.user.role == "Admin"
-            ) {
+            if (context.user.role == "Owner" || context.user.role == "Admin") {
                 const user = await User.findById(userId);
 
-                 if (!user) {
+                if (!user) {
                     throw new Error("User not found");
-                 }
-                
+                }
+
                 await User.findByIdAndDelete(userId);
 
                 if (user.companyId) {
-                  const company = await Company.findById(user.companyId); //changed from company to companyId
+                    const company = await Company.findById(user.companyId); //changed from company to companyId
 
-                  if (company) {
-                    company.users.pull(userId);
-                    await company.save();
-                  }
+                    if (company) {
+                        company.users.pull(userId);
+                        await company.save();
+                    }
                 }
                 return user;
             } else {
@@ -346,10 +350,7 @@ const resolvers = {
         },
 
         removePost: async (parent, { postId }, context) => {
-            if (
-                context.user.role == "Owner" ||
-                context.user.role == "Admin"
-            ) {
+            if (context.user.role == "Owner" || context.user.role == "Admin") {
                 const post = await Post.findOneAndDelete({
                     _id: postId,
                 });
