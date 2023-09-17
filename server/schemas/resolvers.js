@@ -296,19 +296,6 @@ const resolvers = {
             }
         },
 
-        // removeUser: async (parent, { userId }, context) => {
-        //     if (
-        //         context.user.role == "Owner" ||
-        //         context.user.role == "Admin"
-        //     ) {
-        //         const user = await User.findByIdAndDelete(userId);
-        //         return user;
-        //     } else {
-        //         throw new AuthenticationError(
-        //             "You need to be logged in and be an owner/admin to delete a user"
-        //         );
-        //     }
-        // },
         removeUser: async (parent, { userId }, context) => {
             if (
                 context.user.role == "Owner" ||
@@ -330,8 +317,6 @@ const resolvers = {
                     await company.save();
                   }
                 }
-
-                
                 return user;
             } else {
                 throw new AuthenticationError(
