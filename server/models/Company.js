@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     role: [String],
     title: String,
-    company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
+    companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company" }, //changed from company to companyId
     email: {
         type: String,
         unique: true,
@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
 
 const postSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
     images: [String],
     postText: String,
     createdAt: { type: Date, default: Date.now },

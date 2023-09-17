@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const chatMessageSchema = new mongoose.Schema({
     companyId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
+      ref: "Company", //might need to change to companyId? doesn't appear so.
       required: true,
     },
     text: {
