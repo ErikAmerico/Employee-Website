@@ -39,6 +39,7 @@ const typeDefs = `
 
     type Post {
         _id: ID!
+        companyId: Company
         user: User!
         images: [String]
         postText: String!
@@ -97,7 +98,7 @@ const typeDefs = `
     type Mutation {
         createCompany(name: String!, type: String!, logo: String): Company
         createUser(firstName: String!, lastName: String!, companyId: String, role: String, title: String, email: String!, phone: String, password: String!, profileImage: String): Auth
-        createPost(postText: String!, images: [String]): Post
+        createPost(postText: String!, images: [String], companyId: String): Post
         createComment(postId: ID!, commentText: String image: String): Comment
         login(email: String!, password: String!): Auth
         updateCompany(companyId: ID!, name: String, type: String, logo: String): Company

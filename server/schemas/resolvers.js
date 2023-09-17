@@ -140,13 +140,14 @@ const resolvers = {
             return { token, user, companyId }; //changed from company to companyId
         },
         //add a new post
-        createPost: async (parent, { images, postText }, context) => {
+        createPost: async (parent, { images, postText, companyId }, context) => {
             // check if user is logged in and is owner or admin role
             if (
                 (context.user && context.user.role == "Owner") ||
                 context.user.role == "Admin"
             ) {
                 const post = await Post.create({
+                    companyId,
                     images,
                     postText,
                     user: context.user._id,
@@ -330,6 +331,7 @@ const resolvers = {
                 try {
                     await User.deleteMany({ companyId });
                     await ChatMessage.deleteMany({ companyId });
+                    await Post.deleteMany({ companyId });
                     await Company.findByIdAndDelete(companyId);
                     return null;
                 } catch (error) {

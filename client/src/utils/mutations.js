@@ -80,8 +80,8 @@ export const LOGIN = gql`
 `;
 
 export const CREATE_POST = gql`
-  mutation createPost($postText: String!, $images: [String]) {
-    createPost(postText: $postText, images: $images) {
+  mutation createPost($postText: String!, $images: [String], $companyId: String) {
+    createPost(postText: $postText, images: $images, companyId: $companyId) {
       postText
     }
   }

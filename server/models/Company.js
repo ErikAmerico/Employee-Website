@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
 
 const postSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
     images: [String],
     postText: String,
     createdAt: { type: Date, default: Date.now },

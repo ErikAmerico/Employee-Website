@@ -24,6 +24,9 @@ const Share = () => {
         //set useMutation
         const [createPost] = useMutation(CREATE_POST);
 
+        //get company id from local storage, to delete all posts when company is disbanded
+        const companyId = localStorage.getItem("company_id");
+
         //handle post submit
         const handlePostSubmit = async (event) => {
             event.preventDefault();
@@ -33,6 +36,7 @@ const Share = () => {
                     variables: {
                         //Pass post text and user information to be used on posts
                         postText,
+                        companyId,
                     },
                 });
                 setPostText("");
