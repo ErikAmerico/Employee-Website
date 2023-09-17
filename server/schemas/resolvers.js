@@ -62,7 +62,7 @@ const resolvers = {
             }
         },
         //find a single post
-        post: async (parent, { postId }) => {
+        post: async (parent, { postId }, context) => {
             //check if logged in
             if (context.user) {
                 if (postId) {
@@ -81,7 +81,7 @@ const resolvers = {
             }
         },
         //find a selected User
-        user: async (parent, {}) => {
+        user: async (parent, {}, context) => {
             if (context.user) {
                 return await User.findOne({ _id: context.user._id }).populate(
                   "companyId" //changed from company to companyId
@@ -165,7 +165,7 @@ const resolvers = {
         },
 
         //add a new comment
-        createComment: async (parent, { postId, commentText, images }) => {
+        createComment: async (parent, { postId, commentText, images }, context) => {
             if (context.user) {
                 try {
                     const post = await Post.findById(postId);
@@ -210,7 +210,7 @@ const resolvers = {
             return { token, user };
         },
 
-        updateCompany: async (parent, { name, type, logo }) => {
+        updateCompany: async (parent, { name, type, logo }, context) => {
             if (context.user.role == "Owner") {
                 const updatedCompany = await Company.findOneAndUpdate(
                     { name, type, logo },
@@ -271,7 +271,7 @@ const resolvers = {
             }
         },
 
-        updateComment: async (parent, { postId, commentId, commentText }) => {
+        updateComment: async (parent, { postId, commentId, commentText }, context) => {
             if (context.user) {
                 try {
                     const post = await Post.findById(postId);
@@ -361,7 +361,7 @@ const resolvers = {
             }
         },
 
-        removeComment: async (parent, { postId, commentId }) => {
+        removeComment: async (parent, { postId, commentId }, context) => {
             if (context.user) {
                 try {
                     const post = await Post.findById(postId);
