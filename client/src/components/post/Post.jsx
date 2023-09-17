@@ -3,6 +3,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -10,6 +12,7 @@ import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import AuthService from "../../utils/auth";
@@ -21,18 +24,24 @@ import { useQuery } from "@apollo/client";
 import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
 
 import { useMutation } from "@apollo/client";
-import { REMOVE_POST } from "../../utils/mutations";
+import {
+    CREATE_COMMENT,
+    REMOVE_COMMENT,
+    REMOVE_POST,
+} from "../../utils/mutations";
 
 import { useState } from "react";
-import { UPDATE_POST } from "../../utils/mutations";
+import { UPDATE_COMMENT, UPDATE_POST } from "../../utils/mutations";
 
-const Post = () => {
+const Post = ({ comments }) => {
     if (AuthService.loggedIn()) {
         const [editingPostId, setEditingPostId] = useState(null);
         const [showModal, setShowModal] = useState(false);
+        const [newCommentText, setNewCommentText] = useState("");
         const [postId, setPostId] = useState();
         const [updatePost, { errors }] = useMutation(UPDATE_POST);
         const [removePost, { error }] = useMutation(REMOVE_POST);
+        const [createComment] = useMutation(CREATE_COMMENT);
 
         const { data } = useQuery(QUERY_POSTS);
         const posts = data?.posts || [];
@@ -67,6 +76,22 @@ const Post = () => {
                 variables: { postId: postId, postText: updatedValue },
             });
             setEditingPostId(null);
+        };
+
+        const handleCreateComment = async () => {
+            try {
+                const { data } = await createComment({
+                    variables: {
+                        postId: postId, // Use postId from state
+                        commentText: newCommentText, // Use newCommentText from state
+                        commentId: singlePost._id,
+                    },
+                });
+                // Handle the response as needed (e.g., reset form, update UI).
+                // You can also update the comments UI here if needed.
+            } catch (error) {
+                console.error(error);
+            }
         };
 
         const user = AuthService.getProfile();
@@ -150,17 +175,78 @@ const Post = () => {
                                 <ChatBubbleIcon />
                                 <div>3</div>
                             </IconButton>
-
-                            {showModal && (
-                                <Modal
-                                    open={showModal}
-                                    onClose={closeModal}
-                                    aria-labelledby="modal-modal-title"
-                                    aria-describedby="modal-modal-description"
+                            {/* Modal to access comments. */}
+                            <Modal open={showModal} onClose={closeModal}>
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        transform: "translate(-50%, -50%)",
+                                        width: 500,
+                                        bgcolor: "background.paper",
+                                        boxShadow: 22,
+                                        p: 10,
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        alignItems: "center",
+                                        border: "4px solid #000",
+                                    }}
                                 >
-                                    <Comment post={singlePost} />
-                                </Modal>
-                            )}
+                                    {/* Post content */}
+                                    <Typography
+                                        variant="h6"
+                                        gutterBottom
+                                        margin={2}
+                                    >
+                                        {post.user.firstName}{" "}
+                                        {post.user.lastName}
+                                    </Typography>
+                                    {/* if no image, render nothing */}
+                                    {post.postImage && (
+                                        <CardMedia
+                                            component="img"
+                                            height="fit-content"
+                                            image={post.postImage}
+                                        />
+                                    )}
+                                    <Typography
+                                        variant="body2"
+                                        gutterBottom
+                                        margin={2}
+                                    >
+                                        {post.postText}
+                                    </Typography>
+                                    {/* Comments */}
+                                    {comments &&
+                                        comments.map((comment) => (
+                                            <Comment
+                                                key={comment._id}
+                                                comment={comment}
+                                                user={user}
+                                                postId={post._id}
+                                            />
+                                        ))}
+                                    {/* Comment input field */}
+                                    <TextField
+                                        placeholder="Add a comment..."
+                                        fullWidth={true}
+                                        multiline={true}
+                                        variant="outlined"
+                                        value={newCommentText}
+                                        onChange={(e) =>
+                                            setNewCommentText(e.target.value)
+                                        }
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        onClick={handleCreateComment}
+                                        fullWidth={true}
+                                    >
+                                        Comment
+                                    </Button>
+                                </Box>
+                            </Modal>
                         </div>
                     </Card>
                 </div>
