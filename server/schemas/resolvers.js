@@ -90,7 +90,7 @@ const resolvers = {
                 throw new AuthenticationError("Not logged in");
             }
         },
-        getChatMessages: async (parent, { companyId }) => {
+        getChatMessages: async (parent, { companyId }, context) => {
             if (context.user) {
                 try {
                     const messages = await ChatMessage.find({ companyId });
@@ -296,12 +296,27 @@ const resolvers = {
             }
         },
 
-        removeUser: async (parent, { userId }) => {
+        removeUser: async (parent, { userId }, context) => {
             if (
                 context.user.role == "Owner" ||
                 context.user.role == "Admin"
             ) {
-                const user = await User.findByIdAndDelete(userId);
+                const user = await User.findById(userId);
+
+                 if (!user) {
+                    throw new Error("User not found");
+                 }
+                
+                await User.findByIdAndDelete(userId);
+
+                if (user.company) {
+                  const company = await Company.findById(user.company);
+
+                  if (company) {
+                    company.users.pull(userId);
+                    await company.save();
+                  }
+                }
                 return user;
             } else {
                 throw new AuthenticationError(
