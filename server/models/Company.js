@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     role: [String],
     title: String,
-    company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
+    companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company" }, //changed from company to companyId
     email: {
         type: String,
         unique: true,

@@ -17,7 +17,7 @@ export const CREATE_USER = gql`
     $lastName: String!
     $email: String!
     $password: String!
-    $company: String
+    $companyId: String
     $role: String
     $phone: String
     $title: String
@@ -27,7 +27,7 @@ export const CREATE_USER = gql`
       lastName: $lastName
       email: $email
       password: $password
-      company: $company
+      companyId: $companyId
       role: $role
       phone: $phone
       title: $title
@@ -38,7 +38,7 @@ export const CREATE_USER = gql`
         email
         firstName
         lastName
-        company {
+        companyId {
           _id
           name
           type
@@ -154,6 +154,14 @@ export const UPDATE_COMMENT = gql`
 export const REMOVE_USER = gql`
   mutation RemoveUser($userId: ID!) {
     removeUser(userId: $userId) {
+      _id
+    }
+  }
+`;
+
+export const REMOVE_COMPANY = gql`
+  mutation RemoveCompany($companyId: ID!) {
+    removeCompany(companyId: $companyId) {
       _id
     }
   }

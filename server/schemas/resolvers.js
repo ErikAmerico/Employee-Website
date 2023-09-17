@@ -17,9 +17,9 @@ const resolvers = {
 
         users: async (parent, {}, context) => {
             if (context.user) {
-                const companyId = context.user.company;
-                const params = companyId ? { company: companyId } : {};
-                const users = await User.find(params).populate("company");
+                const companyId = context.user.companyId; // changed to companyId from company
+                const params = companyId ? { companyId: companyId } : {}; //
+                const users = await User.find(params).populate("companyId"); //changed to companyId
 
                 const usersWithRolesAsString = users.map((user) => ({
                     ...user.toObject(),
@@ -55,7 +55,7 @@ const resolvers = {
                     user: context.user._id,
                 }).populate({
                     path: "user",
-                    select: "firstName lastName profileImage company",
+                    select: "firstName lastName profileImage companyId", //changed from company to companyId
                 });
             } else {
                 throw new AuthenticationError("Not logged in");
@@ -84,7 +84,7 @@ const resolvers = {
         user: async (parent, {}) => {
             if (context.user) {
                 return await User.findOne({ _id: context.user._id }).populate(
-                    "company"
+                  "companyId" //changed from company to companyId
                 );
             } else {
                 throw new AuthenticationError("Not logged in");
@@ -115,7 +115,7 @@ const resolvers = {
                 firstName,
                 lastName,
                 role,
-                company,
+                companyId, //changed from company to companyId
                 title,
                 email,
                 phone,
@@ -128,7 +128,7 @@ const resolvers = {
                 firstName,
                 lastName,
                 role,
-                company,
+                companyId, //changed from company to companyId
                 title,
                 email,
                 phone,
@@ -137,7 +137,7 @@ const resolvers = {
             });
 
             const token = signToken(user); //create company id to payload of token
-            return { token, user, company };
+            return { token, user, companyId }; //changed from company to companyId
         },
         //add a new post
         createPost: async (parent, { images, postText }, context) => {
@@ -193,7 +193,7 @@ const resolvers = {
 
         //login
         login: async (parent, { email, password }) => {
-            const user = await User.findOne({ email }).populate("company");
+            const user = await User.findOne({ email }).populate("companyId"); //changed from company to companyId
             if (!user) {
                 throw new AuthenticationError("Incorrect credentials");
             }
@@ -203,8 +203,8 @@ const resolvers = {
             }
             // const token = signToken(user);
             const token = signToken({
-                ...user.toObject(),
-                company: user.company._id,
+              ...user.toObject(),
+              companyId: user.companyId, // changed from company._id,
             });
             return { token, user };
         },
@@ -252,7 +252,7 @@ const resolvers = {
             return updatedUser;
         },
 
-        updatePost: async (parent, { postId, images, postText }) => {
+        updatePost: async (parent, { postId, images, postText }, context) => {
             if (
                 (context.user && context.user.role == "Admin") ||
                 context.user.role == "Owner"
@@ -309,8 +309,8 @@ const resolvers = {
                 
                 await User.findByIdAndDelete(userId);
 
-                if (user.company) {
-                  const company = await Company.findById(user.company);
+                if (user.companyId) {
+                  const company = await Company.findById(user.companyId); //changed from company to companyId
 
                   if (company) {
                     company.users.pull(userId);
@@ -325,7 +325,25 @@ const resolvers = {
             }
         },
 
-        removePost: async (parent, { postId }) => {
+        removeCompany: async (parent, { companyId }, context) => {
+            if (context.user.role.includes("Owner")) {
+                try {
+                    await User.deleteMany({ companyId });
+                    await ChatMessage.deleteMany({ companyId });
+                    await Company.findByIdAndDelete(companyId);
+                    return null;
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error removing company");
+                }
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in and be an owner to delete a company"
+                );
+            }
+        },
+
+        removePost: async (parent, { postId }, context) => {
             if (
                 context.user.role == "Owner" ||
                 context.user.role == "Admin"
