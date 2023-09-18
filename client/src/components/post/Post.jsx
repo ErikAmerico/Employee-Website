@@ -20,7 +20,7 @@ import { formatDate } from "../../utils/date";
 import Comment from "../comment/comment";
 import "./post.css";
 
-import { useQuery } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
 
 import { useMutation } from "@apollo/client";
@@ -40,6 +40,7 @@ const Post = ({ comments }) => {
         const [showModal, setShowModal] = useState(false);
         const [newCommentText, setNewCommentText] = useState("");
         const [postId, setPostId] = useState();
+        const [singlePost, setSinglePost] = useState(null);
         const [updatePost, { errors }] = useMutation(UPDATE_POST);
         const [removePost, { error }] = useMutation(REMOVE_POST);
         const [createComment] = useMutation(CREATE_COMMENT);
@@ -47,17 +48,26 @@ const Post = ({ comments }) => {
         const { data } = useQuery(QUERY_POSTS);
         const posts = data?.posts || [];
         console.log(posts);
-        const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
-            variables: { postId: postId },
-        });
-        const singlePost = singlePostData?.post || {};
-
-        const openModal = (postId) => {
+        // const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
+        //     variables: { postId: postId },
+        // });
+        const client = useApolloClient();
+        const openModal = async (postId) => {
             setPostId(postId);
-            setShowModal(true);
+            try {
+                const { data } = await client.query({
+                    query: QUERY_SINGLE_POST,
+                    variables: { postId: postId },
+                });
+                setSinglePost(data.post);
+                setShowModal(true);
+            } catch (err) {
+                console.error(err);
+            }
         };
         const closeModal = () => {
             setPostId(null);
+            setSinglePost(null);
             setShowModal(false);
         };
 
@@ -182,6 +192,8 @@ const Post = ({ comments }) => {
                                 <Box
                                     sx={{
                                         position: "absolute",
+                                        maxHeight: "100%",
+                                        overflow: "auto",
                                         top: "50%",
                                         left: "50%",
                                         transform: "translate(-50%, -50%)",
@@ -220,11 +232,8 @@ const Post = ({ comments }) => {
                                         {post.postText}
                                     </Typography>
                                     {/* Comments */}
-                                    {console.log("these are comments", post.comments)}
-                                    {post.comments &&
-                                        
-                                        post.comments.map((comment) => (
-                                            
+                                    {singlePost?.comments &&
+                                        singlePost.comments.map((comment) => (
                                             <Comment
                                                 key={comment._id}
                                                 comment={comment}

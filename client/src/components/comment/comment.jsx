@@ -1,7 +1,6 @@
 import { useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import {
-    CREATE_COMMENT,
     REMOVE_COMMENT,
     UPDATE_COMMENT,
 } from "../../utils/mutations";
