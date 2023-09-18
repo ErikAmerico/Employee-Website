@@ -106,16 +106,15 @@ const resolvers = {
         getLoggedOutChatCount: async (parent, { companyId, userId }, context) => {
             if (context.user) {
                 try {
-                    const mostRecentMsgCnt = await MsgCnt.findOne({
-                        companyId,
-                        userId,
-                    }).sort({ createdAt: -1 }).limit(1);
+                    const mostRecentMsgCnt = await MsgCnt.find({
+                        companyId: companyId,
+                        userId: userId,
+                    })//.sort({ createdAt: -1 }).limit(1);
 
                     if (!mostRecentMsgCnt) {
                          return { count: 0 };
                     }
-
-                    return { count: mostRecentMsgCnt.count };
+                    return mostRecentMsgCnt;
                 } catch (error) {
                     throw new Error("Error getting chat messages");
                 }
