@@ -50,6 +50,8 @@ const Header = () => {
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
     const [msgCntAtLogOut, setMsgCntAtLogOut] = useState();
     const [userId, setUserId] = useState('');
+    const [currCount, setCurrCount] = useState(0);
+    const [loggedCount, setLoggedCount] = useState(0);
     const companyId = localStorage.getItem("company_id");
     const navigate = useNavigate();
 
@@ -57,6 +59,7 @@ const Header = () => {
 
     useEffect(() => {
         if (location.pathname === "/chat" && hasUnreadMessages) {
+            setCurrCount(0);
             setHasUnreadMessages(false);
         }
     }, [location, hasUnreadMessages, setHasUnreadMessages]);
@@ -111,31 +114,47 @@ const Header = () => {
     const handleMenuClose = () => {
         setAnchorEl();
     };
-
+////////////////////////////////////
     const { data: chatCount } = useQuery(GET_LOGGED_OUT_CHAT_COUNT, {
         variables: { companyId: companyId, userId: userId },
     });
 
     console.log("chatCount:", chatCount); // I have the most recent count here, its in an object
 
-    // const countsArray = chatCount.getLoggedOutChatCount.map(item => item.count);
+    //let loggedCount;
+    useEffect(() => {
+    if (chatCount && chatCount.getLoggedOutChatCount) {
+        const countsArray = chatCount.getLoggedOutChatCount.map(item => item.count);
+        //loggedCount = countsArray[0];
+        setLoggedCount(countsArray[0]);
+        console.log(loggedCount)
+    }
+    }, []);
 
-    // const loggedCount = countsArray[0];
-    // console.log("loggedCount:", loggedCount);       ///uncommenting this block causes the error
+    console.log("loggedCount:", loggedCount)
 
-
-  const { data: Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, {
-    variables: { companyId },
-  });
+    const { data: Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, {
+        variables: { companyId },
+    });
     
-    // const currCount = Msgs4MsgCount.getChatMessages.length;  //uncommenting this block causes the rror
-    // console.log("currCount:", currCount);
+    
+    //let currCount;
+    useEffect(() => {  /////this is used in the logout store count function
+    if (Msgs4MsgCount && Msgs4MsgCount.getChatMessages) {
+        //currCount = Msgs4MsgCount.getChatMessages.length;
+        setCurrCount(Msgs4MsgCount.getChatMessages.length);
+    }
+    }, []);
 
-    // useEffect(() => {
-    //     if (currCount > loggedCount) {
-    //         setHasUnreadMessages(true);     ///i want this functionality
-    //     }
-    // }),[]
+    console.log("currCount:", currCount)
+
+     useEffect(() => {
+         if (currCount > loggedCount) {
+             setHasUnreadMessages(true);
+         }tttt
+     }), []
+    
+    /////////////
 
   const handleLogout = async () => {
     await createMsgCnt({
