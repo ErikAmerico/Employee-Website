@@ -10,6 +10,7 @@ import "./share.css";
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { CREATE_POST } from "../../utils/mutations";
+import { QUERY_POSTS } from "../../utils/queries";
 
 const user = AuthService.getProfile();
 
@@ -34,9 +35,23 @@ const Share = () => {
             try {
                 const { data } = await createPost({
                     variables: {
-                        //Pass post text and user information to be used on posts
+                        // Pass post text and user information to be used on posts
                         postText,
                         companyId,
+                    },
+                    update: (cache, { data: { createPost } }) => {
+                        // Read the current list of posts from the cache
+                        const { posts } = cache.readQuery({
+                            query: QUERY_POSTS,
+                        });
+
+                        // Add the newly created post to the list
+                        cache.writeQuery({
+                            query: QUERY_POSTS,
+                            data: {
+                                posts: [createPost, ...posts],
+                            },
+                        });
                     },
                 });
                 setPostText("");

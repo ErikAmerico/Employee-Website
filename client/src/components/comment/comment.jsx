@@ -12,14 +12,65 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { formatDate } from "../../utils/date";
 import { REMOVE_COMMENT, UPDATE_COMMENT } from "../../utils/mutations";
+import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
 
-const Comment = ({ comment, user, postId }) => {
+const Comment = ({ comment, user, postId, cache }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedCommentText, setEditedCommentText] = useState(
         comment.commentText
     );
-    const [updateComment] = useMutation(UPDATE_COMMENT);
-    const [removeComment] = useMutation(REMOVE_COMMENT);
+    // Update comment and Cache
+    const [updateComment] = useMutation(UPDATE_COMMENT, {
+        update: (cache, { data }) => {
+            try {
+                const { singlePost } = cache.readQuery({
+                    query: QUERY_SINGLE_POST,
+                    variables: { postId: postId },
+                });
+                const filteredComments = singlePost.comments.filter(
+                    (comment) => comment._id !== data.updateComment._id
+                );
+
+                cache.writeQuery({
+                    query: QUERY_SINGLE_POST,
+                    data: {
+                        ...singlePost,
+                        comments: [updateComment, filteredComments],
+                    },
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        },
+    });
+    // Remove comment and Cache
+    const [removeComment] = useMutation(REMOVE_COMMENT, {
+        update: (cache, { data }) => {
+            // Read the current list of posts from the cache
+            const { posts } = cache.readQuery({
+                query: QUERY_POSTS,
+            });
+
+            // Find the post that contains the comment
+            const updatedPosts = posts.map((post) => {
+                if (post._id === postId) {
+                    // Find and remove the deleted comment from the post's comments
+                    post.comments = post.comments.filter(
+                        (c) => c._id !== comment._id
+                    );
+                }
+                return post;
+            });
+
+            // Update the posts list in the cache
+            cache.writeQuery({
+                query: QUERY_POSTS,
+                data: {
+                    posts: updatedPosts,
+                },
+            });
+        },
+    });
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const handleEditComment = async () => {
@@ -39,7 +90,6 @@ const Comment = ({ comment, user, postId }) => {
 
     const handleDeleteComment = async () => {
         try {
-            console.log("commentId:", comment._id);
             const { data } = await removeComment({
                 variables: {
                     postId: postId,

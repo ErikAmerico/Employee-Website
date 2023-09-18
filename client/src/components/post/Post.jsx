@@ -20,58 +20,117 @@ import { formatDate } from "../../utils/date";
 import Comment from "../comment/comment";
 import "./post.css";
 
-import { useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useLazyQuery, useQuery } from "@apollo/client";
 import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
 
 import { useMutation } from "@apollo/client";
-import {
-    CREATE_COMMENT,
-    REMOVE_COMMENT,
-    REMOVE_POST,
-} from "../../utils/mutations";
+import { CREATE_COMMENT, REMOVE_POST } from "../../utils/mutations";
 
 import { useState } from "react";
-import { UPDATE_COMMENT, UPDATE_POST } from "../../utils/mutations";
+import { UPDATE_POST } from "../../utils/mutations";
 
 const Post = ({ comments }) => {
-    console.log(comments);
     if (AuthService.loggedIn()) {
         const [editingPostId, setEditingPostId] = useState(null);
         const [showModal, setShowModal] = useState(false);
         const [newCommentText, setNewCommentText] = useState("");
         const [postId, setPostId] = useState();
-        const [singlePost, setSinglePost] = useState(null);
-        const [updatePost, { errors }] = useMutation(UPDATE_POST);
-        const [removePost, { error }] = useMutation(REMOVE_POST);
-        const [createComment] = useMutation(CREATE_COMMENT);
+        // const [singlePost, setSinglePost] = useState(null);
+        //Update Post and Caching
+        const [updatePost, { errors }] = useMutation(UPDATE_POST, {
+            update(cache, { data: { updatePost } }) {
+                const cachedPost = cache.readFragment({
+                    id: cache.identify(post),
+                    fragment: gql`
+                        fragment UpdatedPost on Post {
+                            _id
+                            postText
+                            updatedAt
+                        }
+                    `,
+                });
+                const updatedPost = {
+                    ...cachedPost,
+                    postText: updatePost.postText,
+                };
+
+                cache.writeFragment({
+                    id: cache.identify(post),
+                    fragment: gql`
+                        fragment UpdatedPost on Post {
+                            _id
+                            postText
+                            updatedAt
+                        }
+                    `,
+                    data: updatedPost,
+                });
+            },
+        });
+        //Remove Post and Caching
+        const [removePost, { error }] = useMutation(REMOVE_POST, {
+            update(cache, { data: { removePost } }) {
+                const { posts } = cache.readQuery({ query: QUERY_POSTS });
+                const updatedPosts = posts.filter(
+                    (post) => post._id !== removePost._id
+                );
+                cache.writeQuery({
+                    query: QUERY_POSTS,
+                    data: { posts: updatedPosts },
+                });
+            },
+        });
+        //Create Comment and Caching
+        const [createComment] = useMutation(CREATE_COMMENT, {
+            update: (cache, data) => {
+                try {
+                    const data2 = cache.readQuery({
+                        query: QUERY_SINGLE_POST,
+                        variables: { postId: postId },
+                    });
+
+                    cache.writeQuery({
+                        query: QUERY_SINGLE_POST,
+                        data: {
+                            ...singlePost,
+                            comments: [
+                                data.createComment,
+                                ...singlePost.comments,
+                            ],
+                        },
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
+            },
+        });
 
         const { data } = useQuery(QUERY_POSTS);
+        const [getSinglePost, { data: singlePost, loading }] =
+            useLazyQuery(QUERY_SINGLE_POST);
         const posts = data?.posts || [];
-        console.log(posts);
-        // const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
-        //     variables: { postId: postId },
-        // });
-        const client = useApolloClient();
+        // const client = useApolloClient();
         const openModal = async (postId) => {
             setPostId(postId);
             try {
-                const { data } = await client.query({
-                    query: QUERY_SINGLE_POST,
-                    variables: { postId: postId },
+                // const { data } = await getSinglePost({
+                //     query: QUERY_SINGLE_POST,
+                getSinglePost({
+                    variables: { postId },
                 });
-                if (data.post) {
-                    setSinglePost(data.post);
-                    setShowModal(postId);
-                } else {
-                    console.error("No post found with the provided postId");
-                }
+                // if (data.post) {
+                //     setSinglePost(data.post);
+                setShowModal(true);
+                // } else {
+                //     console.error("No post found with the provided postId");
+                // }
             } catch (err) {
                 console.error("Error fetching single post:", err);
             }
         };
         const closeModal = () => {
             setPostId(null);
-            setSinglePost(null);
+            // setSinglePost(null);
             setShowModal(false);
         };
 
@@ -112,181 +171,193 @@ const Post = ({ comments }) => {
 
         const user = AuthService.getProfile();
         const isAdminOrOwner =
-            user && (user.role === "Admin" || user.role === "Owner");
+            user && (user.data.role == "Admin" || user.data.role == "Owner");
 
         if (!posts.length) {
             return <p>No Announcements</p>;
         } else {
-            return posts.map((post) => (
-                <div key={post._id} className="post">
-                    <Card sx={{ maxWidth: 850 }} className="cardBody">
-                        <CardHeader
-                            className="cardHeader"
-                            avatar={
-                                <Avatar
-                                    sx={{ bgcolor: "red" }}
-                                    aria-label="recipe"
-                                >
-                                    R
-                                </Avatar>
-                            }
-                            action={
-                                isAdminOrOwner && (
-                                    <ButtonGroup>
-                                        <IconButton
-                                            aria-label="settings"
-                                            onClick={() =>
-                                                handleRemovePost(post._id)
-                                            }
-                                        >
-                                            <DeleteIcon />
-                                        </IconButton>
-                                        <IconButton
-                                            aria-label="settings"
-                                            onClick={() =>
-                                                setEditingPostId(post._id)
-                                            }
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                    </ButtonGroup>
-                                )
-                            }
-                            title={`${post.user.firstName} ${post.user.lastName}`}
-                            subheader={formatDate(post.createdAt)}
-                        />
-
-                        <CardMedia
-                            component="img"
-                            height="fit-content"
-                            image={post.postImage}
-                        />
-
-                        <CardContent>
-                            <Typography variant="body2" color="text.secondary">
-                                {post.postText}
-                            </Typography>
-                        </CardContent>
-
-                        {editingPostId === post._id && (
-                            <input
-                                type="text"
-                                defaultValue={post.postText}
-                                onBlur={(e) =>
-                                    handleUpdatePost(post._id, e.target.value)
+            return posts
+                .slice()
+                .reverse()
+                .map((post) => (
+                    <div key={post._id} className="post">
+                        <Card sx={{ maxWidth: 850 }} className="cardBody">
+                            <CardHeader
+                                className="cardHeader"
+                                avatar={
+                                    <Avatar
+                                        sx={{ bgcolor: "red" }}
+                                        aria-label="recipe"
+                                    >
+                                        R
+                                    </Avatar>
                                 }
+                                action={
+                                    isAdminOrOwner && (
+                                        <ButtonGroup>
+                                            <IconButton
+                                                aria-label="settings"
+                                                onClick={() =>
+                                                    handleRemovePost(post._id)
+                                                }
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                            <IconButton
+                                                aria-label="settings"
+                                                onClick={() =>
+                                                    setEditingPostId(post._id)
+                                                }
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                        </ButtonGroup>
+                                    )
+                                }
+                                title={`${post.user.firstName} ${post.user.lastName}`}
+                                subheader={formatDate(post.createdAt)}
                             />
-                        )}
 
-                        {/* add like button and comment button */}
-                        <div className="postButtons">
-                            <IconButton aria-label="like">
-                                <FavoriteBorderIcon />
-                                <div>1</div>
-                            </IconButton>
-                            <IconButton
-                                aria-label="comment"
-                                onClick={() => openModal(post._id)}
-                            >
-                                <ChatBubbleIcon />
-                                <div>3</div>
-                            </IconButton>
-                            {/* Modal to access comments. */}
-                            <Modal
-                                open={showModal === post._id}
-                                onClose={closeModal}
-                            >
-                                <Box
-                                    sx={{
-                                        position: "absolute",
-                                        maxHeight: "100%",
-                                        overflow: "auto",
-                                        top: "50%",
-                                        left: "50%",
-                                        transform: "translate(-50%, -50%)",
-                                        width: 500,
-                                        bgcolor: "background.paper",
-                                        boxShadow: 22,
-                                        p: 10,
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        alignItems: "center",
-                                        border: "4px solid #000",
-                                    }}
+                            <CardMedia
+                                component="img"
+                                height="fit-content"
+                                image={post.postImage}
+                            />
+
+                            <CardContent>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
                                 >
-                                    {/* Post content */}
-                                    <div
-                                        className="post"
-                                        style={{
-                                            border: "1px solid #e6e6e6",
-                                            width: "100%",
-                                            padding: "8px",
-                                            borderRadius: "10px",
-                                            marginBottom: "8px",
-                                            marginTop: "8px",
+                                    {post.postText}
+                                </Typography>
+                            </CardContent>
+
+                            {editingPostId === post._id && (
+                                <input
+                                    type="text"
+                                    defaultValue={post.postText}
+                                    onBlur={(e) =>
+                                        handleUpdatePost(
+                                            post._id,
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            )}
+
+                            {/* add like button and comment button */}
+                            <div className="postButtons">
+                                <IconButton aria-label="like">
+                                    <FavoriteBorderIcon />
+                                    <div>1</div>
+                                </IconButton>
+                                <IconButton
+                                    aria-label="comment"
+                                    onClick={() => openModal(post._id)}
+                                >
+                                    <ChatBubbleIcon />
+                                    <div>3</div>
+                                </IconButton>
+                                {/* Modal to access comments. */}
+                                <Modal open={showModal} onClose={closeModal}>
+                                    <Box
+                                        sx={{
+                                            position: "absolute",
+                                            maxHeight: "100%",
+                                            overflow: "auto",
+                                            top: "50%",
+                                            left: "50%",
+                                            transform: "translate(-50%, -50%)",
+                                            width: 500,
+                                            bgcolor: "background.paper",
+                                            boxShadow: 22,
+                                            p: 10,
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            alignItems: "center",
+                                            border: "4px solid #000",
                                         }}
                                     >
-                                        <Typography
-                                            variant="h6"
-                                            gutterBottom
-                                            margin={2}
+                                        {/* Post content */}
+                                        <div
+                                            className="post"
+                                            style={{
+                                                border: "1px solid #e6e6e6",
+                                                width: "100%",
+                                                padding: "8px",
+                                                borderRadius: "10px",
+                                                marginBottom: "8px",
+                                                marginTop: "8px",
+                                            }}
                                         >
-                                            {post.user.firstName}{" "}
-                                            {post.user.lastName}
-                                        </Typography>
-                                        {/* if no image, render nothing */}
-                                        {post.postImage && (
-                                            <CardMedia
-                                                component="img"
-                                                height="fit-content"
-                                                image={post.postImage}
-                                            />
-                                        )}
-                                        <Typography
-                                            variant="body2"
-                                            gutterBottom
-                                            margin={2}
+                                            <Typography
+                                                variant="h6"
+                                                gutterBottom
+                                                margin={2}
+                                            >
+                                                {post.user.firstName}{" "}
+                                                {post.user.lastName}
+                                            </Typography>
+                                            {/* if no image, render nothing */}
+                                            {post.postImage && (
+                                                <CardMedia
+                                                    component="img"
+                                                    height="fit-content"
+                                                    image={post.postImage}
+                                                />
+                                            )}
+                                            <Typography
+                                                variant="body2"
+                                                gutterBottom
+                                                margin={2}
+                                            >
+                                                {post.postText}
+                                            </Typography>
+                                        </div>
+                                        {/* Comments */}
+                                        {!loading &&
+                                            singlePost?.post.comments &&
+                                            singlePost.post.comments
+                                                .slice()
+                                                .reverse()
+                                                .map((comment) => (
+                                                    <Comment
+                                                        key={comment._id}
+                                                        comment={comment}
+                                                        user={user}
+                                                        postId={post._id}
+                                                        // cache={client.cache}
+                                                    />
+                                                ))}
+                                        {/* Comment input field */}
+                                        <TextField
+                                            placeholder="Add a comment..."
+                                            fullWidth={true}
+                                            multiline={true}
+                                            variant="outlined"
+                                            value={newCommentText}
+                                            onChange={(e) =>
+                                                setNewCommentText(
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                        <Button
+                                            variant="contained"
+                                            onClick={handleCreateComment}
+                                            fullWidth={true}
                                         >
-                                            {post.postText}
-                                        </Typography>
-                                    </div>
-                                    {/* Comments */}
-                                    {singlePost?.comments &&
-                                        singlePost.comments.map((comment) => (
-                                            <Comment
-                                                key={comment._id}
-                                                comment={comment}
-                                                user={user}
-                                                postId={post._id}
-                                            />
-                                        ))}
-                                    {/* Comment input field */}
-                                    <TextField
-                                        placeholder="Add a comment..."
-                                        fullWidth={true}
-                                        multiline={true}
-                                        variant="outlined"
-                                        value={newCommentText}
-                                        onChange={(e) =>
-                                            setNewCommentText(e.target.value)
-                                        }
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        onClick={handleCreateComment}
-                                        fullWidth={true}
-                                    >
-                                        Comment
-                                    </Button>
-                                </Box>
-                            </Modal>
-                        </div>
-                    </Card>
-                </div>
-            ));
+                                            Comment
+                                        </Button>
+                                    </Box>
+                                </Modal>
+                            </div>
+                        </Card>
+                    </div>
+                ));
         }
     } else {
-        return <h1> Please log in to view this page. </h1>;
     }
 };
 

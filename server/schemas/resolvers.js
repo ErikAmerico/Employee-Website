@@ -179,11 +179,20 @@ const resolvers = {
                         user: context.user._id,
                         commentText,
                         images,
-                        createdAt: new Date().toISOString(),
+                        createdAt: new Date().getTime(),
                     };
                     post.comments.push(newComment);
-                    await post.save();
-                    return newComment;
+                    const postPush = await post.save();
+                    const postPlain = postPush.toObject();
+
+                    const updatedCommenet = postPlain.comments.find(
+                        (comment) =>
+                            comment.user.toString() ===
+                                context.user._id.toString() &&
+                            comment.createdAt.getTime() === newComment.createdAt
+                    );
+
+                    return updatedCommenet;
                 } catch (error) {
                     console.error(error);
                     throw new Error("Error creating comment");
@@ -285,7 +294,10 @@ const resolvers = {
                     if (!post) {
                         throw new Error("No post found");
                     }
-                    const comment = post.comments.id(commentId);
+                    // const comment = post.comments.id(commentId);
+                    const comment = post.comments.find(
+                        (comment) => comment._id.toString() === commentId
+                    );
                     if (!comment) {
                         throw new Error("No comment found");
                     }
