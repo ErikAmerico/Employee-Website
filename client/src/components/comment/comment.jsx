@@ -1,9 +1,17 @@
 import { useMutation } from "@apollo/client";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
+import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
-import {
-    REMOVE_COMMENT,
-    UPDATE_COMMENT,
-} from "../../utils/mutations";
+import { formatDate } from "../../utils/date";
+import { REMOVE_COMMENT, UPDATE_COMMENT } from "../../utils/mutations";
 
 const Comment = ({ comment, user, postId }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -12,13 +20,14 @@ const Comment = ({ comment, user, postId }) => {
     );
     const [updateComment] = useMutation(UPDATE_COMMENT);
     const [removeComment] = useMutation(REMOVE_COMMENT);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const handleEditComment = async () => {
         try {
             const { data } = await updateComment({
                 variables: {
                     commentId: comment._id,
-                    commentText: commentText,
+                    commentText: editedCommentText,
                 },
             });
             setIsEditing(false);
@@ -34,39 +43,98 @@ const Comment = ({ comment, user, postId }) => {
                     commentId: comment._id,
                 },
             });
+            setDeleteDialogOpen(false);
             // Handle the response as needed (e.g., remove the comment from UI).
         } catch (error) {
             console.error(error);
         }
     };
 
+    const openDeleteDialog = () => {
+        setDeleteDialogOpen(true);
+    };
+
+    const closeDeleteDialog = () => {
+        setDeleteDialogOpen(false);
+    };
+
     return (
-        <div className="comment">
+        <div
+            className="comment"
+            style={{
+                border: "1px solid #e6e6e6",
+                width: "100%",
+                padding: "8px",
+                borderRadius: "5px",
+                marginBottom: "8px",
+                backgroundColor: "#D8DEEC",
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "8px", // Add spacing between user info and comment text
+                }}
+            >
+                <Typography variant="subtitle2">
+                    {comment.user.firstName} {comment.user.lastName} ·{" "}
+                    {formatDate(comment.createdAt)}
+                </Typography>
+                {user &&
+                    (user._id === comment.user._id ||
+                        user.role === "Admin") && (
+                        <div>
+                            <IconButton onClick={() => setIsEditing(true)}>
+                                <EditIcon />
+                            </IconButton>
+                            <IconButton onClick={openDeleteDialog}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </div>
+                    )}
+            </div>
+
             {isEditing ? (
                 <div>
-                    <textarea
+                    <TextareaAutosize
                         value={editedCommentText}
                         onChange={(e) => setEditedCommentText(e.target.value)}
                     />
-                    <button onClick={handleEditComment}>Save</button>
+                    <div>
+                        <Button
+                            onClick={handleEditComment}
+                            variant="contained"
+                            color="primary"
+                        >
+                            Save
+                        </Button>
+                    </div>
                 </div>
             ) : (
                 <div>
-                    <p>{comment.commentText}</p>
-                    {user &&
-                        (user._id === comment.user._id ||
-                            user.role === "Admin") && (
-                            <div>
-                                <button onClick={() => setIsEditing(true)}>
-                                    Edit
-                                </button>
-                                <button onClick={handleDeleteComment}>
-                                    Delete
-                                </button>
-                            </div>
-                        )}
+                    <Typography variant="body1" style={{ textAlign: "center" }}>
+                        {comment.commentText}
+                    </Typography>
                 </div>
             )}
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>
+                    Are you sure you want to delete this comment?
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeDeleteDialog} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDeleteComment} color="secondary">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

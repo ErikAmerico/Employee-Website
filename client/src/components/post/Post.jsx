@@ -60,7 +60,7 @@ const Post = ({ comments }) => {
                     variables: { postId: postId },
                 });
                 setSinglePost(data.post);
-                setShowModal(true);
+                setShowModal(postId);
             } catch (err) {
                 console.error(err);
             }
@@ -188,7 +188,10 @@ const Post = ({ comments }) => {
                                 <div>3</div>
                             </IconButton>
                             {/* Modal to access comments. */}
-                            <Modal open={showModal} onClose={closeModal}>
+                            <Modal
+                                open={showModal === post._id}
+                                onClose={closeModal}
+                            >
                                 <Box
                                     sx={{
                                         position: "absolute",
@@ -208,29 +211,41 @@ const Post = ({ comments }) => {
                                     }}
                                 >
                                     {/* Post content */}
-                                    <Typography
-                                        variant="h6"
-                                        gutterBottom
-                                        margin={2}
+                                    <div
+                                        className="post"
+                                        style={{
+                                            border: "1px solid #e6e6e6",
+                                            width: "100%",
+                                            padding: "8px",
+                                            borderRadius: "10px",
+                                            marginBottom: "8px",
+                                            marginTop: "8px",
+                                        }}
                                     >
-                                        {post.user.firstName}{" "}
-                                        {post.user.lastName}
-                                    </Typography>
-                                    {/* if no image, render nothing */}
-                                    {post.postImage && (
-                                        <CardMedia
-                                            component="img"
-                                            height="fit-content"
-                                            image={post.postImage}
-                                        />
-                                    )}
-                                    <Typography
-                                        variant="body2"
-                                        gutterBottom
-                                        margin={2}
-                                    >
-                                        {post.postText}
-                                    </Typography>
+                                        <Typography
+                                            variant="h6"
+                                            gutterBottom
+                                            margin={2}
+                                        >
+                                            {post.user.firstName}{" "}
+                                            {post.user.lastName}
+                                        </Typography>
+                                        {/* if no image, render nothing */}
+                                        {post.postImage && (
+                                            <CardMedia
+                                                component="img"
+                                                height="fit-content"
+                                                image={post.postImage}
+                                            />
+                                        )}
+                                        <Typography
+                                            variant="body2"
+                                            gutterBottom
+                                            margin={2}
+                                        >
+                                            {post.postText}
+                                        </Typography>
+                                    </div>
                                     {/* Comments */}
                                     {singlePost?.comments &&
                                         singlePost.comments.map((comment) => (
