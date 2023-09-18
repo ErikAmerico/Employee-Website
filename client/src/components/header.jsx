@@ -315,6 +315,33 @@ const Header = () => {
         window.removeEventListener("resize", handleResize);
         };
     }, []);
+
+    const smallScreenMenuItems = [
+    <MenuItem
+      key="announcements"
+      component={Link}
+      to="/announcements"
+      onClick={handleMenuClose}
+    >
+      Announcements
+    </MenuItem>,
+    <MenuItem
+      key="users"
+      component={Link}
+      to="/users"
+      onClick={handleMenuClose}
+    >
+      Users
+    </MenuItem>,
+    <MenuItem
+      key="chat"
+      component={Link}
+      to="/chat"
+      onClick={handleMenuClose}
+    >
+      Chat
+    </MenuItem>,
+  ];
     
     return (
         <>
@@ -340,55 +367,59 @@ const Header = () => {
                 </Typography>
 
                 {/* Navigation Links */}
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    <Button
-                        component={Link}
-                        color="info"
-                        variant="outlined"
-                        to="/announcements"
-                        sx={{
-                            marginRight: 2,
-                            backgroundColor: "#134074",
-                            color: "white",
-                        }}
-                    >
-                        Announcements
-                    </Button>
-                    <Button
-                        component={Link}
-                        color="info"
-                        variant="outlined"
-                        to="/users"
-                        sx={{
-                            marginRight: 2,
-                            backgroundColor: "#134074",
-                            color: "white",
-                        }}
-                    >
-                        Users
-                    </Button>
-                    <Button
-                        component={Link}
-                        color="info"
-                        variant="outlined"
-                        to="/chat"
-                        sx={{ backgroundColor: hasUnreadMessages ? "#6669ad" :  "#134074", color: "white" }}
-                    >
-                        Chat
-                    </Button>
-                </Typography>
-
-                {userName ? (
+                {AuthService.loggedIn() && screenWidth > 790 &&  (
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                        <Button
+                            component={Link}
+                            color="info"
+                            variant="outlined"
+                            to="/announcements"
+                            sx={{
+                                marginRight: 2,
+                                backgroundColor: "#134074",
+                                color: "white",
+                            }}
+                        >
+                            Announcements
+                        </Button>
+                        <Button
+                            component={Link}
+                            color="info"
+                            variant="outlined"
+                            to="/users"
+                            sx={{
+                                marginRight: 2,
+                                backgroundColor: "#134074",
+                                color: "white",
+                            }}
+                        >
+                            Users
+                        </Button>
+                        <Button
+                            component={Link}
+                            color="info"
+                            variant="outlined"
+                            to="/chat"
+                            sx={{ backgroundColor: hasUnreadMessages ? "#6669ad" : "#134074", color: "white" }}
+                        >
+                            Chat
+                        </Button>
+                    </Typography>
+            )}
+                    
+                {(userName && screenWidth > 415) ? (
                     <Typography variant="h6" component="div">
                         {userName}
                     </Typography>
-                ) : (
+                    ) : null}
+                    
+                {!userName && (
                     <Button
                         component={Link}
                         to="/loginRegister"
                         color="inherit"
-                    >
-                        Login/Register
+                        >
+                            Login/Register
                     </Button>
                 )}
 
@@ -415,7 +446,8 @@ const Header = () => {
                     open={Boolean(anchorEl)}
                     onClose={handleMenuClose}
                 >
-                    <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                        {screenWidth <= 790 && smallScreenMenuItems}
                         {userRole.some(role => role === "Admin" || role === "Owner") && [
                         <MenuItem key="addUzer" onClick={handleAddUserClick}>Add User</MenuItem>
                     ]}
@@ -431,20 +463,7 @@ const Header = () => {
                     ]}
                 </Menu>
             </Toolbar>
-        </AppBar>
-        {screenWidth <= 750 && (
-        <div className="subheader">
-          <Button component={Link} color="info" variant="outlined" to="/announcements">
-            Announcements
-          </Button>
-          <Button component={Link} color="info" variant="outlined" to="/users">
-            Users
-          </Button>
-          <Button component={Link} color="info" variant="outlined" to="/chat">
-            Chat
-          </Button>
-        </div>
-      )}
+            </AppBar>
         {showModal && (
             <Modal
                 key="uzerModal"
