@@ -71,6 +71,8 @@ export default function Users() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+    
+
   
     return (
       <div className='tableContainerDiv'>

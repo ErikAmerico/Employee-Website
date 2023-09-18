@@ -85,3 +85,84 @@
   margin-left: 10px;
   cursor: pointer;
 }
+
+@media screen and (max-width: 1230px) {
+   .input-container {
+   padding-left: 50px;
+   padding-right: 50px;
+ }
+}
+
+@media screen and (max-width: 960px) {
+   .input-container {
+   padding-left: 30px;
+   padding-right: 30px;
+ }
+  .message-list {
+   min-width: 45%;
+ }
+}
+
+@media screen and (max-width: 730px) {
+  .input-container {
+   padding-left: 40px;
+   padding-right: 40px;
+ }
+  .message-list {
+   min-width: 50%;
+ }
+}
+
+@media screen and (max-width: 625px) {
+  .message-list {
+   min-width: 60%;
+ }
+}
+
+@media screen and (max-width: 550px) {
+  .message-list {
+   min-width: 70%;
+ }
+}
+
+@media screen and (max-width: 460px) {
+  .message-list {
+   min-width: 80%;
+ }
+}
+
+@media screen and (max-width: 400px) {
+  .message-list {
+   min-width: 90%;
+ }
+}
+
+@media screen and (max-width: 350px) {
+  .message-list {
+   min-width: 95%;
+ }
+}
+
+@media screen and (max-width: 330px) {
+  .input-container {
+   padding-left: 25px;
+   padding-right: 25px;
+ }
+  .message-list {
+   min-width: 98%;
+ }
+}
+
+@media screen and (max-width: 300px) {
+  .input-container {
+   padding-left: 10px;
+   padding-right: 10px;
+ }
+}
+
+@media screen and (max-width: 270px) {
+  .input-container {
+   padding-left: 0px;
+   padding-right: 0px;
+ }
+}
