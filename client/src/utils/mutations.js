@@ -134,8 +134,8 @@ export const CREATE_COMMENT = gql`
 `;
 
 export const REMOVE_COMMENT = gql`
-  mutation removeComment($commentId: ID!) {
-    removeComment(commentId: $commentId) {
+  mutation removeComment($postId: ID!, $commentId: ID!) {
+    removeComment(postId: $postId, commentId: $commentId) {
       _id
       commentText
     }
@@ -143,10 +143,11 @@ export const REMOVE_COMMENT = gql`
 `;
 
 export const UPDATE_COMMENT = gql`
-  mutation updateComment($commentId: ID!, $commentText: String!) {
-    updateComment(commentId: $commentId, commentText: $commentText) {
+  mutation updateComment($postId: ID!, $commentId: ID!, $commentText: String!) {
+    updateComment(postId: $postId, commentId: $commentId, commentText: $commentText) {
       _id
       commentText
+      updatedAt
     }
   }
 `;

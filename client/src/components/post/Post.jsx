@@ -59,10 +59,14 @@ const Post = ({ comments }) => {
                     query: QUERY_SINGLE_POST,
                     variables: { postId: postId },
                 });
-                setSinglePost(data.post);
-                setShowModal(postId);
+                if (data.post) {
+                    setSinglePost(data.post);
+                    setShowModal(postId);
+                } else {
+                    console.error("No post found with the provided postId");
+                }
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching single post:", err);
             }
         };
         const closeModal = () => {
