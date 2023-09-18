@@ -34,6 +34,7 @@ import { useState } from "react";
 import { UPDATE_COMMENT, UPDATE_POST } from "../../utils/mutations";
 
 const Post = ({ comments }) => {
+    console.log(comments);
     if (AuthService.loggedIn()) {
         const [editingPostId, setEditingPostId] = useState(null);
         const [showModal, setShowModal] = useState(false);
@@ -45,6 +46,7 @@ const Post = ({ comments }) => {
 
         const { data } = useQuery(QUERY_POSTS);
         const posts = data?.posts || [];
+        console.log(posts);
         const { data: singlePostData } = useQuery(QUERY_SINGLE_POST, {
             variables: { postId: postId },
         });
@@ -84,7 +86,7 @@ const Post = ({ comments }) => {
                     variables: {
                         postId: postId, // Use postId from state
                         commentText: newCommentText, // Use newCommentText from state
-                        commentId: singlePost._id,
+                        // commentId: singlePost._id,
                     },
                 });
                 // Handle the response as needed (e.g., reset form, update UI).
@@ -218,8 +220,11 @@ const Post = ({ comments }) => {
                                         {post.postText}
                                     </Typography>
                                     {/* Comments */}
-                                    {comments &&
-                                        comments.map((comment) => (
+                                    {console.log("these are comments", post.comments)}
+                                    {post.comments &&
+                                        
+                                        post.comments.map((comment) => (
+                                            
                                             <Comment
                                                 key={comment._id}
                                                 comment={comment}
