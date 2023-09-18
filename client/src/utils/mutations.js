@@ -127,7 +127,7 @@ export const CREATE_CHAT_MESSAGE = gql`
 export const CREATE_COMMENT = gql`
   mutation createComment($postId: ID!, $commentText: String!) {
     createComment(postId: $postId, commentText: $commentText) {
-      _id
+      #_id
       commentText
     }
   }

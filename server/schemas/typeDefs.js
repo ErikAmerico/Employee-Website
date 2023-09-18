@@ -54,8 +54,8 @@ const typeDefs = `
     }
      
     type Comment {
-        _id: ID!
-        commentId: ID
+        _id: ID
+        #commentId: ID
         post: Post
         user: User
         commentText: String
