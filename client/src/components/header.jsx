@@ -47,10 +47,19 @@ const Header = () => {
     const [removeCompany] = useMutation(REMOVE_COMPANY);
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+    const [unreadMessages, setUnreadMessages] = useState(false);
 
     const navigate = useNavigate();
 
     const location = useLocation();
+
+    useEffect(() => {
+        if (hasUnreadMessages && screenWidth <= 790) {
+            setUnreadMessages(true);
+        } else {
+            setUnreadMessages(false);
+        }
+  }, [hasUnreadMessages, screenWidth]);
 
     useEffect(() => {
         if (location.pathname === "/chat" && hasUnreadMessages) {
@@ -317,31 +326,32 @@ const Header = () => {
     }, []);
 
     const smallScreenMenuItems = [
-    <MenuItem
-      key="announcements"
-      component={Link}
-      to="/announcements"
-      onClick={handleMenuClose}
-    >
-      Announcements
-    </MenuItem>,
-    <MenuItem
-      key="users"
-      component={Link}
-      to="/users"
-      onClick={handleMenuClose}
-    >
-      Users
-    </MenuItem>,
-    <MenuItem
-      key="chat"
-      component={Link}
-      to="/chat"
-      onClick={handleMenuClose}
-    >
-      Chat
-    </MenuItem>,
-  ];
+        <MenuItem
+            key="announcements"
+            component={Link}
+            to="/announcements"
+            onClick={handleMenuClose}
+        >
+            Announcements
+        </MenuItem>,
+        <MenuItem
+            key="users"
+            component={Link}
+            to="/users"
+            onClick={handleMenuClose}
+        >
+            Users
+        </MenuItem>,
+        <MenuItem
+            key="chat"
+            component={Link}
+            to="/chat"
+            onClick={handleMenuClose}
+            sx={{ backgroundColor: hasUnreadMessages ? "#6669ad" : "white" }}
+        >
+            Chat
+        </MenuItem>,
+    ];
     
     return (
         <>
@@ -430,10 +440,11 @@ const Header = () => {
                         onClick={handleMenuOpen}
                     >
                             <Avatar className={classes.avatar} sx={{
-                                bgcolor: "white",
-                                color: "#144074",
+                                //bgcolor: "white",
+                                backgroundColor: unreadMessages ? "#6669ad" : "white",
+                                color: unreadMessages ? "white" : "#144074",
                                 border: "3px solid gray",
-                                fontWeight: "bold",
+                                fontWeight: unreadMessages ? "normal" : "bold",
                                 textShadow: "0px 0px 12px black",
                             }}>
                             {initials}
