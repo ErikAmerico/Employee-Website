@@ -46,6 +46,8 @@ const Header = () => {
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
     const [removeCompany] = useMutation(REMOVE_COMPANY);
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
+    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -302,6 +304,18 @@ const Header = () => {
           </div>
     );
 
+    useEffect(() => {
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+    return () => {
+        window.removeEventListener("resize", handleResize);
+        };
+    }, []);
+    
     return (
         <>
         <AppBar
@@ -418,6 +432,19 @@ const Header = () => {
                 </Menu>
             </Toolbar>
         </AppBar>
+        {screenWidth <= 750 && (
+        <div className="subheader">
+          <Button component={Link} color="info" variant="outlined" to="/announcements">
+            Announcements
+          </Button>
+          <Button component={Link} color="info" variant="outlined" to="/users">
+            Users
+          </Button>
+          <Button component={Link} color="info" variant="outlined" to="/chat">
+            Chat
+          </Button>
+        </div>
+      )}
         {showModal && (
             <Modal
                 key="uzerModal"

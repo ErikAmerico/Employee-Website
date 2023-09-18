@@ -23,7 +23,6 @@ export default function Users() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profile, setProfile] = useState(AuthService.getProfile());
   const [removeUser] = useMutation(REMOVE_USER);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const { loading, error, data } = useQuery(GET_USERS_BY_COMPANY, {
     variables: { companyId: localStorage.getItem('company_id') },
@@ -73,17 +72,7 @@ export default function Users() {
     setIsModalOpen(false);
   };
     
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
 
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
   
     return (
       <div className='tableContainerDiv'>
@@ -115,20 +104,14 @@ export default function Users() {
                       <Button key='chatUzer'
                         onClick={() => openModal()}
                         sx={{ backgroundColor: '#134074' }}
-                        variant='contained'
-                        className='chatButton'>
-                        {windowWidth <= 1218 ? 'Chat' : `Chat with ${user.firstName}`}
+                        variant='contained'>
+                        {`Chat with ${user.firstName}`}
                       </Button>
                     )}
                   </TableCell>
                   <TableCell>
                     {((myRole.includes("Owner") || (myRole.includes("Admin") && user.role !== "Owner")) && user._id !== myId) && [
-                      <Button key='removeUzer'
-                        onClick={() => handleRemoveUser(user)}
-                        color='error'
-                        variant='contained'>
-                        {windowWidth <= 1218 ? 'Remove' : 'Remove User'}
-                      </Button>
+                      <Button key='removeUzer' onClick={() => handleRemoveUser(user)} color='error' variant='contained'>Remove User</Button>
                     ]}
                   </TableCell>
                 </TableRow>
