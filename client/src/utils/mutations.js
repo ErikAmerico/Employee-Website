@@ -143,9 +143,10 @@ export const REMOVE_COMMENT = gql`
 `;
 
 export const CREATE_MSG_CNT = gql`
-  mutation createMsgCnt($companyId: ID!, $count: Int!) {
-    createMsgCnt(companyId: $companyId, count: $count) {
+  mutation createMsgCnt($companyId: ID!, $userId: ID!, $count: Int!) {
+    createMsgCnt(companyId: $companyId, userId: $userId, count: $count) {
       companyId
+      userId
       count
     }
   }

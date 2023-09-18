@@ -103,6 +103,26 @@ const resolvers = {
                 throw new AuthenticationError("Not logged in");
             }
         },
+        getLoggedOutChatCount: async (parent, { companyId, userId }, context) => {
+            if (context.user) {
+                try {
+                    const mostRecentMsgCnt = await MsgCnt.findOne({
+                        companyId,
+                        userId,
+                    }).sort({ createdAt: -1 }).limit(1);
+
+                    if (!mostRecentMsgCnt) {
+                         return { count: 0 };
+                    }
+
+                    return { count: mostRecentMsgCnt.count };
+                } catch (error) {
+                    throw new Error("Error getting chat messages");
+                }
+            } else {
+                throw new AuthenticationError("Not logged in");
+            }
+        },
     },
     Mutation: {
         //add a new company
@@ -429,12 +449,14 @@ const resolvers = {
                 );
             }
         },
-        createMsgCnt: async (parent, { companyId, count }, context) => {
+        createMsgCnt: async (parent, { companyId, userId, count }, context) => {
             if (context.user) {
                 try {
                     const newMsgCnt = new MsgCnt({
                         companyId,
+                        userId,
                         count,
+                        createdAt: new Date().toISOString(),
                     });
                     await newMsgCnt.save();
                     return newMsgCnt;

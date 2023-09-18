@@ -46,9 +46,11 @@ const Header = () => {
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
     const [removeCompany] = useMutation(REMOVE_COMPANY);
-    const [createMsgCnt] = useMutation(CREATE_MSG_CNT);
+    const [createMsgCnt] = useMutation(CREATE_MSG_CNT); 
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
-    const [msgCntAtLogOut, setMsgCntAtLogOut] = useState(0);
+    const [msgCntAtLogOut, setMsgCntAtLogOut] = useState();
+    const [userId, setUserId] = useState('');
+    const companyId = localStorage.getItem("company_id");
     const navigate = useNavigate();
 
     const location = useLocation();
@@ -81,9 +83,11 @@ const Header = () => {
     useEffect(() => {
         if (AuthService.loggedIn()) {
             const profile = AuthService.getProfile();
+            //console.log(profile)
             const firstName = profile.data.firstName;
             const lastName = profile.data.lastName;
             const role = profile.data.role;
+            setUserId(profile.data._id);
             setUserRole(role);
             setUserName(`${firstName} ${lastName}`);
         }
@@ -108,41 +112,13 @@ const Header = () => {
         setAnchorEl();
     };
 
-
-    // const handleLogout = async () => { //
-    //     await createMsgCnt({
-    //         variables: { companyId: companyId, count: msgCntAtLogOut },
-    //     })
-    //     .then(() => {
-        
-    //         AuthService.logout();
-    //         handleMenuClose();
-    //         localStorage.removeItem("company_id");
-    //     })
-    // };
-
-    // useEffect(() => {
-    //     const { Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, {
-    //         variables: { companyId },
-    //     });
-    //     setMsgCntAtLogOut(Msgs4MsgCount);
-    // }), [handleLogout];
-
-    // const handleLogout = () => {
-    //     AuthService.logout();
-    //     handleMenuClose();
-    //     localStorage.removeItem("company_id");
-    // };
-
-    const companyId = localStorage.getItem("company_id");
-
   const { data: Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, {
     variables: { companyId },
   });
 
   const handleLogout = async () => {
     await createMsgCnt({
-      variables: { companyId: companyId, count: msgCntAtLogOut },
+      variables: { companyId: companyId, userId: userId, count: msgCntAtLogOut },
     });
 
     AuthService.logout();
@@ -151,9 +127,10 @@ const Header = () => {
   };
     
   useEffect(() => {
-    if (Msgs4MsgCount && Msgs4MsgCount.length > 0) {
-      const messageCount = Msgs4MsgCount.length;
-      setMsgCntAtLogOut(messageCount);
+    if (Msgs4MsgCount && Msgs4MsgCount.getChatMessages) {
+        const chatMessagesArray = Object.values(Msgs4MsgCount.getChatMessages);
+        const messageCount = chatMessagesArray.length;
+        setMsgCntAtLogOut(messageCount);
     }
   }, [Msgs4MsgCount, msgCntAtLogOut, handleLogout]);
 

@@ -6,10 +6,16 @@ const msgCntSchema = new mongoose.Schema({
       ref: "Company",
       required: true,
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     count: {
       type: Number,
       required: true,
     },
+    createdAt: { type: Date, default: Date.now }
 });
 
 const MsgCnt = mongoose.model("MsgCnt", msgCntSchema);

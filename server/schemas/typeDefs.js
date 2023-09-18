@@ -86,12 +86,9 @@ const typeDefs = `
 
     type msgCnt {
         companyId: ID!
+        userId: ID!
         count: Int!
-    }
-
-    input msgCntInput {
-        companyId: ID!
-        count: Int!
+        createdAt: String
     }
 
     type Query {
@@ -103,6 +100,7 @@ const typeDefs = `
         users(companyId: ID): [User]
         posts(companyId: ID): [Post]
         getChatMessages(companyId: ID!): [ChatMessage]
+        getLoggedOutChatCount(companyId: ID!, userId: ID!): [msgCnt]
     }
 
     type Mutation {
@@ -121,7 +119,7 @@ const typeDefs = `
         removeCompany(companyId: ID!): Company
         addUserToCompany(companyId: ID!, userId: ID!): Company
         createChatMessage(companyId: ID!, text: String!, sender: String!, name: String!): ChatMessage
-        createMsgCnt(companyId: ID!, count: Int!): msgCnt
+        createMsgCnt(companyId: ID!, userId: ID!, count: Int!): msgCnt
     }
 `;
 
