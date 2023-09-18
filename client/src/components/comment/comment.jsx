@@ -26,6 +26,7 @@ const Comment = ({ comment, user, postId }) => {
         try {
             const { data } = await updateComment({
                 variables: {
+                    postId: postId,
                     commentId: comment._id,
                     commentText: editedCommentText,
                 },
@@ -38,8 +39,10 @@ const Comment = ({ comment, user, postId }) => {
 
     const handleDeleteComment = async () => {
         try {
+            console.log("commentId:", comment._id);
             const { data } = await removeComment({
                 variables: {
+                    postId: postId,
                     commentId: comment._id,
                 },
             });
