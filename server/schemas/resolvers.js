@@ -104,7 +104,7 @@ const resolvers = {
                     const mostRecentMsgCnt = await MsgCnt.find({
                         companyId: companyId,
                         userId: userId,
-                    })//.sort({ createdAt: -1 }).limit(1);
+                    }).sort({ createdAt: -1 }).limit(1);
 
                     if (!mostRecentMsgCnt) {
                          return { count: 0 };

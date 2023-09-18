@@ -18,7 +18,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_USER, ADD_USER_TO_COMPANY, REMOVE_COMPANY, CREATE_MSG_CNT } from "../utils/mutations";
-import { GET_PREV_CHAT_MESSAGES } from "../utils/queries";
+import { GET_PREV_CHAT_MESSAGES, GET_LOGGED_OUT_CHAT_COUNT } from "../utils/queries";
 import AuthService from "../utils/auth";
 
 //import MenuIcon from '@mui/icons-material/Menu';
@@ -112,9 +112,30 @@ const Header = () => {
         setAnchorEl();
     };
 
+    const { data: chatCount } = useQuery(GET_LOGGED_OUT_CHAT_COUNT, {
+        variables: { companyId: companyId, userId: userId },
+    });
+
+    console.log("chatCount:", chatCount); // I have the most recent count here, its in an object
+
+    // const countsArray = chatCount.getLoggedOutChatCount.map(item => item.count);
+
+    // const loggedCount = countsArray[0];
+    // console.log("loggedCount:", loggedCount);       ///uncommenting this block causes the error
+
+
   const { data: Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, {
     variables: { companyId },
   });
+    
+    // const currCount = Msgs4MsgCount.getChatMessages.length;  //uncommenting this block causes the rror
+    // console.log("currCount:", currCount);
+
+    // useEffect(() => {
+    //     if (currCount > loggedCount) {
+    //         setHasUnreadMessages(true);     ///i want this functionality
+    //     }
+    // }),[]
 
   const handleLogout = async () => {
     await createMsgCnt({
