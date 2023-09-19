@@ -79,7 +79,8 @@ const Share = () => {
                     <hr className="shareHr" />
                     <div className="shareBottom">
                         <div className="shareOptions">
-                            <div className="shareOption">
+                            {/* add these options, once you add media options to account */}
+                            {/* <div className="shareOption">
                                 <VideocamIcon
                                     htmlColor="blue"
                                     className="shareIcon"
@@ -87,8 +88,8 @@ const Share = () => {
                                 <span className="shareOptionText">
                                     Live Video
                                 </span>
-                            </div>
-                            <div className="shareOption">
+                            </div> */}
+                            {/* <div className="shareOption">
                                 <PhotoLibraryIcon
                                     htmlColor="green"
                                     className="shareIcon"
@@ -96,8 +97,8 @@ const Share = () => {
                                 <span className="shareOptionText">
                                     Photo/Video
                                 </span>
-                            </div>
-                            <div className="shareOption">
+                            </div> */}
+                            {/* <div className="shareOption">
                                 <AttachFileIcon
                                     htmlColor="purple"
                                     className="shareIcon"
@@ -105,7 +106,7 @@ const Share = () => {
                                 <span className="shareOptionText">
                                     Upload a File
                                 </span>
-                            </div>
+                            </div> */}
                         </div>
                         <button
                             className="shareButton"
