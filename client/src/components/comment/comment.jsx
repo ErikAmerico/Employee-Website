@@ -46,29 +46,27 @@ const Comment = ({ comment, user, postId }) => {
     // Remove comment and Cache
     const [removeComment] = useMutation(REMOVE_COMMENT, {
         update: (cache, { data }) => {
-            // Read the current list of posts from the cache
-            const { posts } = cache.readQuery({
-                query: QUERY_POSTS,
-            });
+            console.log(data);
+            try {
+                const { post } = cache.readQuery({
+                    query: QUERY_SINGLE_POST,
+                    variables: { postId },
+                });
+                const deletedCommentId = data.removeComment._id;
+                const filteredComments = post.comments.filter(
+                    (comment) => comment._id !== deletedCommentId
+                );
+                console.log(filteredComments);
 
-            // Find the post that contains the comment
-            const updatedPosts = posts.map((post) => {
-                if (post._id === postId) {
-                    // Find and remove the deleted comment from the post's comments
-                    post.comments = post.comments.filter(
-                        (c) => c._id !== comment._id
-                    );
-                }
-                return post;
-            });
-
-            // Update the posts list in the cache
-            cache.writeQuery({
-                query: QUERY_POSTS,
-                data: {
-                    posts: updatedPosts,
-                },
-            });
+                cache.writeQuery({
+                    query: QUERY_SINGLE_POST,
+                    data: {
+                        post: { ...post, comments: filteredComments },
+                    },
+                });
+            } catch (e) {
+                console.error(e);
+            }
         },
     });
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

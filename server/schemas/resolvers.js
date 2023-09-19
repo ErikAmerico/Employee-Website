@@ -102,16 +102,17 @@ const resolvers = {
             if (context.user) {
                 try {
                     const mostRecentMsgCnt = await MsgCnt.find({
-                      companyId: companyId,
-                      userId: context.user._id,
-                    }).sort({ createdAt: -1 })
+                        companyId: companyId,
+                        userId: context.user._id,
+                    })
+                        .sort({ createdAt: -1 })
                         .limit(1);
                     const companyMessagesCount = await ChatMessage.find({
                         companyId: companyId,
                     });
 
                     const currentCount = companyMessagesCount.length;
-                    const mostRecentCount = mostRecentMsgCnt[0].count
+                    const mostRecentCount = mostRecentMsgCnt[0].count;
 
                     return currentCount > mostRecentCount;
                 } catch (error) {
@@ -436,13 +437,14 @@ const resolvers = {
                         );
                     }
 
+                    const removeComment = post.comments[commentIndex];
                     // Remove the comment
                     post.comments.splice(commentIndex, 1);
 
                     // Save the post to apply changes (e.g., remove the comment from the post's comments array)
                     await post.save();
 
-                    return post.comments[commentIndex];
+                    return removeComment;
                 } catch (error) {
                     console.error(error);
                     throw new Error("Error deleting comment");
