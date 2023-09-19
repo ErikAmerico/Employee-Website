@@ -10,10 +10,12 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
+import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import * as React from "react";
 import AuthService from "../../utils/auth";
 import { formatDate } from "../../utils/date";
@@ -109,24 +111,16 @@ const Post = ({ comments }) => {
         const openModal = async (postId) => {
             setPostId(postId);
             try {
-                // const { data } = await getSinglePost({
-                //     query: QUERY_SINGLE_POST,
                 getSinglePost({
                     variables: { postId },
                 });
-                // if (data.post) {
-                //     setSinglePost(data.post);
                 setShowModal(true);
-                // } else {
-                //     console.error("No post found with the provided postId");
-                // }
             } catch (err) {
                 console.error("Error fetching single post:", err);
             }
         };
         const closeModal = () => {
             setPostId(null);
-            // setSinglePost(null);
             setShowModal(false);
         };
 
@@ -157,8 +151,6 @@ const Post = ({ comments }) => {
                         commentText: newCommentText, // Use newCommentText from state
                     },
                 });
-                // Handle the response as needed (e.g., reset form, update UI).
-                // You can also update the comments UI here if needed.
             } catch (error) {
                 console.error(error);
             }
@@ -167,6 +159,8 @@ const Post = ({ comments }) => {
         const user = AuthService.getProfile();
         const isAdminOrOwner =
             user && (user.data.role == "Admin" || user.data.role == "Owner");
+        
+        const isSmallScreen = useMediaQuery(`(max-width: 750px)`);
 
         if (!posts.length) {
             return <p>No Announcements</p>;
@@ -252,24 +246,36 @@ const Post = ({ comments }) => {
                                 </IconButton>
                                 {/* Modal to access comments. */}
                                 <Modal open={showModal} onClose={closeModal}>
-                                    <Box
-                                        sx={{
-                                            position: "absolute",
-                                            maxHeight: "100%",
-                                            overflow: "auto",
-                                            top: "50%",
-                                            left: "50%",
-                                            transform: "translate(-50%, -50%)",
-                                            width: 500,
-                                            bgcolor: "background.paper",
-                                            boxShadow: 22,
-                                            p: 10,
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            alignItems: "center",
-                                            border: "4px solid #000",
-                                        }}
-                                    >
+                                <Box
+                sx={{
+                    position: "absolute",
+                    maxHeight: isSmallScreen ? '80%' : "100%", // Adjust the height for smaller screens
+                    overflow: "auto",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: isSmallScreen ? '60%' : 500, // Adjust the width for smaller screens
+                    bgcolor: "background.paper",
+                    boxShadow: 22,
+                    p: 10,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    border: "4px solid #000",
+                }}
+            >
+                {/* Close button */}
+                <IconButton
+                    aria-label="close"
+                    sx={{
+                        position: "absolute",
+                        top: "10px",
+                        right: "10px",
+                    }}
+                    onClick={closeModal}
+                >
+                    <CloseIcon />
+                </IconButton>
                                         {/* Post content */}
                                         <div
                                             className="post"
@@ -306,7 +312,7 @@ const Post = ({ comments }) => {
                                                 {post.postText}
                                             </Typography>
                                         </div>
-                                        
+
                                         {/* Comments */}
                                         <TextField
                                             placeholder="Add a comment..."
@@ -321,7 +327,7 @@ const Post = ({ comments }) => {
                                             }
                                         />
                                         {/* Comment input field */}
-                                        
+
                                         <Button
                                             variant="contained"
                                             onClick={() =>
@@ -344,7 +350,6 @@ const Post = ({ comments }) => {
                                                         postId={post._id}
                                                     />
                                                 ))}
-                                        
                                     </Box>
                                 </Modal>
                             </div>
