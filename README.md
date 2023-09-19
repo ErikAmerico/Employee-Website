@@ -50,9 +50,17 @@ We are always open to ideas and suggestions to improve the application!
 ## Current Implementations
 
 -   Owners can create an account and add employees to the company with specified roles and titles.
+![register](https://github.com/ErikAmerico/Employee-Website/assets/117021869/95a9d262-0683-4fab-8374-98e359eb02e9)
+
 -   Users are able to view a list of employees to easily contact them if needed.
+![user](https://github.com/ErikAmerico/Employee-Website/assets/117021869/a1cd5d76-1511-46d6-b601-752b6476dc60)
+
 -   Staying in touch is one of our goals that we strive for, so we have implemented a group chat system where everyone can partake in the conversation and stay up to date with the company.
+![chat](https://github.com/ErikAmerico/Employee-Website/assets/117021869/792a4291-8d17-4ca2-a951-1ff3d536f64a)
+
 -   Having an announcement board is a great way to keep everyone up to date with the company, so we have implemented a way to post announcements to the company if you are an admin or owner. Employees can still interact however and comment on any of the posts. Giving them a space to voice opinions and engage with the company.
+![announcements](https://github.com/ErikAmerico/Employee-Website/assets/117021869/b317d4a1-1d7b-41c1-86d7-19930d415c4e)
+
 
 ## Future Implementations
 
