@@ -12,14 +12,73 @@ import Typography from "@mui/material/Typography";
 import React, { useState } from "react";
 import { formatDate } from "../../utils/date";
 import { REMOVE_COMMENT, UPDATE_COMMENT } from "../../utils/mutations";
+import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
 
 const Comment = ({ comment, user, postId }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedCommentText, setEditedCommentText] = useState(
         comment.commentText
     );
-    const [updateComment] = useMutation(UPDATE_COMMENT);
-    const [removeComment] = useMutation(REMOVE_COMMENT);
+    // Update comment and Cache
+    const [updateComment] = useMutation(UPDATE_COMMENT, {
+        update: (cache, { data: { updateComment } }) => {
+            try {
+                const { singlePost } = cache.readQuery({
+                    query: QUERY_SINGLE_POST,
+                    variables: { postId },
+                });
+
+                const updatedComment = {
+                    ...updateComment,
+                };
+
+                cache.modify({
+                    id: cache.identify(singlePost),
+                    fields: {
+                        comments(existingComments = []) {
+                            const updatedComments = existingComments.map(
+                                (comment) => {
+                                    if (comment._id === updatedComment._id) {
+                                        return updatedComment;
+                                    }
+                                    return comment;
+                                }
+                            );
+                            return updatedComments;
+                        },
+                    },
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        },
+    });
+    // Remove comment and Cache
+    const [removeComment] = useMutation(REMOVE_COMMENT, {
+        update: (cache, { data }) => {
+            console.log(data);
+            try {
+                const { post } = cache.readQuery({
+                    query: QUERY_SINGLE_POST,
+                    variables: { postId },
+                });
+                const deletedCommentId = data.removeComment._id;
+                const filteredComments = post.comments.filter(
+                    (comment) => comment._id !== deletedCommentId
+                );
+                console.log(filteredComments);
+
+                cache.writeQuery({
+                    query: QUERY_SINGLE_POST,
+                    data: {
+                        post: { ...post, comments: filteredComments },
+                    },
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        },
+    });
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const handleEditComment = async () => {
@@ -39,7 +98,6 @@ const Comment = ({ comment, user, postId }) => {
 
     const handleDeleteComment = async () => {
         try {
-            console.log("commentId:", comment._id);
             const { data } = await removeComment({
                 variables: {
                     postId: postId,

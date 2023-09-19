@@ -80,8 +80,13 @@ export const LOGIN = gql`
 `;
 
 export const CREATE_POST = gql`
-  mutation createPost($postText: String!, $images: [String], $companyId: String) {
+  mutation createPost(
+    $postText: String!
+    $images: [String]
+    $companyId: String
+  ) {
     createPost(postText: $postText, images: $images, companyId: $companyId) {
+      _id
       postText
     }
   }
@@ -114,7 +119,12 @@ export const CREATE_CHAT_MESSAGE = gql`
     $sender: String!
     $name: String!
   ) {
-    createChatMessage(companyId: $companyId, text: $text, sender: $sender, name: $name) {
+    createChatMessage(
+      companyId: $companyId
+      text: $text
+      sender: $sender
+      name: $name
+    ) {
       _id
       companyId
       text
@@ -127,7 +137,7 @@ export const CREATE_CHAT_MESSAGE = gql`
 export const CREATE_COMMENT = gql`
   mutation createComment($postId: ID!, $commentText: String!) {
     createComment(postId: $postId, commentText: $commentText) {
-      #_id
+      _id
       commentText
     }
   }
@@ -154,7 +164,11 @@ export const CREATE_MSG_CNT = gql`
 
 export const UPDATE_COMMENT = gql`
   mutation updateComment($postId: ID!, $commentId: ID!, $commentText: String!) {
-    updateComment(postId: $postId, commentId: $commentId, commentText: $commentText) {
+    updateComment(
+      postId: $postId
+      commentId: $commentId
+      commentText: $commentText
+    ) {
       _id
       commentText
       updatedAt
