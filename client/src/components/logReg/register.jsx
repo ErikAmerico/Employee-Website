@@ -282,7 +282,7 @@ const Register = ({ toggleForm }) => {
                 item
                 xs={10}
                 sm={8}
-                md={6}
+                md={4}
                 className="form-container"
               ref={formContainerRef}
               id="registration-form"
