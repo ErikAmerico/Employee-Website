@@ -39,32 +39,29 @@ const Post = ({ comments }) => {
         //Update Post and Caching
         const [updatePost, { errors }] = useMutation(UPDATE_POST, {
             update(cache, { data: { updatePost } }) {
-                const cachedPost = cache.readFragment({
-                    id: cache.identify(post),
-                    fragment: gql`
-                        fragment UpdatedPost on Post {
-                            _id
-                            postText
-                            updatedAt
-                        }
-                    `,
-                });
-                const updatedPost = {
-                    ...cachedPost,
-                    postText: updatePost.postText,
-                };
-
-                cache.writeFragment({
-                    id: cache.identify(post),
-                    fragment: gql`
-                        fragment UpdatedPost on Post {
-                            _id
-                            postText
-                            updatedAt
-                        }
-                    `,
-                    data: updatedPost,
-                });
+                try {
+                    const { posts } = cache.readQuery({ query: QUERY_POSTS });
+                    const updatedPost = {
+                        ...updatePost,
+                    };
+                    cache.modify({
+                        fields: {
+                            posts(existingPosts = []) {
+                                const updatedPosts = existingPosts.map(
+                                    (post) => {
+                                        if (post._id === updatePost._id) {
+                                            return updatedPost;
+                                        }
+                                        return post;
+                                    }
+                                );
+                                return updatedPosts;
+                            },
+                        },
+                    });
+                } catch (e) {
+                    console.error(e);
+                }
             },
         });
         //Remove Post and Caching
