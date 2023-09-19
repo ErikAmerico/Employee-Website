@@ -96,5 +96,5 @@ GitHub: [ErikAmerico](https://github.com/ErikAmerico)
 (ctrl+click to follow link, where you can see this user's repositories and profile)
 
 Email: michael.r.tranquillo@gmail.com (Michael Tranquillo)
-Email: erik@email.com (Erik Olson)
+Email: ErikAmerico1991@gmail.com (Erik Olson)
 (ctrl+click to send email to this address with your default email client or copy and paste address into your email client)
