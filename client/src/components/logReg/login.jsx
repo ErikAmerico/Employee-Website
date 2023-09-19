@@ -15,26 +15,45 @@ const Login = ({ toggleForm }) => {
     const [loginUser, { error }] = useMutation(LOGIN);
     const formContainerRef = useRef(null);
 
-    useEffect(() => {
-        const formContainerHeight = formContainerRef.current.clientHeight;
-        const toggleButton = document.querySelector(".toggleButton");
-        if (toggleButton) {
-            toggleButton.style.height = `${formContainerHeight}px`;
-        }
-    }, []);
 
-    useEffect(() => {
-        document.querySelector(".form-container").classList.toggle("flipLog");
-    }, []);
+       const handleResize = () => {
+           const screenWidth = window.innerWidth;
+           const formContainerHeight = formContainerRef.current.clientHeight;
+           const formContainerWidth = formContainerRef.current.clientWidth;
+           const toggleButton = document.querySelector(".toggleButton");
+           const registrationButton = document.querySelector("#registration-button")
 
-    useEffect(() => {
-        const toggleButton = document.querySelector(".toggleButton");
-        if (toggleButton) {
-            toggleButton.classList.toggle("slideLog");
-            toggleButton.addEventListener("animationend", () => {
+           if (screenWidth < 600) {
+               registrationButton.classList.add("slideDown");
+            if (toggleButton) {
+               toggleButton.style.width = `${formContainerWidth}px`;
+                toggleButton.style.height = null;
+                toggleButton.addEventListener("animationend", () => {
                 toggleButton.style.zIndex = 0;
             });
-        }
+            }
+               document.querySelector(".form-container").classList.toggle("flip");
+        } else {
+            if (toggleButton) {
+                toggleButton.style.height = `${formContainerHeight}px`;
+                toggleButton.style.width = null;
+            }
+
+
+            document.querySelector(".form-container").classList.toggle("flip");
+
+
+    useEffect(() => {
+        const toggleButton = document.querySelector(".toggleButton");
+
+
+    useEffect(() => {
+        handleResize();
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
     }, []);
 
     const handleChange = (e) => {
@@ -90,14 +109,14 @@ const Login = ({ toggleForm }) => {
             alignItems="center"
             style={{ minHeight: "100vh" }}
         >
-            <Grid
-                item
-                xs={12}
-                sm={4}
+
+            <Grid item
+                xs={10}
+                sm={8}
+                md={4}
                 className="form-container"
-                ref={formContainerRef}
-                id="login-form"
-            >
+                ref={formContainerRef} id="login-form">
+
                 <h1>Login Form</h1>
                 <form onSubmit={handleSubmit}>
                     <TextField

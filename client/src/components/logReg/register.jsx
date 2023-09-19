@@ -33,20 +33,45 @@ const Register = ({ toggleForm }) => {
     const formContainerRef = useRef(null);
     const [errorMessage, setErrorMessage] = useState("");
     const [modalErrorMessage, setModalErrorMessage] = useState("");
-    useEffect(() => {
-        const formContainerHeight = formContainerRef.current.clientHeight;
-        const toggleButton = document.querySelector(".toggleButton");
-        if (toggleButton) {
-            toggleButton.style.height = `${formContainerHeight}px`;
+
+
+       const handleResize = () => {
+           const screenWidth = window.innerWidth;
+           const formContainerHeight = formContainerRef.current.clientHeight;
+           const formContainerWidth = formContainerRef.current.clientWidth;
+           const toggleButton = document.querySelector(".toggleButton");
+           const loginButton = document.querySelector("#login-button");
+
+           if (screenWidth < 600) {
+               loginButton.classList.add("slideUp");
+            if (toggleButton) {
+               toggleButton.style.width = `${formContainerWidth}px`;
+               toggleButton.style.height = null;
+            }
+               document.querySelector(".form-container").classList.toggle("flip");
+        } else {
+            if (toggleButton) {
+                toggleButton.style.height = `${formContainerHeight}px`;
+                toggleButton.style.width = null;
+            }
+
+               document.querySelector(".form-container").classList.toggle("flip");
+               
+
+            const toggleButtonElem = document.querySelector(".toggleButton");
+            if (toggleButtonElem) {
+                toggleButtonElem.classList.toggle("slide");
+            }
         }
-    }, []);
+    };
 
     useEffect(() => {
-        document.querySelector(".form-container").classList.toggle("flip");
-    }, []);
+        handleResize();
+        window.addEventListener("resize", handleResize);
 
-    useEffect(() => {
-        document.querySelector(".toggleButton").classList.toggle("slide");
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
     }, []);
 
     const handleChange = (e) => {
@@ -284,8 +309,9 @@ const Register = ({ toggleForm }) => {
             </div>
             <Grid
                 item
-                xs={12}
-                sm={4}
+                xs={10}
+                sm={8}
+                md={4}
                 className="form-container"
                 ref={formContainerRef}
                 id="registration-form"
