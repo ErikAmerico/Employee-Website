@@ -257,7 +257,7 @@ const Post = ({ comments }) => {
                                     onClick={() => openModal(post._id)}
                                 >
                                     <ChatBubbleIcon />
-                                    <div>3</div>
+                                    <div>{post.comments.length}</div>
                                 </IconButton>
                                 {/* Modal to access comments. */}
                                 <Modal open={showModal} onClose={closeModal}>
