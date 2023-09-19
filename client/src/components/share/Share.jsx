@@ -61,8 +61,7 @@ const Share = () => {
         };
 
         const handleChange = (event) => {
-            const { name, value } = event.target;
-            setPostText(value);
+            setPostText(event.target.value);
         };
         return (
             <div className="share">
@@ -73,6 +72,7 @@ const Share = () => {
                             placeholder="Make and announcement."
                             className="shareInput"
                             name="postText"
+                            value={postText}
                             onChange={handleChange}
                         ></input>
                     </div>
