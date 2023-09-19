@@ -84,6 +84,13 @@ const typeDefs = `
         name: String!
     }
 
+    type msgCnt {
+        companyId: ID!
+        userId: ID!
+        count: Int!
+        createdAt: String
+    }
+
     type Query {
         company(companyId: ID!): Company
         user(userId: ID!): User
@@ -93,6 +100,7 @@ const typeDefs = `
         users(companyId: ID): [User]
         posts(companyId: ID): [Post]
         getChatMessages(companyId: ID!): [ChatMessage]
+        hasNewMessages(companyId: ID!, userId: ID!): Boolean
     }
 
     type Mutation {
@@ -111,6 +119,7 @@ const typeDefs = `
         removeCompany(companyId: ID!): Company
         addUserToCompany(companyId: ID!, userId: ID!): Company
         createChatMessage(companyId: ID!, text: String!, sender: String!, name: String!): ChatMessage
+        createMsgCnt(companyId: ID!, userId: ID!, count: Int!): msgCnt
     }
 `;
 

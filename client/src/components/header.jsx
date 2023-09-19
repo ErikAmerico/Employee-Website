@@ -17,10 +17,10 @@ import {
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
-import {CREATE_USER, ADD_USER_TO_COMPANY, REMOVE_COMPANY } from "../utils/mutations";
+import { CREATE_USER, ADD_USER_TO_COMPANY, REMOVE_COMPANY, CREATE_MSG_CNT } from "../utils/mutations";
+import { GET_PREV_CHAT_MESSAGES, HAS_NEW_MESSAGES } from "../utils/queries";
 import AuthService from "../utils/auth";
 
-//import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
 import { styled } from "@mui/material/styles";
 import { useQuery } from "@apollo/client";
@@ -45,7 +45,11 @@ const Header = () => {
     const [createUser, { error }] = useMutation(CREATE_USER);
     const [addUserToCompany] = useMutation(ADD_USER_TO_COMPANY);
     const [removeCompany] = useMutation(REMOVE_COMPANY);
+    const [createMsgCnt] = useMutation(CREATE_MSG_CNT); 
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
+    const [msgCntAtLogOut, setMsgCntAtLogOut] = useState();
+    const [userId, setUserId] = useState('');
+    const companyId = localStorage.getItem("company_id");
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [unreadMessages, setUnreadMessages] = useState(false);
 
@@ -92,6 +96,7 @@ const Header = () => {
             const firstName = profile.data.firstName;
             const lastName = profile.data.lastName;
             const role = profile.data.role;
+            setUserId(profile.data._id);
             setUserRole(role);
             setUserName(`${firstName} ${lastName}`);
         }
@@ -116,17 +121,44 @@ const Header = () => {
         setAnchorEl();
     };
 
-    const handleLogout = () => {
-        AuthService.logout();
-        handleMenuClose();
-    };
+    const { data: newMessages } = useQuery(HAS_NEW_MESSAGES, {
+        variables: { companyId: companyId, userId: userId },
+    });
+
+    useEffect(() => {
+    if (newMessages?.hasNewMessages) {
+        setHasUnreadMessages(true);
+    }
+    }, [newMessages, setHasUnreadMessages]);
+
+    
+    const handleLogout = async () => {
+      await createMsgCnt({
+      variables: { companyId: companyId, userId: userId, count: msgCntAtLogOut },
+    });
+
+    AuthService.logout();
+    handleMenuClose();
+    localStorage.removeItem("company_id");
+  };
+  
+    const { data: Msgs4MsgCount, loading: currLoading } = useQuery(GET_PREV_CHAT_MESSAGES, {
+        variables: { companyId },
+    });
+    
+  useEffect(() => {
+    if (Msgs4MsgCount && Msgs4MsgCount.getChatMessages) {
+        const chatMessagesArray = Object.values(Msgs4MsgCount.getChatMessages);
+        const messageCount = chatMessagesArray.length;
+        setMsgCntAtLogOut(messageCount);
+    }
+  }, [Msgs4MsgCount, msgCntAtLogOut, handleLogout]);
 
     const handleAddUserClick = () => {
         setShowModal(true);
         handleMenuClose();
     };
 
-    const companyId = localStorage.getItem("company_id");
 
     const handleModalSubmit = async () => {
         try {

@@ -1,6 +1,7 @@
 const { signToken, AuthenticationError } = require("../utils/auth");
 const { User, Company, Post } = require("../models/Company");
 const ChatMessage = require("../models/ChatMessage");
+const MsgCnt = require("../models/MsgCnt.js");
 
 const resolvers = {
     Query: {
@@ -90,6 +91,29 @@ const resolvers = {
                 try {
                     const messages = await ChatMessage.find({ companyId });
                     return messages;
+                } catch (error) {
+                    throw new Error("Error getting chat messages");
+                }
+            } else {
+                throw new AuthenticationError("Not logged in");
+            }
+        },
+        hasNewMessages: async (parent, { companyId }, context) => {
+            if (context.user) {
+                try {
+                    const mostRecentMsgCnt = await MsgCnt.find({
+                      companyId: companyId,
+                      userId: context.user._id,
+                    }).sort({ createdAt: -1 })
+                        .limit(1);
+                    const companyMessagesCount = await ChatMessage.find({
+                        companyId: companyId,
+                    });
+
+                    const currentCount = companyMessagesCount.length;
+                    const mostRecentCount = mostRecentMsgCnt[0].count
+
+                    return currentCount > mostRecentCount;
                 } catch (error) {
                     throw new Error("Error getting chat messages");
                 }
@@ -469,6 +493,27 @@ const resolvers = {
             } else {
                 throw new AuthenticationError(
                     "You need to be logged in to create a chat message"
+                );
+            }
+        },
+        createMsgCnt: async (parent, { companyId, userId, count }, context) => {
+            if (context.user) {
+                try {
+                    const newMsgCnt = new MsgCnt({
+                        companyId,
+                        userId,
+                        count,
+                        createdAt: new Date().toISOString(),
+                    });
+                    await newMsgCnt.save();
+                    return newMsgCnt;
+                } catch (error) {
+                    console.error(error);
+                    throw new Error("Error storing message count");
+                }
+            } else {
+                throw new AuthenticationError(
+                    "You need to be logged in store message count"
                 );
             }
         },
