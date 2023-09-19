@@ -90,10 +90,8 @@ export const GET_PREV_CHAT_MESSAGES = gql`
     }
 `;
 
-export const GET_LOGGED_OUT_CHAT_COUNT = gql`
-  query getLoggedOutChatCount($companyId: ID!, $userId: ID!) {
-    getLoggedOutChatCount(companyId: $companyId, userId: $userId) {
-      count
+export const HAS_NEW_MESSAGES = gql`
+    query hasNewMessages($companyId: ID!, $userId: ID!) {
+        hasNewMessages(companyId: $companyId, userId: $userId)
     }
-  }
 `;

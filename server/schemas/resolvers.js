@@ -98,18 +98,22 @@ const resolvers = {
                 throw new AuthenticationError("Not logged in");
             }
         },
-        getLoggedOutChatCount: async (parent, { companyId, userId }, context) => {
+        hasNewMessages: async (parent, { companyId }, context) => {
             if (context.user) {
                 try {
                     const mostRecentMsgCnt = await MsgCnt.find({
+                      companyId: companyId,
+                      userId: context.user._id,
+                    }).sort({ createdAt: -1 })
+                        .limit(1);
+                    const companyMessagesCount = await ChatMessage.find({
                         companyId: companyId,
-                        userId: userId,
-                    }).sort({ createdAt: -1 }).limit(1);
+                    });
 
-                    if (!mostRecentMsgCnt) {
-                         return { count: 0 };
-                    }
-                    return mostRecentMsgCnt;
+                    const currentCount = companyMessagesCount.length;
+                    const mostRecentCount = mostRecentMsgCnt[0].count
+
+                    return currentCount > mostRecentCount;
                 } catch (error) {
                     throw new Error("Error getting chat messages");
                 }

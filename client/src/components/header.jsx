@@ -18,10 +18,9 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_USER, ADD_USER_TO_COMPANY, REMOVE_COMPANY, CREATE_MSG_CNT } from "../utils/mutations";
-import { GET_PREV_CHAT_MESSAGES, GET_LOGGED_OUT_CHAT_COUNT } from "../utils/queries";
+import { GET_PREV_CHAT_MESSAGES, HAS_NEW_MESSAGES } from "../utils/queries";
 import AuthService from "../utils/auth";
 
-//import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
 import { styled } from "@mui/material/styles";
 import { useQuery } from "@apollo/client";
@@ -50,8 +49,6 @@ const Header = () => {
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
     const [msgCntAtLogOut, setMsgCntAtLogOut] = useState();
     const [userId, setUserId] = useState('');
-    const [currCount, setCurrCount] = useState(0);
-    const [loggedCount, setLoggedCount] = useState(0);
     const companyId = localStorage.getItem("company_id");
     const navigate = useNavigate();
 
@@ -59,7 +56,6 @@ const Header = () => {
 
     useEffect(() => {
         if (location.pathname === "/chat" && hasUnreadMessages) {
-            setCurrCount(0); //tried this
             setHasUnreadMessages(false);
         }
     }, [location, hasUnreadMessages, setHasUnreadMessages]);
@@ -86,7 +82,6 @@ const Header = () => {
     useEffect(() => {
         if (AuthService.loggedIn()) {
             const profile = AuthService.getProfile();
-            //console.log(profile)
             const firstName = profile.data.firstName;
             const lastName = profile.data.lastName;
             const role = profile.data.role;
@@ -114,49 +109,21 @@ const Header = () => {
     const handleMenuClose = () => {
         setAnchorEl();
     };
-/////////////////////////////////////////////////////////////////////////////
-    const { data: chatCount } = useQuery(GET_LOGGED_OUT_CHAT_COUNT, {
+
+    const { data: newMessages } = useQuery(HAS_NEW_MESSAGES, {
         variables: { companyId: companyId, userId: userId },
     });
 
-    //console.log("chatCount:", chatCount); // I have the most recent count here, its in an object
-
-    //let loggedCount;
     useEffect(() => {
-    if (chatCount && chatCount.getLoggedOutChatCount) {
-        const countsArray = chatCount.getLoggedOutChatCount.map(item => item.count);
-        //loggedCount = countsArray[0];
-        setLoggedCount(countsArray[0]);
-        console.log(loggedCount)
+    if (newMessages?.hasNewMessages) {
+        setHasUnreadMessages(true);
     }
-    }, []);
+    }, [newMessages, setHasUnreadMessages]);
 
-    //console.log("loggedCount outside:", loggedCount)
-
- 
-    const { data: Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, { /////this is used for the logout store count function as well, so it needs to be here
+    const { data: Msgs4MsgCount, loading: currLoading } = useQuery(GET_PREV_CHAT_MESSAGES, {
         variables: { companyId },
     });
     
-    
-    //let currCount;
-    useEffect(() => {  
-    if (Msgs4MsgCount && Msgs4MsgCount.getChatMessages) {
-        //currCount = Msgs4MsgCount.getChatMessages.length;
-        setCurrCount(Msgs4MsgCount.getChatMessages.length);
-        console.log(currCount)
-    }
-    }, []);
-
-    //console.log("currCount outside:", currCount)
-
-     useEffect(() => {
-         if (currCount > loggedCount) {
-             setHasUnreadMessages(true);
-         }
-     }), []
-    
-    /////////////////////////////////////////////////////////////////////////////
 
   const handleLogout = async () => {
     await createMsgCnt({

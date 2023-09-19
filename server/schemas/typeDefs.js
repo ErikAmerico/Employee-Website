@@ -100,7 +100,7 @@ const typeDefs = `
         users(companyId: ID): [User]
         posts(companyId: ID): [Post]
         getChatMessages(companyId: ID!): [ChatMessage]
-        getLoggedOutChatCount(companyId: ID!, userId: ID!): [msgCnt]
+        hasNewMessages(companyId: ID!, userId: ID!): Boolean
     }
 
     type Mutation {
