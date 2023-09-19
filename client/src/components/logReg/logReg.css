@@ -77,6 +77,39 @@
   margin-top: 20px;
 }
 
+
+.slideUp {
+  animation: SlideUp 0.5s linear;
+}
+
+.slideDown {
+  animation: SlideDown 0.5s linear;
+  z-index: -1;
+}
+
+@keyframes SlideUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes SlideDown {
+  0% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+
 .submit-button:hover {
   background-color: #134074;
 }
@@ -90,153 +123,18 @@ h1 {
 .toggleButton {
   width: 107px;
 }
-/* 
-@media screen and (min-width: 360px) {
-  #login-button {
-    position: relative;
-    top: 10px !important;
-    left: 11px !important;
-    width: 300px !important;
-    height: 30px !important;
-  }
 
-  #registration-form {
+@media screen and (max-width: 600px) {
+  #registration-button{
     position: relative;
-    top: -140px !important;
-    left: 11px !important;
-  }
-
-  #registration-button {
-    position: relative;
-    bottom: 525px !important;
-    width: 300px !important;
-    left: 11px !important;
-    height: 30px !important;
-  }
-
-  #login-form {
-    position: relative;
-    top: 20px !important;
-    left: 11px !important;
+    bottom: 233px;
   }
 }
 
-@media screen and (min-width: 375px) {
-  #login-button {
+@media screen and (max-width: 600px) {
+  #registration-form{
     position: relative;
-    top: 45px !important;
-    left: 11px !important;
-    width: 300px !important;
-    height: 30px !important;
-  }
-
-  #registration-form {
-    position: relative;
-    top: -75px !important;
-    left: 11px !important;
-  }
-
-  #registration-button {
-    position: relative;
-    bottom: 457px !important;
-    width: 300px !important;
-    left: 11px !important;
-    height: 30px !important;
-  }
-
-  #login-form {
-    position: relative;
-    top: 50px !important;
-    left: 11px !important;
+    bottom: 233px;
   }
 }
-
-@media screen and (min-width: 390px) {
-  #login-button {
-    position: relative;
-    top: -10px !important;
-    left: 11px !important;
-    width: 300px !important;
-    height: 30px !important;
-  }
-
-  #registration-form {
-    position: relative;
-    top: -218px !important;
-    left: 11px !important;
-  }
-
-  #registration-button {
-    position: relative;
-    bottom: 600px !important;
-    width: 300px !important;
-    left: 11px !important;
-    height: 30px !important;
-  }
-
-  #login-form {
-    position: relative;
-    top: 3px !important;
-    left: 11px !important;
-  }
-}
-
-@media screen and (min-width: 412px) {
-  #login-button {
-    position: relative;
-    top: 20px !important;
-    left: 11px !important;
-    width: 350px !important;
-    height: 30px !important;
-  }
-
-  #registration-form {
-    position: relative;
-    top: -214px !important;
-    left: 11px !important;
-  }
-
-  #registration-button {
-    position: relative;
-    bottom: 605px !important;
-    width: 300px !important;
-    left: 11px !important;
-    height: 30px !important;
-  }
-
-  #login-form {
-    position: relative;
-    top: 33px !important;
-    left: 11px !important;
-  }
-}
-
-@media screen and (min-width: 540px) {
-  #login-button {
-    position: relative;
-    top: 20px !important;
-    left: 11px !important;
-    width: 350px !important;
-    height: 30px !important;
-  }
-
-  #registration-form {
-    position: relative;
-    top: -125px !important;
-    left: 11px !important;
-  }
-
-  #registration-button {
-    position: relative;
-    bottom: 500px !important;
-    width: 300px !important;
-    left: 11px !important;
-    height: 30px !important;
-  }
-
-  #login-form {
-    position: relative;
-    top: 35px !important;
-    left: 11px !important;
-  }
-} */
+  
