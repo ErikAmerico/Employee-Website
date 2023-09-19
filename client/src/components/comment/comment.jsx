@@ -14,7 +14,7 @@ import { formatDate } from "../../utils/date";
 import { REMOVE_COMMENT, UPDATE_COMMENT } from "../../utils/mutations";
 import { QUERY_POSTS, QUERY_SINGLE_POST } from "../../utils/queries";
 
-const Comment = ({ comment, user, postId, cache }) => {
+const Comment = ({ comment, user, postId }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedCommentText, setEditedCommentText] = useState(
         comment.commentText
