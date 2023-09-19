@@ -97,3 +97,10 @@
     width: 100%;
     padding-left: 20px;
 }
+
+/* media query for comment box */
+@media (max-width: 768px) {
+    .commentBox {
+        width: 100%;
+    }
+}

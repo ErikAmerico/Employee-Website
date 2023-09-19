@@ -16,12 +16,12 @@ const app = express();
 app.use(cors());
 const socketServer = http.createServer(app);
 const io = new Server(socketServer, {
-  cors: {
+    cors: {
         //origin: "http://localhost:3000" //I uncommented this out for you :)
-        origin: "http://127.0.0.1:3000"
-  },
+        origin: "http://127.0.0.1:3000",
+    },
 });
-    
+
 io.on("connection", (socket) => {
     console.log(`A user connected: ${socket.id}`);
 
@@ -34,18 +34,16 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log("A user disconnected");
     });
-}
-);
-
-socketServer.listen(3002, () => {
-  console.log("Socket server running on port 3002");
 });
 
+socketServer.listen(3002, () => {
+    console.log("Socket server running on port 3002");
+});
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  //context: ({ req }) => ({ req, socket }), //passing socket via context to resolvers
+    typeDefs,
+    resolvers,
+    //context: ({ req }) => ({ req, socket }), //passing socket via context to resolvers
 });
 
 // Create a new instance of an Apollo server with the GraphQL schema

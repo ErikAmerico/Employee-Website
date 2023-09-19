@@ -2,6 +2,7 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 // import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -14,6 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import * as React from "react";
 import AuthService from "../../utils/auth";
 import { formatDate } from "../../utils/date";
@@ -109,24 +111,16 @@ const Post = ({ comments }) => {
         const openModal = async (postId) => {
             setPostId(postId);
             try {
-                // const { data } = await getSinglePost({
-                //     query: QUERY_SINGLE_POST,
                 getSinglePost({
                     variables: { postId },
                 });
-                // if (data.post) {
-                //     setSinglePost(data.post);
                 setShowModal(true);
-                // } else {
-                //     console.error("No post found with the provided postId");
-                // }
             } catch (err) {
                 console.error("Error fetching single post:", err);
             }
         };
         const closeModal = () => {
             setPostId(null);
-            // setSinglePost(null);
             setShowModal(false);
         };
 
@@ -157,8 +151,6 @@ const Post = ({ comments }) => {
                         commentText: newCommentText, // Use newCommentText from state
                     },
                 });
-                // Handle the response as needed (e.g., reset form, update UI).
-                // You can also update the comments UI here if needed.
             } catch (error) {
                 console.error(error);
             }
@@ -167,6 +159,8 @@ const Post = ({ comments }) => {
         const user = AuthService.getProfile();
         const isAdminOrOwner =
             user && (user.data.role == "Admin" || user.data.role == "Owner");
+
+        const isSmallScreen = useMediaQuery(`(max-width: 750px)`);
 
         if (!posts.length) {
             return <p>No Announcements</p>;
@@ -255,12 +249,14 @@ const Post = ({ comments }) => {
                                     <Box
                                         sx={{
                                             position: "absolute",
-                                            maxHeight: "100%",
+                                            maxHeight: isSmallScreen
+                                                ? "80%"
+                                                : "100%", // Adjust the height for smaller screens
                                             overflow: "auto",
                                             top: "50%",
                                             left: "50%",
                                             transform: "translate(-50%, -50%)",
-                                            width: 500,
+                                            width: isSmallScreen ? "60%" : 500, // Adjust the width for smaller screens
                                             bgcolor: "background.paper",
                                             boxShadow: 22,
                                             p: 10,
@@ -270,6 +266,18 @@ const Post = ({ comments }) => {
                                             border: "4px solid #000",
                                         }}
                                     >
+                                        {/* Close button */}
+                                        <IconButton
+                                            aria-label="close"
+                                            sx={{
+                                                position: "absolute",
+                                                top: "10px",
+                                                right: "10px",
+                                            }}
+                                            onClick={closeModal}
+                                        >
+                                            <CloseIcon />
+                                        </IconButton>
                                         {/* Post content */}
                                         <div
                                             className="post"
@@ -306,7 +314,31 @@ const Post = ({ comments }) => {
                                                 {post.postText}
                                             </Typography>
                                         </div>
+
                                         {/* Comments */}
+                                        <TextField
+                                            placeholder="Add a comment..."
+                                            fullWidth={true}
+                                            multiline={true}
+                                            variant="outlined"
+                                            value={newCommentText}
+                                            onChange={(e) =>
+                                                setNewCommentText(
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                        {/* Comment input field */}
+
+                                        <Button
+                                            variant="contained"
+                                            onClick={() =>
+                                                handleCreateComment(post._id)
+                                            }
+                                            fullWidth={true}
+                                        >
+                                            Comment
+                                        </Button>
                                         {!loading &&
                                             singlePost?.post.comments &&
                                             singlePost.post.comments
@@ -320,28 +352,6 @@ const Post = ({ comments }) => {
                                                         postId={post._id}
                                                     />
                                                 ))}
-                                        {/* Comment input field */}
-                                        <TextField
-                                            placeholder="Add a comment..."
-                                            fullWidth={true}
-                                            multiline={true}
-                                            variant="outlined"
-                                            value={newCommentText}
-                                            onChange={(e) =>
-                                                setNewCommentText(
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <Button
-                                            variant="contained"
-                                            onClick={() =>
-                                                handleCreateComment(post._id)
-                                            }
-                                            fullWidth={true}
-                                        >
-                                            Comment
-                                        </Button>
                                     </Box>
                                 </Modal>
                             </div>
