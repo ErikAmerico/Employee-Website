@@ -11,7 +11,6 @@ CompOnnect is a valuable tool for businesses of all sizes. It can help you to im
 Future implementations of CompOnnect will allow businesses to organize their company as a whole, with files, forms, and more. This will make it even easier for businesses to manage their employees and their work.
 Overall, CompOnnect is a powerful tool that can help businesses to improve their efficiency and productivity.
 
-
 ## Table of Contents
 
 -   [Installation](#installation)
@@ -50,17 +49,16 @@ We are always open to ideas and suggestions to improve the application!
 ## Current Implementations
 
 -   Owners can create an account and add employees to the company with specified roles and titles.
-![register](https://github.com/ErikAmerico/Employee-Website/assets/117021869/95a9d262-0683-4fab-8374-98e359eb02e9)
+    ![register](https://github.com/ErikAmerico/Employee-Website/assets/117021869/95a9d262-0683-4fab-8374-98e359eb02e9)
 
 -   Users are able to view a list of employees to easily contact them if needed.
-![user](https://github.com/ErikAmerico/Employee-Website/assets/117021869/a1cd5d76-1511-46d6-b601-752b6476dc60)
+    ![user](https://github.com/ErikAmerico/Employee-Website/assets/117021869/a1cd5d76-1511-46d6-b601-752b6476dc60)
 
 -   Staying in touch is one of our goals that we strive for, so we have implemented a group chat system where everyone can partake in the conversation and stay up to date with the company.
-![chat](https://github.com/ErikAmerico/Employee-Website/assets/117021869/792a4291-8d17-4ca2-a951-1ff3d536f64a)
+    ![chat](https://github.com/ErikAmerico/Employee-Website/assets/117021869/792a4291-8d17-4ca2-a951-1ff3d536f64a)
 
 -   Having an announcement board is a great way to keep everyone up to date with the company, so we have implemented a way to post announcements to the company if you are an admin or owner. Employees can still interact however and comment on any of the posts. Giving them a space to voice opinions and engage with the company.
-![announcements](https://github.com/ErikAmerico/Employee-Website/assets/117021869/b317d4a1-1d7b-41c1-86d7-19930d415c4e)
-
+    ![announcements](https://github.com/ErikAmerico/Employee-Website/assets/117021869/b317d4a1-1d7b-41c1-86d7-19930d415c4e)
 
 ## Future Implementations
 
@@ -75,8 +73,8 @@ We are always open to ideas and suggestions to improve the application!
 -   A way for the owner of the company to edit the company information, such as name, type and logo.
 -   A way for owners and admins to add personalized notes to employees profiles, which only they can see. This would include warnings, employee reviews, their current salary, and more.
 -   A specialized page for Human Resources, where they can view all of the employees information, as well as their notes. This would have access to whomever is given specific permissions to view it, such as Human Resources role, or added roles to view.
-- Within announcements, we will add a way to add media, files and more to the posts. This would allow for a more organized way to keep track of important documents and media.
-- Validation for forms, so that everything is entered correctly and in the correct format. This will reduce risk of errors and make the application more user friendly.
+-   Within announcements, we will add a way to add media, files and more to the posts. This would allow for a more organized way to keep track of important documents and media.
+-   Validation for forms, so that everything is entered correctly and in the correct format. This will reduce risk of errors and make the application more user friendly.
 
 ## Collaborators
 

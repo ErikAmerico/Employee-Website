@@ -14,7 +14,6 @@ export default function Announcements({ user }) {
                     <Post />
                 </div>
             </div>
-
         </>
     );
 }
