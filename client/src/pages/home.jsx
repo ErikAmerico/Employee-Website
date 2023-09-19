@@ -49,7 +49,7 @@ export default function Home() {
                                 CompOnnect
                             </Typography>
                             <img
-                                src="../public/images/componnect-nobg.png"
+                                src="/images/componnect-nobg.png"
                                 alt="Employee Website Logo"
                                 style={{
                                     width: "40%",

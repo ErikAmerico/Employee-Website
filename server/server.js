@@ -17,8 +17,8 @@ app.use(cors());
 const socketServer = http.createServer(app);
 const io = new Server(socketServer, {
     cors: {
-        //origin: "http://localhost:3000" //I uncommented this out for you :)
-        origin: "http://127.0.0.1:3000",
+        origin: "http://localhost:3000", //I uncommented this out for you :) <3
+        // origin: "http://127.0.0.1:3000",
     },
 });
 
