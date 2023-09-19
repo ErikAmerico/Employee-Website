@@ -306,7 +306,31 @@ const Post = ({ comments }) => {
                                                 {post.postText}
                                             </Typography>
                                         </div>
+                                        
                                         {/* Comments */}
+                                        <TextField
+                                            placeholder="Add a comment..."
+                                            fullWidth={true}
+                                            multiline={true}
+                                            variant="outlined"
+                                            value={newCommentText}
+                                            onChange={(e) =>
+                                                setNewCommentText(
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                        {/* Comment input field */}
+                                        
+                                        <Button
+                                            variant="contained"
+                                            onClick={() =>
+                                                handleCreateComment(post._id)
+                                            }
+                                            fullWidth={true}
+                                        >
+                                            Comment
+                                        </Button>
                                         {!loading &&
                                             singlePost?.post.comments &&
                                             singlePost.post.comments
@@ -320,28 +344,7 @@ const Post = ({ comments }) => {
                                                         postId={post._id}
                                                     />
                                                 ))}
-                                        {/* Comment input field */}
-                                        <TextField
-                                            placeholder="Add a comment..."
-                                            fullWidth={true}
-                                            multiline={true}
-                                            variant="outlined"
-                                            value={newCommentText}
-                                            onChange={(e) =>
-                                                setNewCommentText(
-                                                    e.target.value
-                                                )
-                                            }
-                                        />
-                                        <Button
-                                            variant="contained"
-                                            onClick={() =>
-                                                handleCreateComment(post._id)
-                                            }
-                                            fullWidth={true}
-                                        >
-                                            Comment
-                                        </Button>
+                                        
                                     </Box>
                                 </Modal>
                             </div>
