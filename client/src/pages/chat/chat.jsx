@@ -23,6 +23,7 @@ export default function Chat() {
             variables: { companyId },
         });
 
+
         useEffect(() => {
             if (data) {
                 setMessages(data.getChatMessages);
@@ -76,6 +77,7 @@ export default function Chat() {
                 }
             } catch (error) {
                 console.error("Error creating chat message:", error);
+
             }
 
             setMessage("");

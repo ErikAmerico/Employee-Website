@@ -89,3 +89,9 @@ export const GET_PREV_CHAT_MESSAGES = gql`
         }
     }
 `;
+
+export const HAS_NEW_MESSAGES = gql`
+    query hasNewMessages($companyId: ID!, $userId: ID!) {
+        hasNewMessages(companyId: $companyId, userId: $userId)
+    }
+`;
