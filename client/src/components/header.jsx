@@ -442,7 +442,7 @@ const Header = () => {
                     >
                         <Link to="/">
                             <img
-                                src="../src/assets/images/componnect-nobg.png"
+                                src="../public/images/componnect-nobg.png"
                                 alt="Company Logo"
                                 style={{
                                     height: "auto",

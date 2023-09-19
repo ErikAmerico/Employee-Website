@@ -21,7 +21,6 @@ import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import react from "react";
 import { Link } from "react-router-dom";
-import "./home.css";
 
 const Item = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
@@ -50,7 +49,7 @@ export default function Home() {
                                 CompOnnect
                             </Typography>
                             <img
-                                src="../src/assets/images/componnect-nobg.png"
+                                src="../public/images/componnect-nobg.png"
                                 alt="Employee Website Logo"
                                 style={{
                                     width: "40%",
