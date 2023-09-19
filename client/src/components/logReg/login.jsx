@@ -5,6 +5,7 @@ import { LOGIN } from "../../utils/mutations";
 import Auth from "../../utils/auth";
 import "./logReg.css";
 
+
 const Login = ({ toggleForm }) => {
     const [errorMessage, setErrorMessage] = useState("");
     const [inputs, setInputs] = useState({

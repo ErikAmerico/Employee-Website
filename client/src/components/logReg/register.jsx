@@ -6,6 +6,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_COMPANY, CREATE_USER, ADD_USER_TO_COMPANY, LOGIN } from "../../utils/mutations";
 import Auth from "../../utils/auth";
 
+
 const Register = ({ toggleForm }) => {
     const [inputs, setInputs] = useState({
         name: "",
