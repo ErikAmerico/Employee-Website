@@ -11,6 +11,7 @@ import {
     LOGIN,
 } from "../../utils/mutations";
 
+
 const Register = ({ toggleForm }) => {
     const [inputs, setInputs] = useState({
         name: "",
