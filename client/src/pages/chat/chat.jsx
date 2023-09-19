@@ -23,7 +23,7 @@ export default function Chat() {
         variables: { companyId },
     });
         
-    console.log('chat messages query data', data)
+    //console.log('chat messages query data', data)
 
     useEffect(() => {
         if (data) {
@@ -67,7 +67,7 @@ export default function Chat() {
                 },
             });
             if (data.createChatMessage) {
-                console.log("Chat message created successfully:", data.createChatMessage);
+                //console.log("Chat message created successfully:", data.createChatMessage);
                 refetch();
             }
         } catch (error) {

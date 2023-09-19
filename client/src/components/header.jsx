@@ -59,7 +59,7 @@ const Header = () => {
 
     useEffect(() => {
         if (location.pathname === "/chat" && hasUnreadMessages) {
-            setCurrCount(0);
+            setCurrCount(0); //tried this
             setHasUnreadMessages(false);
         }
     }, [location, hasUnreadMessages, setHasUnreadMessages]);
@@ -114,12 +114,12 @@ const Header = () => {
     const handleMenuClose = () => {
         setAnchorEl();
     };
-////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
     const { data: chatCount } = useQuery(GET_LOGGED_OUT_CHAT_COUNT, {
         variables: { companyId: companyId, userId: userId },
     });
 
-    console.log("chatCount:", chatCount); // I have the most recent count here, its in an object
+    //console.log("chatCount:", chatCount); // I have the most recent count here, its in an object
 
     //let loggedCount;
     useEffect(() => {
@@ -131,30 +131,32 @@ const Header = () => {
     }
     }, []);
 
-    console.log("loggedCount:", loggedCount)
+    //console.log("loggedCount outside:", loggedCount)
 
-    const { data: Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, {
+ 
+    const { data: Msgs4MsgCount } = useQuery(GET_PREV_CHAT_MESSAGES, { /////this is used for the logout store count function as well, so it needs to be here
         variables: { companyId },
     });
     
     
     //let currCount;
-    useEffect(() => {  /////this is used in the logout store count function
+    useEffect(() => {  
     if (Msgs4MsgCount && Msgs4MsgCount.getChatMessages) {
         //currCount = Msgs4MsgCount.getChatMessages.length;
         setCurrCount(Msgs4MsgCount.getChatMessages.length);
+        console.log(currCount)
     }
     }, []);
 
-    console.log("currCount:", currCount)
+    //console.log("currCount outside:", currCount)
 
      useEffect(() => {
          if (currCount > loggedCount) {
              setHasUnreadMessages(true);
-         }tttt
+         }
      }), []
     
-    /////////////
+    /////////////////////////////////////////////////////////////////////////////
 
   const handleLogout = async () => {
     await createMsgCnt({
