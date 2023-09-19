@@ -1,8 +1,8 @@
-import { Button, Grid, TextField } from "@mui/material";
-import React, { useState, useEffect, useRef } from "react";
 import { useMutation } from "@apollo/client";
-import { LOGIN } from "../../utils/mutations";
+import { Button, Grid, TextField } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import Auth from "../../utils/auth";
+import { LOGIN } from "../../utils/mutations";
 import "./logReg.css";
 
 const Login = ({ toggleForm }) => {
@@ -18,8 +18,8 @@ const Login = ({ toggleForm }) => {
     useEffect(() => {
         const formContainerHeight = formContainerRef.current.clientHeight;
         const toggleButton = document.querySelector(".toggleButton");
-            if (toggleButton) {
-        toggleButton.style.height = `${formContainerHeight}px`;
+        if (toggleButton) {
+            toggleButton.style.height = `${formContainerHeight}px`;
         }
     }, []);
 
@@ -28,7 +28,7 @@ const Login = ({ toggleForm }) => {
     }, []);
 
     useEffect(() => {
-        const toggleButton = document.querySelector(".toggleButton")
+        const toggleButton = document.querySelector(".toggleButton");
         if (toggleButton) {
             toggleButton.classList.toggle("slideLog");
             toggleButton.addEventListener("animationend", () => {
@@ -51,7 +51,7 @@ const Login = ({ toggleForm }) => {
 
         if (!inputs.password || !inputs.email) {
             setErrorMessage("Both fields are required.");
-        return;
+            return;
         }
 
         try {
@@ -64,11 +64,12 @@ const Login = ({ toggleForm }) => {
 
             if (data && data.login && data.login.token) {
                 Auth.login(data.login.token);
-                
+
                 console.log("Successful login!");
             } else {
-                setErrorMessage("Login failed. Please check your email and password.");
-
+                setErrorMessage(
+                    "Login failed. Please check your email and password."
+                );
             }
         } catch (error) {
             console.error("Error logging in:", error.message);
@@ -89,7 +90,14 @@ const Login = ({ toggleForm }) => {
             alignItems="center"
             style={{ minHeight: "100vh" }}
         >
-            <Grid item xs={12} sm={4} className="form-container" ref={formContainerRef} id="login-form">
+            <Grid
+                item
+                xs={12}
+                sm={4}
+                className="form-container"
+                ref={formContainerRef}
+                id="login-form"
+            >
                 <h1>Login Form</h1>
                 <form onSubmit={handleSubmit}>
                     <TextField
@@ -102,7 +110,9 @@ const Login = ({ toggleForm }) => {
                         fullWidth
                         margin="normal"
                     />
-                    {errorMessage && <div className="error-message">{errorMessage}</div>}
+                    {errorMessage && (
+                        <div className="error-message">{errorMessage}</div>
+                    )}
                     <TextField
                         name="password"
                         value={inputs.password}
@@ -127,7 +137,14 @@ const Login = ({ toggleForm }) => {
                 </form>
             </Grid>
             <div className="toggle-button-container">
-                <Button onClick={toggleForm} variant="contained" className="toggleButton" id="registration-button">Register</Button>
+                <Button
+                    onClick={toggleForm}
+                    variant="contained"
+                    className="toggleButton"
+                    id="registration-button"
+                >
+                    Register
+                </Button>
             </div>
         </Grid>
     );

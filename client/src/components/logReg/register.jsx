@@ -3,8 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 import "./logReg.css";
 
 import { useMutation } from "@apollo/client";
-import { CREATE_COMPANY, CREATE_USER, ADD_USER_TO_COMPANY, LOGIN } from "../../utils/mutations";
 import Auth from "../../utils/auth";
+import {
+    ADD_USER_TO_COMPANY,
+    CREATE_COMPANY,
+    CREATE_USER,
+    LOGIN,
+} from "../../utils/mutations";
 
 const Register = ({ toggleForm }) => {
     const [inputs, setInputs] = useState({
@@ -55,7 +60,7 @@ const Register = ({ toggleForm }) => {
         e.preventDefault();
         if (!inputs.name || !inputs.type) {
             setErrorMessage("Both fields are required.");
-        return;
+            return;
         }
         setShowModal(true);
     };
@@ -69,74 +74,85 @@ const Register = ({ toggleForm }) => {
 
     const handleModalSubmit = async () => {
         try {
-            if (!modalData.firstName || !modalData.lastName || !modalData.title || !modalData.email || !modalData.phone || !modalData.password) {
+            if (
+                !modalData.firstName ||
+                !modalData.lastName ||
+                !modalData.title ||
+                !modalData.email ||
+                !modalData.phone ||
+                !modalData.password
+            ) {
                 setModalErrorMessage("All fields are required.");
                 return;
             }
 
-            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            const emailPattern =
+                /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
             if (!emailPattern.test(modalData.email)) {
                 setModalErrorMessage("Please enter a valid email address.");
                 return;
             }
-            
+
             const { data } = await createCompany({ variables: inputs });
             console.log("companyData", data);
 
-          const companyId = data.createCompany._id;
+            const companyId = data.createCompany._id;
             console.log("companyId", companyId);
-            console.log("modalData", modalData)
+            console.log("modalData", modalData);
 
             const userResponse = await createUser({
-                variables: { ...modalData, companyId: companyId, role: 'Owner'},
-           })
-             
-            const userId = userResponse.data.createUser.user._id;
-            console.log("USERINFO", userResponse.data.createUser)
-
-          addUserToCompany({
-                variables: { companyId, userId },
-          })
-            .then((res) => {
-                console.log("usr added to company", res);
-                console.log('modalData', modalData)
-            })
-              .then(async() => {
-                const { data } = await loginUser({
-                    variables: {
-                        email: modalData.email,
-                        password: modalData.password,
-                    },
-                });
-                  
-                  console.log('loggin in', data)
-
-                if (data && data.login && data.login.token) {
-                    Auth.login(data.login.token);
-                    console.log("Successful login!");
-                } else {
-                    console.log("Login failed.");
-                }
-                  
-              })      
-             .then(() => {
-                setModalData({
-                    firstName: "",
-                    lastName: "",
-                    title: "",
-                    email: "",
-                    phone: "",
-                    password: "",
-                });
-
-                setInputs({
-                    name: "",
-                    type: "",
-                });
-                setModalErrorMessage("");
-
-                setShowModal(false);
+                variables: {
+                    ...modalData,
+                    companyId: companyId,
+                    role: "Owner",
+                },
             });
+
+            const userId = userResponse.data.createUser.user._id;
+            console.log("USERINFO", userResponse.data.createUser);
+
+            addUserToCompany({
+                variables: { companyId, userId },
+            })
+                .then((res) => {
+                    console.log("usr added to company", res);
+                    console.log("modalData", modalData);
+                })
+                .then(async () => {
+                    const { data } = await loginUser({
+                        variables: {
+                            email: modalData.email,
+                            password: modalData.password,
+                        },
+                    });
+
+                    console.log("loggin in", data);
+
+                    if (data && data.login && data.login.token) {
+                        Auth.login(data.login.token);
+                        console.log("Successful login!");
+                    } else {
+                        console.log("Login failed.");
+                    }
+                })
+                .then(() => {
+                    setModalData({
+                        firstName: "",
+                        lastName: "",
+                        title: "",
+                        email: "",
+                        phone: "",
+                        password: "",
+                    });
+
+                    setInputs({
+                        name: "",
+                        type: "",
+                    });
+                    setModalErrorMessage("");
+
+                    setShowModal(false);
+                });
         } catch (err) {
             console.error(err);
             setShowAlert(true);
@@ -147,7 +163,9 @@ const Register = ({ toggleForm }) => {
         <div className="modal-container">
             <div className="modal-content">
                 <h2>Your Information</h2>
-                {modalErrorMessage && <div className="error-message">{modalErrorMessage}</div>}
+                {modalErrorMessage && (
+                    <div className="error-message">{modalErrorMessage}</div>
+                )}
                 <TextField
                     name="firstName"
                     value={modalData.firstName}
@@ -193,8 +211,19 @@ const Register = ({ toggleForm }) => {
                     value={modalData.phone}
                     onChange={handleModalInputChange}
                     onKeyDown={(e) => {
-                        if (!/^\d+$/.test(e.key) && !['Tab', 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-                        e.preventDefault();
+                        if (
+                            !/^\d+$/.test(e.key) &&
+                            ![
+                                "Tab",
+                                "Backspace",
+                                "Delete",
+                                "ArrowLeft",
+                                "ArrowRight",
+                                "Home",
+                                "End",
+                            ].includes(e.key)
+                        ) {
+                            e.preventDefault();
                         }
                     }}
                     type="tel"
@@ -258,8 +287,8 @@ const Register = ({ toggleForm }) => {
                 xs={12}
                 sm={4}
                 className="form-container"
-              ref={formContainerRef}
-              id="registration-form"
+                ref={formContainerRef}
+                id="registration-form"
             >
                 <h1>Registration</h1>
                 <form onSubmit={handleFormSubmit}>
@@ -273,7 +302,9 @@ const Register = ({ toggleForm }) => {
                         fullWidth
                         margin="normal"
                     />
-                    {errorMessage && <div className="error-message">{errorMessage}</div>}
+                    {errorMessage && (
+                        <div className="error-message">{errorMessage}</div>
+                    )}
                     <TextField
                         name="type"
                         value={inputs.type}
