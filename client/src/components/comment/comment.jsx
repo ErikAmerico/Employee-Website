@@ -21,21 +21,31 @@ const Comment = ({ comment, user, postId }) => {
     );
     // Update comment and Cache
     const [updateComment] = useMutation(UPDATE_COMMENT, {
-        update: (cache, { data }) => {
+        update: (cache, { data: { updateComment } }) => {
             try {
                 const { singlePost } = cache.readQuery({
                     query: QUERY_SINGLE_POST,
-                    variables: { postId: postId },
+                    variables: { postId },
                 });
-                const filteredComments = singlePost.comments.filter(
-                    (comment) => comment._id !== data.updateComment._id
-                );
 
-                cache.writeQuery({
-                    query: QUERY_SINGLE_POST,
-                    data: {
-                        ...singlePost,
-                        comments: [updateComment, filteredComments],
+                const updatedComment = {
+                    ...updateComment,
+                };
+
+                cache.modify({
+                    id: cache.identify(singlePost),
+                    fields: {
+                        comments(existingComments = []) {
+                            const updatedComments = existingComments.map(
+                                (comment) => {
+                                    if (comment._id === updatedComment._id) {
+                                        return updatedComment;
+                                    }
+                                    return comment;
+                                }
+                            );
+                            return updatedComments;
+                        },
                     },
                 });
             } catch (e) {
