@@ -112,10 +112,10 @@ const typeDefs = `
         updateCompany(companyId: ID!, name: String, type: String, logo: String): Company
         updateUser(userId: ID!, firstName: String, lastName: String, role: String, title: String, email: String, phone: String, password: String, profileImage: String): User
         updatePost(postId: ID!, images: [String], postText: String): Post
-        updateComment(commentId: ID!, commentText: String, image: String): Comment
+        updateComment(postId: ID!, commentId: ID!, commentText: String, image: String): Comment
         removeUser(userId: ID!): User
         removePost(postId: ID!): Post
-        removeComment(commentId: ID!): Comment
+        removeComment(postId: ID!, commentId: ID!): Comment
         removeCompany(companyId: ID!): Company
         addUserToCompany(companyId: ID!, userId: ID!): Company
         createChatMessage(companyId: ID!, text: String!, sender: String!, name: String!): ChatMessage

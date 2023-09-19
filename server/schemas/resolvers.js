@@ -313,6 +313,17 @@ const resolvers = {
                     if (!comment) {
                         throw new Error("No comment found");
                     }
+
+                    // Check if the authenticated user is the creator of the comment
+                    if (
+                        context.user._id.toString() !== comment.user.toString()
+                    ) {
+                        throw new Error(
+                            "You can only update your own comments"
+                        );
+                    }
+
+                    // Update the comment
                     comment.commentText = commentText;
                     comment.updatedAt = new Date().toISOString();
                     await post.save();
@@ -393,13 +404,33 @@ const resolvers = {
                     if (!post) {
                         throw new Error("No post found");
                     }
-                    const comment = post.comments.id(commentId);
-                    if (!comment) {
-                        throw new Error("No comment found");
+
+                    // Locate the comment within the post
+                    const commentIndex = post.comments.findIndex(
+                        (comment) => comment._id.toString() === commentId
+                    );
+                    if (commentIndex === -1) {
+                        throw new Error("Comment not found");
                     }
-                    comment.remove();
+
+                    // Ensure that the authenticated user has permission to delete the comment (e.g., ownership check)
+                    if (
+                        context.user._id !==
+                            post.comments[commentIndex].user.toString() &&
+                        context.user.role !== "Admin"
+                    ) {
+                        throw new Error(
+                            "You don't have permission to delete this comment"
+                        );
+                    }
+
+                    // Remove the comment
+                    post.comments.splice(commentIndex, 1);
+
+                    // Save the post to apply changes (e.g., remove the comment from the post's comments array)
                     await post.save();
-                    return comment;
+
+                    return post.comments[commentIndex];
                 } catch (error) {
                     console.error(error);
                     throw new Error("Error deleting comment");
