@@ -5,7 +5,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { CREATE_CHAT_MESSAGE } from '../../utils/mutations';
 import { GET_PREV_CHAT_MESSAGES } from '../../utils/queries';
 import { useGlobalContext } from "../../utils/globalContext";
-import './Chat.css';
+import './chat.css';
 const socket = io.connect('http://localhost:3002');
 
 export default function Chat() {
