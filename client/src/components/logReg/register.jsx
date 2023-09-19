@@ -26,7 +26,8 @@ const Register = ({ toggleForm }) => {
     const [showModal, setShowModal] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
     const formContainerRef = useRef(null);
-
+    const [errorMessage, setErrorMessage] = useState("");
+    const [modalErrorMessage, setModalErrorMessage] = useState("");
     useEffect(() => {
         const formContainerHeight = formContainerRef.current.clientHeight;
         const toggleButton = document.querySelector(".toggleButton");
@@ -52,6 +53,10 @@ const Register = ({ toggleForm }) => {
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
+        if (!inputs.name || !inputs.type) {
+            setErrorMessage("Both fields are required.");
+        return;
+        }
         setShowModal(true);
     };
 
@@ -64,6 +69,17 @@ const Register = ({ toggleForm }) => {
 
     const handleModalSubmit = async () => {
         try {
+            if (!modalData.firstName || !modalData.lastName || !modalData.title || !modalData.email || !modalData.phone || !modalData.password) {
+                setModalErrorMessage("All fields are required.");
+                return;
+            }
+
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            if (!emailPattern.test(modalData.email)) {
+                setModalErrorMessage("Please enter a valid email address.");
+                return;
+            }
+            
             const { data } = await createCompany({ variables: inputs });
             console.log("companyData", data);
 
@@ -117,6 +133,7 @@ const Register = ({ toggleForm }) => {
                     name: "",
                     type: "",
                 });
+                setModalErrorMessage("");
 
                 setShowModal(false);
             });
@@ -130,6 +147,7 @@ const Register = ({ toggleForm }) => {
         <div className="modal-container">
             <div className="modal-content">
                 <h2>Your Information</h2>
+                {modalErrorMessage && <div className="error-message">{modalErrorMessage}</div>}
                 <TextField
                     name="firstName"
                     value={modalData.firstName}
@@ -174,6 +192,11 @@ const Register = ({ toggleForm }) => {
                     name="phone"
                     value={modalData.phone}
                     onChange={handleModalInputChange}
+                    onKeyDown={(e) => {
+                        if (!/^\d+$/.test(e.key) && !['Tab', 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+                        e.preventDefault();
+                        }
+                    }}
                     type="tel"
                     label="Phone Number"
                     variant="outlined"
@@ -250,6 +273,7 @@ const Register = ({ toggleForm }) => {
                         fullWidth
                         margin="normal"
                     />
+                    {errorMessage && <div className="error-message">{errorMessage}</div>}
                     <TextField
                         name="type"
                         value={inputs.type}

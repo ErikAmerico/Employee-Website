@@ -6,6 +6,7 @@ import Auth from "../../utils/auth";
 import "./logReg.css";
 
 const Login = ({ toggleForm }) => {
+    const [errorMessage, setErrorMessage] = useState("");
     const [inputs, setInputs] = useState({
         email: "",
         password: "",
@@ -48,6 +49,11 @@ const Login = ({ toggleForm }) => {
 
         console.log(inputs);
 
+        if (!inputs.password || !inputs.email) {
+            setErrorMessage("Both fields are required.");
+        return;
+        }
+
         try {
             const { data } = await loginUser({
                 variables: {
@@ -61,12 +67,14 @@ const Login = ({ toggleForm }) => {
                 
                 console.log("Successful login!");
             } else {
-                console.log("Login failed.");
+                setErrorMessage("Login failed. Please check your email and password.");
+
             }
         } catch (error) {
             console.error("Error logging in:", error.message);
         }
 
+        setErrorMessage("");
         setInputs({
             email: "",
             password: "",
@@ -94,7 +102,7 @@ const Login = ({ toggleForm }) => {
                         fullWidth
                         margin="normal"
                     />
-
+                    {errorMessage && <div className="error-message">{errorMessage}</div>}
                     <TextField
                         name="password"
                         value={inputs.password}

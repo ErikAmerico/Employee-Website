@@ -48,6 +48,7 @@ const Header = () => {
     const { hasUnreadMessages, setHasUnreadMessages } = useGlobalContext();
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [unreadMessages, setUnreadMessages] = useState(false);
+    //const [addUserErrorMessage, setAddUserErrorMessage] = useState("");
 
     const navigate = useNavigate();
 
@@ -130,6 +131,10 @@ const Header = () => {
 
     const handleModalSubmit = async () => {
         try {
+            // if (!modalData.firstName || !modalData.lastName || !modalData.role || !modalData.title || !modalData.email || !modalData.phone || !modalData.password) {
+            //     setAddUserErrorMessage("All fields are required.");
+            //     return;
+            // }
 
             const userResponse = await createUser({
                 variables: { ...modalData, companyId: companyId, profileImage: initials, role: selectedRole },
@@ -156,7 +161,7 @@ const Header = () => {
                         phone: "",
                         password: "",
                     });
-
+                    //setAddUserErrorMessage("");
                     setShowModal(false);
                     navigate("/users");
             });
@@ -172,6 +177,7 @@ const Header = () => {
         <div className="modal-container">
             <div className="modal-content">
                 <h2>Employee Information</h2>
+                {/* {addUserErrorMessage && <div className="error-message">{addUserErrorMessage}</div>} */}
                 <TextField
                     name="firstName"
                     value={modalData.firstName}
@@ -228,6 +234,11 @@ const Header = () => {
                     name="phone"
                     value={modalData.phone}
                     onChange={handleModalInputChange}
+                    onKeyDown={(e) => {
+                        if (!/^\d+$/.test(e.key) && !['Tab', 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+                        e.preventDefault();
+                        }
+                    }}
                     type="tel"
                     label="Phone Number"
                     variant="outlined"
