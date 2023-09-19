@@ -288,9 +288,10 @@ export default function Home() {
                             >
                                 <p>
                                     It is our goal to make this application as
-                                    accessible as possible for everyone.<br/> We are
-                                    continuously working on improving our
-                                    application and adding new features.
+                                    accessible as possible for everyone.
+                                    <br /> We are continuously working on
+                                    improving our application and adding new
+                                    features.
                                 </p>
                                 <p>Here are some things you can expect:</p>
                                 <ul
@@ -307,7 +308,8 @@ export default function Home() {
                                             marginBottom: "1rem",
                                         }}
                                     >
-                                        &#x2022; Private messaging and group select messaging
+                                        &#x2022; Private messaging and group
+                                        select messaging
                                     </li>
                                     <li
                                         style={{
@@ -317,7 +319,8 @@ export default function Home() {
                                             marginBottom: "1rem",
                                         }}
                                     >
-                                        &#x2022; More roles for employees such as manager, human resources and more
+                                        &#x2022; More roles for employees such
+                                        as manager, human resources and more
                                     </li>
                                     <li
                                         style={{
@@ -327,7 +330,8 @@ export default function Home() {
                                             marginBottom: "1rem",
                                         }}
                                     >
-                                        &#x2022; A system to organize employee files and important documents
+                                        &#x2022; A system to organize employee
+                                        files and important documents
                                     </li>
                                     <li
                                         style={{
@@ -337,7 +341,9 @@ export default function Home() {
                                             marginBottom: "1rem",
                                         }}
                                     >
-                                        &#x2022; A documents page that can hold employee handbooks, company policies, forms and more
+                                        &#x2022; A documents page that can hold
+                                        employee handbooks, company policies,
+                                        forms and more
                                     </li>
                                     <li
                                         style={{
@@ -347,7 +353,9 @@ export default function Home() {
                                             marginBottom: "1rem",
                                         }}
                                     >
-                                        &#x2022; A schedule page to keep track of employee schedules, time clocks and associated needs
+                                        &#x2022; A schedule page to keep track
+                                        of employee schedules, time clocks and
+                                        associated needs
                                     </li>
                                     <li
                                         style={{

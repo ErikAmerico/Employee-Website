@@ -1,168 +1,167 @@
-
 .messagecontainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
 }
 
 .message-list {
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #e5e5ea;
-  min-width: 35%;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #e5e5ea;
+    min-width: 35%;
 }
 
 .message {
-  display: flex;
-  margin: 5px;
-  /* max-width: 80%; */
+    display: flex;
+    margin: 5px;
+    /* max-width: 80%; */
 }
 
 .sent {
-  justify-content: flex-end;
+    justify-content: flex-end;
 }
 
 .received {
-  justify-content: flex-start;
+    justify-content: flex-start;
 }
 
 .message-content {
-  background-color: #e5e5ea;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-width: 80%;
+    background-color: #e5e5ea;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 80%;
 }
 
 .received .message-content {
-  background-color: #A4C639;
+    background-color: #a4c639;
 }
 
 .sent .message-content {
-  background-color: #007AFF;
-  color: rgb(237, 234, 234);
+    background-color: #007aff;
+    color: rgb(237, 234, 234);
 }
 
 .message-sender {
-  font-weight: bold;
-  margin-bottom: 5px;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .message-text {
-  word-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .input-container {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background-color: #6669ad;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  box-shadow: 6px 6px 6px 6px rgba(0, 0, 0, 0.1);
-  padding-left: 100px;
-  padding-right: 100px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #6669ad;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 6px 6px 6px 6px rgba(0, 0, 0, 0.1);
+    padding-left: 100px;
+    padding-right: 100px;
 }
 
 .message-input {
-  flex-grow: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 20px;
-  outline: none;
+    flex-grow: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    outline: none;
 }
 
 .send-button {
-  background-color: #007AFF;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 10px 20px;
-  margin-left: 10px;
-  cursor: pointer;
+    background-color: #007aff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 20px;
+    margin-left: 10px;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 1230px) {
-   .input-container {
-   padding-left: 50px;
-   padding-right: 50px;
- }
+    .input-container {
+        padding-left: 50px;
+        padding-right: 50px;
+    }
 }
 
 @media screen and (max-width: 960px) {
-   .input-container {
-   padding-left: 30px;
-   padding-right: 30px;
- }
-  .message-list {
-   min-width: 45%;
- }
+    .input-container {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    .message-list {
+        min-width: 45%;
+    }
 }
 
 @media screen and (max-width: 730px) {
-  .input-container {
-   padding-left: 40px;
-   padding-right: 40px;
- }
-  .message-list {
-   min-width: 50%;
- }
+    .input-container {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+    .message-list {
+        min-width: 50%;
+    }
 }
 
 @media screen and (max-width: 625px) {
-  .message-list {
-   min-width: 60%;
- }
+    .message-list {
+        min-width: 60%;
+    }
 }
 
 @media screen and (max-width: 550px) {
-  .message-list {
-   min-width: 70%;
- }
+    .message-list {
+        min-width: 70%;
+    }
 }
 
 @media screen and (max-width: 460px) {
-  .message-list {
-   min-width: 80%;
- }
+    .message-list {
+        min-width: 80%;
+    }
 }
 
 @media screen and (max-width: 400px) {
-  .message-list {
-   min-width: 90%;
- }
+    .message-list {
+        min-width: 90%;
+    }
 }
 
 @media screen and (max-width: 350px) {
-  .message-list {
-   min-width: 95%;
- }
+    .message-list {
+        min-width: 95%;
+    }
 }
 
 @media screen and (max-width: 330px) {
-  .input-container {
-   padding-left: 25px;
-   padding-right: 25px;
- }
-  .message-list {
-   min-width: 98%;
- }
+    .input-container {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+    .message-list {
+        min-width: 98%;
+    }
 }
 
 @media screen and (max-width: 300px) {
-  .input-container {
-   padding-left: 10px;
-   padding-right: 10px;
- }
+    .input-container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
 }
 
 @media screen and (max-width: 270px) {
-  .input-container {
-   padding-left: 0px;
-   padding-right: 0px;
- }
+    .input-container {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
 }
