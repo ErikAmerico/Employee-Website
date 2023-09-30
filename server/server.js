@@ -36,9 +36,9 @@ io.on("connection", (socket) => {
   });
 });
 
-const serverPort = process.env.PORT || 3002;
-socketServer.listen(serverPort, () => {
-  console.log(`Socket server running on port ${serverPort}`);
+//const serverPort = process.env.PORT || 3002;
+socketServer.listen(3002, () => {
+  console.log("Socket server running on port 3002");
 });
 
 const server = new ApolloServer({
