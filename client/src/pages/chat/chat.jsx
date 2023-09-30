@@ -20,7 +20,7 @@ export default function Chat() {
     const { setHasUnreadMessages } = useGlobalContext();
     const chatContainerRef = useRef(null);
 
-    //const location = useLocation(); //added this line, useLocation was never read? might have to remove it if this attempt does not work.
+    const location = useLocation(); //added this line, useLocation was never read? might have to remove it if this attempt does not work.
 
     const wsProtocol =
       location.protocol.toLocaleLowerCase() === "http:" ? "ws" : "wss";
