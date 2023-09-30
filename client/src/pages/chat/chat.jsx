@@ -5,7 +5,7 @@ import AuthService from "../../utils/auth";
 import { useGlobalContext } from "../../utils/globalContext";
 import { CREATE_CHAT_MESSAGE } from "../../utils/mutations";
 import { GET_PREV_CHAT_MESSAGES } from "../../utils/queries";
-import { useLocation } from "react-router-dom";
+//import { useLocation } from "react-router-dom";
 import "./chat.css";
 //const socket = io.connect("http://localhost:3002");
 
@@ -20,12 +20,12 @@ export default function Chat() {
     const { setHasUnreadMessages } = useGlobalContext();
     const chatContainerRef = useRef(null);
 
-    const location = useLocation(); //added this line, useLocation was never read? might have to remove it if this attempt does not work.
+    //const location = useLocation(); //added this line, useLocation was never read? might have to remove it if this attempt does not work.
 
     const wsProtocol =
-      location.protocol.toLocaleLowerCase() === "http:" ? "ws" : "wss";
+      window.location.protocol.toLocaleLowerCase() === "http:" ? "ws" : "wss";
     const socket = io.connect(
-      `${wsProtocol}://${location.hostname}:${location.port}`
+      `${wsProtocol}://${window.location.hostname}:${window.location.port}`
     );
 
     const { loading, data, refetch } = useQuery(GET_PREV_CHAT_MESSAGES, {
