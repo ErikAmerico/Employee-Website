@@ -5,7 +5,7 @@ import AuthService from "../../utils/auth";
 import { useGlobalContext } from "../../utils/globalContext";
 import { CREATE_CHAT_MESSAGE } from "../../utils/mutations";
 import { GET_PREV_CHAT_MESSAGES } from "../../utils/queries";
-//import { useLocation } from "react-router-dom";
+///import { useLocation } from "react-router-dom";
 import "./chat.css";
 //const socket = io.connect("http://localhost:3002");
 
