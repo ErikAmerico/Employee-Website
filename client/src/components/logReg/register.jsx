@@ -119,6 +119,12 @@ const Register = ({ toggleForm }) => {
                 return;
             }
 
+            const phonePattern = /^\d{10}$/;
+            if (!phonePattern.test(modalData.phone)) {
+                setModalErrorMessage("Please enter a valid phone number.");
+                return;
+            }
+
             const { data } = await createCompany({ variables: inputs });
             console.log("companyData", data);
 
