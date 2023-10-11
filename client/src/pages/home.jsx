@@ -1,25 +1,9 @@
-// make a landing page with MUI for the employee website to showcase what the website is about and what it can do
-// Landing page for new users to see what the website is about and what it can do
-// Employee website is a place companies can post all of their announcements, events, and other important information
-// Employees can comment on the announcements to share their thoughts and ideas
-// Employees can join in in a group chat to discuss the announcements and events or just to chat
-import {
-    CardActionArea,
-    CardHeader,
-    CardMedia,
-    IconButton,
-} from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
-import react from "react";
 import { Link } from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -45,6 +29,16 @@ export default function Home() {
                                 component="div"
                                 gutterBottom
                                 marginTop={4}
+                                sx={{
+                                    fontSize: "6rem",
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    maxWidth: "100%",
+                                    "@media (max-width: 600px)": {
+                                        fontSize: "3rem",
+                                    },
+                                }}
                             >
                                 CompOnnect
                             </Typography>
