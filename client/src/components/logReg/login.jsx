@@ -1,10 +1,9 @@
-import { Button, Grid, TextField } from "@mui/material";
-import React, { useState, useEffect, useRef } from "react";
 import { useMutation } from "@apollo/client";
-import { LOGIN } from "../../utils/mutations";
+import { Button, Grid, TextField } from "@mui/material";
+import React, { useEffect, useRef, useState } from "react";
 import Auth from "../../utils/auth";
+import { LOGIN } from "../../utils/mutations";
 import "./logReg.css";
-
 
 const Login = ({ toggleForm }) => {
     const [errorMessage, setErrorMessage] = useState("");
@@ -16,23 +15,25 @@ const Login = ({ toggleForm }) => {
     const [loginUser, { error }] = useMutation(LOGIN);
     const formContainerRef = useRef(null);
 
-       const handleResize = () => {
-           const screenWidth = window.innerWidth;
-           const formContainerHeight = formContainerRef.current.clientHeight;
-           const formContainerWidth = formContainerRef.current.clientWidth;
-           const toggleButton = document.querySelector(".toggleButton");
-           const registrationButton = document.querySelector("#registration-button")
+    const handleResize = () => {
+        const screenWidth = window.innerWidth;
+        const formContainerHeight = formContainerRef.current.clientHeight;
+        const formContainerWidth = formContainerRef.current.clientWidth;
+        const toggleButton = document.querySelector(".toggleButton");
+        const registrationButton = document.querySelector(
+            "#registration-button"
+        );
 
-           if (screenWidth < 600) {
-               registrationButton.classList.add("slideDown");
+        if (screenWidth < 600) {
+            registrationButton.classList.add("slideDown");
             if (toggleButton) {
-               toggleButton.style.width = `${formContainerWidth}px`;
+                toggleButton.style.width = `${formContainerWidth}px`;
                 toggleButton.style.height = null;
                 toggleButton.addEventListener("animationend", () => {
-                toggleButton.style.zIndex = 0;
-            });
+                    toggleButton.style.zIndex = 0;
+                });
             }
-               document.querySelector(".form-container").classList.toggle("flip");
+            document.querySelector(".form-container").classList.toggle("flip");
         } else {
             if (toggleButton) {
                 toggleButton.style.height = `${formContainerHeight}px`;
@@ -41,12 +42,12 @@ const Login = ({ toggleForm }) => {
 
             document.querySelector(".form-container").classList.toggle("flip");
 
-        if (toggleButton) {
+            if (toggleButton) {
                 toggleButton.classList.toggle("slideLog");
                 toggleButton.addEventListener("animationend", () => {
-                toggleButton.style.zIndex = 0;
-            });
-        }
+                    toggleButton.style.zIndex = 0;
+                });
+            }
         }
     };
 
@@ -69,11 +70,9 @@ const Login = ({ toggleForm }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(inputs);
-
         if (!inputs.password || !inputs.email) {
             setErrorMessage("Both fields are required.");
-        return;
+            return;
         }
 
         try {
@@ -86,17 +85,19 @@ const Login = ({ toggleForm }) => {
 
             if (data && data.login && data.login.token) {
                 Auth.login(data.login.token);
-                
                 console.log("Successful login!");
+                setErrorMessage("");
             } else {
-                setErrorMessage("Login failed. Please check your email and password.");
-
+                setErrorMessage(
+                    "Login failed. Please check your email and password."
+                );
             }
-        } catch (error) {
-            console.error("Error logging in:", error.message);
+        } catch {
+            setErrorMessage(
+                "Login failed. Please check your email and password."
+            );
         }
 
-        setErrorMessage("");
         setInputs({
             email: "",
             password: "",
@@ -111,12 +112,15 @@ const Login = ({ toggleForm }) => {
             alignItems="center"
             style={{ minHeight: "100vh" }}
         >
-            <Grid item
+            <Grid
+                item
                 xs={10}
                 sm={8}
                 md={4}
                 className="form-container"
-                ref={formContainerRef} id="login-form">
+                ref={formContainerRef}
+                id="login-form"
+            >
                 <h1>Login Form</h1>
                 <form onSubmit={handleSubmit}>
                     <TextField
@@ -129,7 +133,9 @@ const Login = ({ toggleForm }) => {
                         fullWidth
                         margin="normal"
                     />
-                    {errorMessage && <div className="error-message">{errorMessage}</div>}
+                    {errorMessage && (
+                        <div className="error-message">{errorMessage}</div>
+                    )}
                     <TextField
                         name="password"
                         value={inputs.password}
@@ -154,7 +160,14 @@ const Login = ({ toggleForm }) => {
                 </form>
             </Grid>
             <div className="toggle-button-container">
-                <Button onClick={toggleForm} variant="contained" className="toggleButton" id="registration-button">Register</Button>
+                <Button
+                    onClick={toggleForm}
+                    variant="contained"
+                    className="toggleButton"
+                    id="registration-button"
+                >
+                    Register
+                </Button>
             </div>
         </Grid>
     );
