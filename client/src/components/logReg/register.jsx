@@ -11,7 +11,6 @@ import {
     LOGIN,
 } from "../../utils/mutations";
 
-
 const Register = ({ toggleForm }) => {
     const [inputs, setInputs] = useState({
         name: "",
@@ -35,29 +34,27 @@ const Register = ({ toggleForm }) => {
     const [errorMessage, setErrorMessage] = useState("");
     const [modalErrorMessage, setModalErrorMessage] = useState("");
 
+    const handleResize = () => {
+        const screenWidth = window.innerWidth;
+        const formContainerHeight = formContainerRef.current.clientHeight;
+        const formContainerWidth = formContainerRef.current.clientWidth;
+        const toggleButton = document.querySelector(".toggleButton");
+        const loginButton = document.querySelector("#login-button");
 
-       const handleResize = () => {
-           const screenWidth = window.innerWidth;
-           const formContainerHeight = formContainerRef.current.clientHeight;
-           const formContainerWidth = formContainerRef.current.clientWidth;
-           const toggleButton = document.querySelector(".toggleButton");
-           const loginButton = document.querySelector("#login-button");
-
-           if (screenWidth < 600) {
-               loginButton.classList.add("slideUp");
+        if (screenWidth < 600) {
+            loginButton.classList.add("slideUp");
             if (toggleButton) {
-               toggleButton.style.width = `${formContainerWidth}px`;
-               toggleButton.style.height = null;
+                toggleButton.style.width = `${formContainerWidth}px`;
+                toggleButton.style.height = null;
             }
-               document.querySelector(".form-container").classList.toggle("flip");
+            document.querySelector(".form-container").classList.toggle("flip");
         } else {
             if (toggleButton) {
                 toggleButton.style.height = `${formContainerHeight}px`;
                 toggleButton.style.width = null;
             }
 
-               document.querySelector(".form-container").classList.toggle("flip");
-               
+            document.querySelector(".form-container").classList.toggle("flip");
 
             const toggleButtonElem = document.querySelector(".toggleButton");
             if (toggleButtonElem) {
@@ -86,6 +83,9 @@ const Register = ({ toggleForm }) => {
         e.preventDefault();
         if (!inputs.name || !inputs.type) {
             setErrorMessage("Both fields are required.");
+            return;
+        } else if (inputs.name.length < 2) {
+            setErrorMessage("Company name must be at least 2 characters.");
             return;
         }
         setShowModal(true);
