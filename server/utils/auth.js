@@ -1,5 +1,6 @@
 const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
+const { AuthenticationError } = require("apollo-server-express");
 
 const secret = "mysecretssshhhhhhh";
 const expiration = "2h";
@@ -32,7 +33,7 @@ module.exports = {
             console.log("Invalid token");
             console.error(err);
             //if there is an error, the req gets returned regardless, not ideal?
-            // throw new AuthenticationError("Invalid token");
+            throw new AuthenticationError("Invalid token");
         }
 
         // return the request object so it can be passed to the resolver as `context`
