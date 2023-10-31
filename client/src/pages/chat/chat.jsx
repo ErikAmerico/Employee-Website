@@ -23,7 +23,8 @@ export default function Chat() {
     const location = useLocation();
 
     const wsProtocol =
-      location.protocol.toLocaleLowerCase() === "http:" ? "ws" : "wss";
+      location.protocol?.toLocaleLowerCase() === "http:" ? "ws" : "wss";
+    //location.protocol === "http:" ? "ws" : "wss";
     const socket = io.connect(
       `${wsProtocol}://${location.hostname}:${location.port}`
     );
